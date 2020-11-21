@@ -10,6 +10,7 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import cobble.sbp.handlers.ConfigHandler;
+import cobble.sbp.threads.DungeonsFloorThread;
 import cobble.sbp.threads.DungeonsThread;
 import cobble.sbp.utils.DataGetter;
 import cobble.sbp.utils.GetFromAPI;
@@ -21,6 +22,7 @@ import net.minecraft.command.ICommandSender;
 
 public class Dungeons extends CommandBase {	
 	public static String args0 = "";
+	public static String args1 = "";
 		@Override
 		public String getCommandName() {
 			return "dungeons";
@@ -39,12 +41,25 @@ public class Dungeons extends CommandBase {
 					Utils.sendMessage(ChatFormatting.RED+"Please supply a name to look up!");
 					return;
 					}
-				Thread dungeonsCommand = new DungeonsThread();
-				args0 = args[0];
-				dungeonsCommand.start();
-				/*
-				
-			*/
+				else if(args.length == 2) {
+					args0 = args[0];
+					args1 = args[1];
+					if(Utils.isNumeric(args1)) {
+						if(parseInt(args1) < 8 && parseInt(args1) > -1) {
+							Thread dungeonsFloorCommand = new DungeonsFloorThread();
+							dungeonsFloorCommand.start();
+						} else {
+							Utils.sendMessage(ChatFormatting.RED+"Please supply an actual floor!");
+						}
+					} else {
+						Utils.sendMessage(ChatFormatting.RED+"Please supply an actual number to select a floor!");
+					}
+					
+				} else {
+					Thread dungeonsCommand = new DungeonsThread();
+					args0 = args[0];
+					dungeonsCommand.start();
+				}
 		} else {
 			Utils.enableMod();
 		}
