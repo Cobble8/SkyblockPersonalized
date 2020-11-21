@@ -1,19 +1,140 @@
 package cobble.sbp.utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+
+import java.lang.Object;
+
 
 public class GetFromAPI {
 	static String[] profileUUIDs = new String[5];
 	
+	public static int getMostDamage(String file, String uuid, String profileuuid, String floor, String selectedClass) {
+		JsonParser parser = new JsonParser();
+		JsonElement dungeonClass = parser.parse(file.toString());
+		int profileID = 0;
+		
+		for(int i=0;i<profileUUIDs.length;i++) {
+			if(profileUUIDs[i] == profileuuid) {
+				profileID = i;
+			}
+		}
+		int temp = 0;
+		String temp1 = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs")+"";
+		//String temp1 = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsString();
+		//Utils.print(temp1);
+		if (temp1.contains("most_damage_"+selectedClass)) {
+			Utils.print(floor+" | "+ selectedClass);
+			temp = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("most_damage_"+selectedClass).getAsJsonObject().get(floor).getAsInt();
+		} else {
+			temp = 1;
+		}
+		//temp = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("most_damage_"+selectedClass).getAsJsonObject().get(floor).getAsInt();}
+		return temp;
+	}
+
+	
+	public static int getMostHealing(String file, String uuid, String profileuuid, String floor) {
+		JsonParser parser = new JsonParser();
+		JsonElement dungeonClass = parser.parse(file.toString());
+		int profileID = 0;
+		
+		for(int i=0;i<profileUUIDs.length;i++) {
+			if(profileUUIDs[i] == profileuuid) {
+				profileID = i;
+			}
+		}
+		
+		return dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("most_healing").getAsJsonObject().get(floor).getAsInt();
+		}
+	
+	public static int getFastestTime(String file, String uuid, String profileuuid, String floor) {
+		JsonParser parser = new JsonParser();
+		JsonElement dungeonClass = parser.parse(file.toString());
+		int profileID = 0;
+		
+		for(int i=0;i<profileUUIDs.length;i++) {if(profileUUIDs[i] == profileuuid) {profileID = i;}}
+		
+		return dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("fastest_time").getAsJsonObject().get(floor).getAsInt();
+		}
+	public static int getFastestSTime(String file, String uuid, String profileuuid, String floor) {
+		JsonParser parser = new JsonParser();
+		JsonElement dungeonClass = parser.parse(file.toString());
+		int profileID = 0;
+		
+		for(int i=0;i<profileUUIDs.length;i++) {if(profileUUIDs[i] == profileuuid) {profileID = i;}}
+		
+		return dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("fastest_time_s").getAsJsonObject().get(floor).getAsInt();
+		}
+	public static int getFastestSPlusTime(String file, String uuid, String profileuuid, String floor) {
+		JsonParser parser = new JsonParser();
+		JsonElement dungeonClass = parser.parse(file.toString());
+		int profileID = 0;
+		
+		for(int i=0;i<profileUUIDs.length;i++) {if(profileUUIDs[i] == profileuuid) {profileID = i;}}
+		
+		return dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("fastest_time_s_plus").getAsJsonObject().get(floor).getAsInt();
+		}
+	
+	
+	public static int getMostKills(String file, String uuid, String profileuuid, String floor) {
+		JsonParser parser = new JsonParser();
+		JsonElement dungeonClass = parser.parse(file.toString());
+		int profileID = 0;
+		
+		for(int i=0;i<profileUUIDs.length;i++) {
+			if(profileUUIDs[i] == profileuuid) {
+				profileID = i;
+			}
+		}
+		
+		return dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("most_mobs_killed").getAsJsonObject().get(floor).getAsInt();
+		}
+	
+	
+	public static int getWatcherKills(String file, String uuid, String profileuuid, String floor) {
+		JsonParser parser = new JsonParser();
+		JsonElement dungeonClass = parser.parse(file.toString());
+		int profileID = 0;
+		
+		for(int i=0;i<profileUUIDs.length;i++) {
+			if(profileUUIDs[i] == profileuuid) {
+				profileID = i;
+			}
+		}
+		
+		return dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("watcher_kills").getAsJsonObject().get(floor).getAsInt();
+		}
+	
+	public static int getFloorAttempts(String file, String uuid, String profileuuid, String floor) {
+		JsonParser parser = new JsonParser();
+		JsonElement dungeonClass = parser.parse(file.toString());
+		int profileID = 0;
+		
+		for(int i=0;i<profileUUIDs.length;i++) {
+			if(profileUUIDs[i] == profileuuid) {
+				profileID = i;
+			}
+		}
+		
+		return dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("times_played").getAsJsonObject().get(floor).getAsInt();
+		}
+	
+	public static int getBestScore(String file, String uuid, String profileuuid, String floor) {
+		JsonParser parser = new JsonParser();
+		JsonElement bestScore = parser.parse(file.toString());
+		int profileID = 0;
+		for(int i=0;i<profileUUIDs.length;i++) {
+			if(profileUUIDs[i] == profileuuid) {
+				profileID = i;
+			}
+		}
+		return bestScore.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("best_score").getAsJsonObject().get(floor).getAsInt();
+	}
 	
 	public static String getSelectedDungeonClass(String file, String uuid, String profileuuid) {
 		JsonParser parser = new JsonParser();
@@ -30,7 +151,9 @@ public class GetFromAPI {
 
 		}
 	
-	public static int getFloorRuns(String file, String floor, String uuid, String profileuuid) {
+	
+	
+	public static int getFloorRuns(String file, String uuid, String profileuuid, String floor) {
 		
 		JsonParser parser = new JsonParser();
 		JsonElement dungeonClass = parser.parse(file.toString());
