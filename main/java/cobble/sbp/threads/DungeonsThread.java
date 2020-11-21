@@ -14,14 +14,12 @@ import cobble.sbp.utils.Utils;
 public class DungeonsThread extends Thread {
 	
 	public void run() {
-		int cataXP = 0;
 
 		String getuuid = "";
 		try {
 			getuuid = HttpClient.readPage("https://api.mojang.com/users/profiles/minecraft/"+Dungeons.args0+"?at=%3CcurrentUnixTimestampInSeconds%20-%2030%20days%3E");
 		} catch (Exception e1) {e1.printStackTrace();}
 		String uuid = GetFromAPI.getUUID(getuuid);
-		String info = "";
 		String achievementsInfo = "";
 		String newInfo = "";
 		String APIKey = (String) DataGetter.find("APIKey");
@@ -50,24 +48,18 @@ public class DungeonsThread extends Thread {
 	int F5 = 0;
 	int F6 = 0;
 	int F7 = 0;
-	int F8 = 0;
-	int F9 = 0;
-	int F10 = 0;
 	int highestCompleted = GetFromAPI.getHighestFloor(newInfo, uuid, profileuuid);
-	Utils.print("Highest Floor Completed: "+highestCompleted);
-	if(highestCompleted >= 0) {F0 = GetFromAPI.getFloorRuns(newInfo, "0", uuid, profileuuid);}
-	if(highestCompleted >= 1) {F1 = GetFromAPI.getFloorRuns(newInfo, "1", uuid, profileuuid);}
-	if(highestCompleted >= 2) {F2 = GetFromAPI.getFloorRuns(newInfo, "2", uuid, profileuuid);}
-	if(highestCompleted >= 3) {F3 = GetFromAPI.getFloorRuns(newInfo, "3", uuid, profileuuid);}
-	if(highestCompleted >= 4) {F4 = GetFromAPI.getFloorRuns(newInfo, "4", uuid, profileuuid);}
-	if(highestCompleted >= 5) {F5 = GetFromAPI.getFloorRuns(newInfo, "5", uuid, profileuuid);}
-	if(highestCompleted >= 6) {F6 = GetFromAPI.getFloorRuns(newInfo, "6", uuid, profileuuid);}
-	if(highestCompleted >= 7) {F7 = GetFromAPI.getFloorRuns(newInfo, "7", uuid, profileuuid);}
-	if(highestCompleted >= 8) {F8 = GetFromAPI.getFloorRuns(newInfo, "8", uuid, profileuuid);}
-	if(highestCompleted >= 9) {F9 = GetFromAPI.getFloorRuns(newInfo, "9", uuid, profileuuid);}
-	if(highestCompleted >= 10) {F10 = GetFromAPI.getFloorRuns(newInfo, "10", uuid, profileuuid);}
+	//Utils.print("Highest Floor Completed: "+highestCompleted);
+	if(highestCompleted >= 0) {F0 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "0" );}
+	if(highestCompleted >= 1) {F1 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "1" );}
+	if(highestCompleted >= 2) {F2 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "2" );}
+	if(highestCompleted >= 3) {F3 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "3" );}
+	if(highestCompleted >= 4) {F4 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "4" );}
+	if(highestCompleted >= 5) {F5 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "5" );}
+	if(highestCompleted >= 6) {F6 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "6" );}
+	if(highestCompleted >= 7) {F7 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "7" );}
 	
-	int FloorList[] = {F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10};
+	int FloorList[] = {F0, F1, F2, F3, F4, F5, F6, F7};
 	Arrays.sort(FloorList);
 	int mostPlayedFloorNum = FloorList[FloorList.length-1];
 	int floorNum = 0;
@@ -82,9 +74,6 @@ public class DungeonsThread extends Thread {
 	if(F5 > 0) {highestFloor = "5"; hFNum = F5+"";}
 	if(F6 > 0) {highestFloor = "6"; hFNum = F6+"";}
 	if(F7 > 0) {highestFloor = "7"; hFNum = F7+"";}
-	if(F8 > 0) {highestFloor = "8"; hFNum = F8+"";}
-	if(F9 > 0) {highestFloor = "9"; hFNum = F9+"";}
-	if(F10 > 0) {highestFloor = "10"; hFNum = F10+"";}
 	String hFNumFin = "";
 	if(hFNum != "") hFNumFin = ChatFormatting.BLUE+"("+ChatFormatting.AQUA+hFNum+ChatFormatting.BLUE+")";
 	if(mostPlayedFloorNum == F0) floorNum = 0;
@@ -95,10 +84,7 @@ public class DungeonsThread extends Thread {
 	else if(mostPlayedFloorNum == F5){ floorNum = 5;}
 	else if(mostPlayedFloorNum == F6){ floorNum = 6;}
 	else if(mostPlayedFloorNum == F7){ floorNum = 7;}
-	else if(mostPlayedFloorNum == F8){ floorNum = 8;}
-	else if(mostPlayedFloorNum == F9){ floorNum = 9;}
-	else if(mostPlayedFloorNum == F10){ floorNum = 10;}
-	int totalRuns = F0+F1+F2+F3+F4+F5+F6+F7+F8+F9+F10;
+	int totalRuns = F0+F1+F2+F3+F4+F5+F6+F7;
 	double secretsPerRun = (double) secretsFound / (double) totalRuns;
 	
 	Utils.sendMessage(ChatFormatting.DARK_RED+"-----------------------------------------------------");
