@@ -2,15 +2,21 @@ package cobble.sbp.utils;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import cobble.sbp.handlers.ConfigHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.event.ClickEvent;
+import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import scala.Int;
 
 public class Utils {
 	private static final Gson gson = new Gson();
@@ -23,6 +29,47 @@ public class Utils {
 	          return false;
 	      }
 	  }
+	
+	
+	
+	public static String getLatestVersion() throws Exception {
+		String sbpAPI = HttpClient.readPage("https://cobble8.github.io/sbpAPI.html").toString();
+		return new JsonParser().parse(sbpAPI.toString()).getAsJsonObject().get("LATEST_VERSION").getAsString();
+	}
+	
+	public static String getLatestBetaVersion() throws Exception {
+		String sbpAPI = HttpClient.readPage("https://cobble8.github.io/sbpAPI.html").toString();
+		return new JsonParser().parse(sbpAPI.toString()).getAsJsonObject().get("LATEST_BETA_VERSION").getAsString();
+	}
+	
+	public static String getLatestDevVersion() throws Exception {
+		String sbpAPI = HttpClient.readPage("https://cobble8.github.io/sbpAPI.html").toString();
+		return new JsonParser().parse(sbpAPI.toString()).getAsJsonObject().get("LATEST_DEV_VERSION").getAsString();
+	}
+	
+	public static void checkAgainstLatestVersion() throws Exception {
+			if(Reference.VERSION.equals(getLatestBetaVersion())) {
+				Utils.sendMessage(ChatFormatting.DARK_RED+"-----------------------------------------------------");
+				Utils.sendMessage(ChatFormatting.YELLOW+"You are on the latest"+ChatFormatting.AQUA+" Beta "+ChatFormatting.YELLOW+"version for "+ChatFormatting.GOLD+"SkyblockPersonalized"+ChatFormatting.YELLOW+"!");
+		        return;
+			} else if(Reference.VERSION.equals(getLatestVersion())) {
+				Utils.sendMessage(ChatFormatting.DARK_RED+"-----------------------------------------------------");
+				Utils.sendMessage(ChatFormatting.YELLOW+"You are on the latest "+ChatFormatting.YELLOW+"version for "+ChatFormatting.GOLD+"SkyblockPersonalized"+ChatFormatting.YELLOW+"!");
+			} else if(Reference.VERSION.equals(getLatestDevVersion())) {
+				Utils.sendMessage(ChatFormatting.DARK_RED+"-----------------------------------------------------");
+				Utils.sendMessage(ChatFormatting.YELLOW+"You are on the latest"+ChatFormatting.BLUE+" Dev "+ChatFormatting.YELLOW+"version for "+ChatFormatting.GOLD+"SkyblockPersonalized"+ChatFormatting.YELLOW+"!");
+			} else {
+				Utils.sendMessage(ChatFormatting.DARK_RED+"-----------------------------------------------------");
+				ChatStyle copyText = new ChatStyle();
+		        copyText.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(ChatFormatting.AQUA+"Click here to go to the "+ChatFormatting.BLUE+"Discord"+ChatFormatting.AQUA+" server!")));
+		        copyText.setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/QXA3y5EbNA"));
+		        if(Reference.BETA) {Utils.sendMessage(ChatFormatting.YELLOW+"Your"+ChatFormatting.GOLD+" SkyblockPersonalized"+ChatFormatting.AQUA+" Beta" +ChatFormatting.YELLOW+" is out of date!");}
+		        else {Utils.sendMessage(ChatFormatting.YELLOW+"Your"+ChatFormatting.GOLD+" SkyblockPersonalized"+ChatFormatting.YELLOW+" is out of date!");}
+		        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(ChatFormatting.YELLOW+"Click here to go to the "+ChatFormatting.BLUE+"Discord "+ChatFormatting.YELLOW+"server \n"+ChatFormatting.YELLOW+"to download the latest version!").setChatStyle(copyText));
+				return;
+			}
+	}
+	//
 	
 	public static String formatNums(int num) {
 		NumberFormat myFormat = NumberFormat.getInstance();
