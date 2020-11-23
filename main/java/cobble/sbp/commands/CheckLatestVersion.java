@@ -6,26 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
+import cobble.sbp.threads.VersionCheckerThread;
 import cobble.sbp.utils.DataGetter;
-import cobble.sbp.utils.Reference;
 import cobble.sbp.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.event.ClickEvent;
-import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
 
-public class ShowConfig extends CommandBase{
-
+public class CheckLatestVersion extends CommandBase {
 	private final ArrayList aliases;
 	Minecraft MC;
 	
-	public ShowConfig() 
+	public CheckLatestVersion() 
 	{
 		aliases = new ArrayList();
 	}
@@ -33,32 +27,21 @@ public class ShowConfig extends CommandBase{
 	
 	@Override
 	public String getCommandName() {
-		return "showconfig";
+		return "versioncheck";
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender sender) {
-		return "/showconfig";
+		return "/versioncheck";
 	}
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
 		if((Boolean) DataGetter.find("modToggle")) {
 			
-		try {
-		      File myObj = new File("config/sbp/sbp.cfg");
-		      Scanner myReader = new Scanner(myObj);
-		      while (myReader.hasNextLine()) {
-		        String data = myReader.nextLine();
-		        
-		        
-		        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Config:"+"\n"+data));
-		      }
-		      myReader.close();
-		    } catch (FileNotFoundException e) {
-		      System.out.println("An error occurred.");
-		      e.printStackTrace();
-		    }
+		Thread versionCheckerCommand = new VersionCheckerThread();
+		versionCheckerCommand.start();
+		
 		} else Utils.enableMod();
 	}
 
@@ -72,5 +55,4 @@ public class ShowConfig extends CommandBase{
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		return true;
 	}
-
 }
