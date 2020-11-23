@@ -9,10 +9,8 @@ public class DefaultValues
 	{
 		ConfigHandler.newObject("APIKey", "NOT_SET");
 		ConfigHandler.newObject("modToggle", true);
-		//for(int i=1;i<11;i++) {
-			//ConfigHandler.newObject("task"+i+"Done", "N/A");
-			//ConfigHandler.newObject("task"+i+"Text", "N/A");
-		//}
-	
+		ConfigHandler.newObject("imageXCoord", 0);
+		ConfigHandler.newObject("imageYCoord", 0);
+		ConfigHandler.newObject("imageID", null);
 	}
 }

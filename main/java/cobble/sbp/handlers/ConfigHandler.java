@@ -38,17 +38,15 @@ public class ConfigHandler
 			DefaultValues.init();
 			}
 		else {
+			
+			
 			loadValue("APIKey");
 			loadValue("modToggle");
-			//for(int i=1;i<11;i++) {
-				//loadValue("task"+i+"Done");
-				//loadValue("task"+i+"Text");
-			//}
+			loadValue("imageXCoord");
+			loadValue("imageYCoord");
+			loadValue("imageID");
+			
 		}
-		
-		
-		
-		
 		
 		file = new File("config/sbp/sbp.cfg");
 		file.createNewFile();
@@ -62,7 +60,7 @@ public class ConfigHandler
 			DefaultValues.init();
 			}
 		else {
-			//registerConfigType(type);
+			
 		}
 		file = new File("config/sbp/sbp.cfg");
 		file.createNewFile();

@@ -1,27 +1,25 @@
 package cobble.sbp.handlers;
 
-import cobble.sbp.gui.menu.MainGUI;
-import cobble.sbp.gui.menu.TaskManagerGUI;
+import cobble.sbp.gui.menu.Puzzles;
+import cobble.sbp.gui.screen.PuzzleImage;
+import cobble.sbp.utils.DataGetter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class RenderGuiHandler {
 	
-	public static boolean SBPHelpGuiDisplay = false;
-	public static boolean TaskManagerDisplay = false;
+	public static Boolean PuzzleGUI = false;
 	
 	@SubscribeEvent
 	public void onRenderGui(RenderGameOverlayEvent.Post event) {
-		
-		/*if(SBPHelpGuiDisplay) {
-			Minecraft.getMinecraft().displayGuiScreen(new MainGUI());
-			SBPHelpGuiDisplay = false;
+		if(PuzzleGUI) {
+			Minecraft.getMinecraft().displayGuiScreen(new Puzzles());
+			PuzzleGUI = false;
 		}
-		if(TaskManagerDisplay) {
-			Minecraft.getMinecraft().displayGuiScreen(new TaskManagerGUI());
-			TaskManagerDisplay = false;
-		}*/
+		if((Boolean) DataGetter.find("modToggle")) {
+			new PuzzleImage(Minecraft.getMinecraft());
+		}
 	}
 	
 	
