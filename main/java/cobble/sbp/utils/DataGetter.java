@@ -25,7 +25,8 @@ public class DataGetter
 			
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Utils.print("[SBP] Couldn't find key: \""+objectName+"\" in the config");
+			//e.printStackTrace();
 		}
 		return dataOutput;
 	}

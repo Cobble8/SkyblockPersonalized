@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
-import cobble.sbp.commands.Dungeons;
+import cobble.sbp.commands.functional.Dungeons;
 import cobble.sbp.utils.DataGetter;
 import cobble.sbp.utils.GetFromAPI;
 import cobble.sbp.utils.HttpClient;
@@ -12,6 +12,8 @@ import cobble.sbp.utils.Utils;
 
 public class DungeonsFloorThread extends Thread {
 
+	public static String highestClass = "";
+	
 	public void run() {
 		int selectedFloor = Integer.parseInt(Dungeons.args1);
 		String APIKey = (String) DataGetter.find("APIKey");
@@ -28,7 +30,7 @@ public class DungeonsFloorThread extends Thread {
 		try {
 			newInfo = HttpClient.readPage("https://api.hypixel.net/skyblock/profiles?key="+APIKey+"&uuid="+uuid);
 		} catch (Exception e1) {e1.printStackTrace();}
-		
+		Utils.print("https://api.hypixel.net/skyblock/profiles?key="+APIKey+"&uuid="+uuid);
 		String profileuuid = GetFromAPI.getCurrProfile(newInfo, uuid);
 		int highestFloor = GetFromAPI.getHighestFloor(newInfo, uuid, profileuuid);
 		if(selectedFloor > highestFloor) {
@@ -57,27 +59,8 @@ public class DungeonsFloorThread extends Thread {
 			fastestSPLUSTime = "None";
 		}
 		
-		int mDmg = 0;
-		int hDmg = 0;
-		int tDmg = 0;
-		int bDmg = 0;
-		int aDmg = 0;
-		if(GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "mage") != 1) { mDmg = GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "mage"); } 
-		else if(GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "healer") != 1) { hDmg = GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "healer"); } 
-		else if(GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "tank") != 1) { tDmg = GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "tank"); } 
-		else if(GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "berserk") != 1) { bDmg = GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "berserk"); } 
-		else if(GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "archer") != 1) { aDmg = GetFromAPI.getMostDamage(newInfo, uuid, profileuuid, Dungeons.args1, "archer"); } 
 		
-		int[] classDamage = {mDmg, hDmg, tDmg, bDmg, aDmg};
-		Arrays.sort(classDamage);
-		String[] classes = {"mage", "healer", "tank", "berserk", "archer"};
-		int mostDamage = classDamage[classDamage.length-1];
-		String mostDamageClass = "Error";
-		if(mostDamage == mDmg) {mostDamageClass = "Mage";}
-		else if(mostDamage == hDmg) {mostDamageClass = "Healer";}
-		else if(mostDamage == tDmg) {mostDamageClass = "Tank";}
-		else if(mostDamage == bDmg) {mostDamageClass = "Berserk";}
-		else if(mostDamage == aDmg) {mostDamageClass = "Archer";}
+		long mostDamage = GetFromAPI.getHighestFloorDamage(newInfo, uuid, profileuuid, Dungeons.args1);
 		
 		
 		Utils.sendMessage(ChatFormatting.DARK_RED+"-----------------------------------------------------");
@@ -85,7 +68,7 @@ public class DungeonsFloorThread extends Thread {
 		Utils.sendMessage(ChatFormatting.AQUA+"Total Completions: "+ChatFormatting.GOLD+Utils.formatNums(totalFinishes).replace(",", ChatFormatting.BLUE+","+ChatFormatting.GOLD)+ChatFormatting.GREEN+"/"+ChatFormatting.GOLD+Utils.formatNums(totalAttempts).replace(",", ChatFormatting.BLUE+","+ChatFormatting.GOLD) + ChatFormatting.BLUE+" ("+ChatFormatting.AQUA+Utils.formatNums(watcherKills).replace(",", ChatFormatting.BLUE+","+ChatFormatting.AQUA)+ChatFormatting.GREEN+" Watcher "+ChatFormatting.AQUA+"Kills"+ChatFormatting.BLUE+")");
 		Utils.sendMessage(ChatFormatting.AQUA+"Best Score: "+ChatFormatting.GOLD+bestScore);
 		Utils.sendMessage(ChatFormatting.AQUA+"Most Mobs Killed: "+ChatFormatting.GOLD+Utils.formatNums(mostMobKills).replace(",", ChatFormatting.BLUE+","+ChatFormatting.GOLD));
-		Utils.sendMessage(ChatFormatting.AQUA+"Most Damage: "+ChatFormatting.GOLD+Utils.formatNums(mostDamage).replace(",", ChatFormatting.BLUE+","+ChatFormatting.GOLD)+ChatFormatting.BLUE+" ("+ChatFormatting.AQUA+mostDamageClass+ChatFormatting.BLUE+(")"));
+		Utils.sendMessage(ChatFormatting.AQUA+"Most Damage: "+ChatFormatting.GOLD+Utils.formatNums(Integer.parseInt(mostDamage+"")).replace(",", ChatFormatting.BLUE+","+ChatFormatting.GOLD)+ChatFormatting.BLUE+" ("+ChatFormatting.AQUA+highestClass+ChatFormatting.BLUE+(")"));
 		Utils.sendMessage(ChatFormatting.AQUA+"Most Healing: "+ChatFormatting.GOLD+Utils.formatNums(mostHealing).replace(",", ChatFormatting.BLUE+","+ChatFormatting.GOLD));
 		Utils.sendMessage(ChatFormatting.AQUA+"Fastest Time: "+ChatFormatting.GOLD+fastestTime);
 		Utils.sendMessage(ChatFormatting.AQUA+"Fastest S Time: "+ChatFormatting.GOLD+fastestSTime);

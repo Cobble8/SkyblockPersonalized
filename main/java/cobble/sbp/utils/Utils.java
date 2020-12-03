@@ -1,25 +1,46 @@
 package cobble.sbp.utils;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
-import cobble.sbp.handlers.ConfigHandler;
+import cobble.sbp.utils.config.ConfigHandler;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
+import net.minecraft.world.World;
 import scala.Int;
 
 public class Utils {
 	private static final Gson gson = new Gson();
+	
+	
+	
+	public static Boolean checkBlock(World world, int x, int y, int z, Block blockCheckAgainst) {
+		if(world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().equals(blockCheckAgainst.getRegistryName())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	
 	public static boolean isJSONValid(String jsonInString) {
 	      try {
@@ -30,7 +51,11 @@ public class Utils {
 	      }
 	  }
 	
-	
+	public static long stringToLong(String num) {
+		String temp1 = num+"";
+		Long temp2 = Long.parseLong(temp1);
+		return temp2;
+	}
 	
 	public static String getLatestVersion() throws Exception {
 		String sbpAPI = HttpClient.readPage("https://cobble8.github.io/sbpAPI.html").toString();
@@ -69,7 +94,16 @@ public class Utils {
 				return;
 			}
 	}
-	//
+	
+	public static void setApiKey() {
+		ChatStyle runCommand = new ChatStyle();
+		runCommand.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/api new"));
+		runCommand.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(ChatFormatting.YELLOW+"Click to run "+ChatFormatting.AQUA+"/api new")));
+		Utils.sendMessage(ChatFormatting.DARK_RED+"-----------------------------------------------------");
+		Utils.sendMessage(ChatFormatting.YELLOW+"Your "+ChatFormatting.GOLD+"SkyblockPersonalized "+ChatFormatting.YELLOW+"API key is not setup properly!");
+		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(ChatFormatting.YELLOW+"Type "+ChatFormatting.AQUA+"/api new"+ChatFormatting.YELLOW+" to set your API key!").setChatStyle(runCommand));
+		Utils.sendMessage(ChatFormatting.DARK_RED+"-----------------------------------------------------");
+	}
 	
 	public static String formatNums(int num) {
 		NumberFormat myFormat = NumberFormat.getInstance();
@@ -110,16 +144,37 @@ public class Utils {
         return true;
     }
 	
+	public static void deleteFile(String args) 
+    { 
+        File file = new File(args); 
+          
+        try
+        { 
+            Files.deleteIfExists(Paths.get(args)); 
+        } 
+        catch(NoSuchFileException e) 
+        { 
+            System.out.println("No such file/directory exists"); 
+        } 
+        catch(DirectoryNotEmptyException e) 
+        { 
+            System.out.println("Directory is not empty."); 
+        } 
+        catch(IOException e) 
+        { 
+            //System.out.println("Invalid permissions."); 
+        } 
+          
+        System.out.println("Deletion successful."); 
+    }
+	
 	
 	public static void sendMessage(String text) {
 		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(text));
 	}
 	public static void enableMod() {
-		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("The mod has now been"+ChatFormatting.GREEN+" enabled "+ChatFormatting.RESET+"due to you attempting to use it. Use the command again to show the information."));
+		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(ChatFormatting.GOLD+"SkyblockPersonalized "+ChatFormatting.RESET+"has now been"+ChatFormatting.GREEN+" enabled "+ChatFormatting.RESET+"due to you attempting to use it. Use the command again to show the information."));
 		try {ConfigHandler.newObject("modToggle", true);} catch (IOException e) {e.printStackTrace();}
-	}
-	public static void setApiKey() {
-		sendMessage(ChatFormatting.RED+"Please set your "+ChatFormatting.GOLD+"SkyblockPersonalized "+ChatFormatting.RED+"API Key!");
 	}
 	
 	private static Object configFind(String type) {

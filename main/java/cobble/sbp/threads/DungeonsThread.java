@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
-import cobble.sbp.commands.Dungeons;
+import cobble.sbp.commands.functional.Dungeons;
 import cobble.sbp.utils.DataGetter;
 import cobble.sbp.utils.GetFromAPI;
 import cobble.sbp.utils.HttpClient;

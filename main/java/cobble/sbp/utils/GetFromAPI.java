@@ -7,6 +7,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import cobble.sbp.threads.DungeonsFloorThread;
+
 import java.lang.Object;
 
 
@@ -25,16 +27,87 @@ public class GetFromAPI {
 		}
 		int temp = 0;
 		String temp1 = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs")+"";
-		//String temp1 = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsString();
-		//Utils.print(temp1);
+
 		if (temp1.contains("most_damage_"+selectedClass)) {
-			Utils.print(floor+" | "+ selectedClass);
 			temp = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("most_damage_"+selectedClass).getAsJsonObject().get(floor).getAsInt();
 		} else {
 			temp = 1;
 		}
-		//temp = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("most_damage_"+selectedClass).getAsJsonObject().get(floor).getAsInt();}
 		return temp;
+	}
+	
+	public static long getHighestFloorDamage(String file, String uuid, String profileuuid, String floor) {
+		int profileID = 0;
+		
+		for(int i=0;i<profileUUIDs.length;i++) {
+			if(profileUUIDs[i] == profileuuid) {
+				profileID = i;
+			}
+		}
+		Boolean mageDamageToggle;
+		Boolean healerDamageToggle;
+		Boolean tankDamageToggle;
+		Boolean berserkDamageToggle;
+		Boolean archerDamageToggle;
+		
+		long mDmg;
+		long hDmg;
+		long tDmg;
+		long bDmg;
+		long aDmg;
+		
+		JsonParser parser = new JsonParser();
+		JsonElement dungeonClass = parser.parse(file.toString());
+		String findDamage = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs")+"";
+		JsonObject findClassFloors = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject();
+		
+		if(findDamage.contains("most_damage_mage")) { 
+			if((findClassFloors.get("most_damage_mage")+"").contains("\""+floor+"\"")) {
+				mageDamageToggle = true; 
+			} else {mageDamageToggle = false;}
+		} else {mageDamageToggle = false;}
+		
+		if(findDamage.contains("most_damage_healer")) { 
+			if((findClassFloors.get("most_damage_healer")+"").contains("\""+floor+"\"")) {
+				healerDamageToggle = true; 
+			} else {healerDamageToggle = false;}
+		} else {healerDamageToggle = false;}
+		
+		if(findDamage.contains("most_damage_tank")) { 
+			if((findClassFloors.get("most_damage_tank")+"").contains("\""+floor+"\"")) {
+				tankDamageToggle = true; 
+			} else {tankDamageToggle = false;}
+		} else {tankDamageToggle = false;}
+		
+		if(findDamage.contains("most_damage_berserk")) { 
+			if((findClassFloors.get("most_damage_berserk")+"").contains("\""+floor+"\"")) {
+				berserkDamageToggle = true; 
+			} else {berserkDamageToggle = false;}
+		} else {berserkDamageToggle = false;}
+		
+		if(findDamage.contains("most_damage_archer")) { 
+			if((findClassFloors.get("most_damage_archer")+"").contains("\""+floor+"\"")) {
+				archerDamageToggle = true; 
+			} else {archerDamageToggle = false;}
+		} else {archerDamageToggle = false;}
+		
+		if(mageDamageToggle) {mDmg = getMostDamage(file, uuid, profileuuid, floor, "mage");} else {mDmg = 1;}
+		if(healerDamageToggle) {hDmg = getMostDamage(file, uuid, profileuuid, floor, "healer");} else {hDmg = 1;}
+		if(tankDamageToggle) {tDmg = getMostDamage(file, uuid, profileuuid, floor, "tank");} else {tDmg = 1;}
+		if(berserkDamageToggle) {bDmg = getMostDamage(file, uuid, profileuuid, floor, "berserk");} else {bDmg = 1;}
+		if(archerDamageToggle) {aDmg = getMostDamage(file, uuid, profileuuid, floor, "archer");} else {aDmg = 1;}
+		
+		long[] compareDamage = {mDmg, hDmg, tDmg, bDmg, aDmg};
+		Arrays.sort(compareDamage);
+		long mostDamage = compareDamage[compareDamage.length-1];
+		
+		if(mostDamage == mDmg) {DungeonsFloorThread.highestClass = "Mage";}
+		else if(mostDamage == hDmg) {DungeonsFloorThread.highestClass = "Healer";}
+		else if(mostDamage == tDmg) {DungeonsFloorThread.highestClass = "Tank";}
+		else if(mostDamage == bDmg) {DungeonsFloorThread.highestClass = "Berserk";}
+		else if(mostDamage == aDmg) {DungeonsFloorThread.highestClass = "Archer";}
+		
+		return mostDamage;
 	}
 
 	

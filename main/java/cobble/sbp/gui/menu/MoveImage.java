@@ -3,10 +3,10 @@ package cobble.sbp.gui.menu;
 import java.io.IOException;
 
 import cobble.sbp.gui.screen.PuzzleImage;
-import cobble.sbp.handlers.ConfigHandler;
 import cobble.sbp.handlers.RenderGuiHandler;
 import cobble.sbp.utils.DataGetter;
 import cobble.sbp.utils.Reference;
+import cobble.sbp.utils.config.ConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -36,10 +36,10 @@ public class MoveImage extends GuiScreen
 	ResourceLocation border = new ResourceLocation(Reference.MODID, "textures/gui/imageBorder_1.png");
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		this.drawDefaultBackground();
+		//this.drawDefaultBackground();
 		mc.getTextureManager().bindTexture(border);
  		this.drawModalRectWithCustomSizedTexture(mouseX, mouseY, 0, 0, 126, 126, 126, 126);
- 		if(PuzzleImage.puzzlePicture != "") {
+ 		if(DataGetter.find("imageID") != "" && DataGetter.find("imageID") != null) {
  			ResourceLocation image = new ResourceLocation(Reference.MODID, "textures/gui/"+DataGetter.find("imageID")+".png");
  			mc.getTextureManager().bindTexture(image);
  	 		this.drawModalRectWithCustomSizedTexture(mouseX+2, mouseY+2, 0, 0, 122, 122, 122, 122);	
