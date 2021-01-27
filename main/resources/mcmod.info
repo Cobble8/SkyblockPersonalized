@@ -1,0 +1,16 @@
+[
+{
+  "modid": "cobblemod",
+  "name": "Cobble's Mod",
+  "description": "A mod made by Cobble8",
+  "version": "0.1.0.0",
+  "mcversion": "1.8.9",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Cobble8"],
+  "credits": "ComplexOrigin, Moulberry",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
