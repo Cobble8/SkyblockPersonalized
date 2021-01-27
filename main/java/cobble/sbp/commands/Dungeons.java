@@ -1,21 +1,14 @@
-package cobble.sbp.commands;
+package com.cobble.sbp.commands;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.DecimalFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.google.gson.JsonSyntaxException;
-import com.mojang.realmsclient.gui.ChatFormatting;
+import com.cobble.sbp.core.config.DataGetter;
+import com.cobble.sbp.threads.onetimes.DungeonsFloorThread;
+import com.cobble.sbp.threads.onetimes.DungeonsPartyThread;
+import com.cobble.sbp.threads.onetimes.DungeonsThread;
+import com.cobble.sbp.utils.Utils;
 
-import cobble.sbp.handlers.ConfigHandler;
-import cobble.sbp.threads.DungeonsFloorThread;
-import cobble.sbp.threads.DungeonsThread;
-import cobble.sbp.utils.DataGetter;
-import cobble.sbp.utils.GetFromAPI;
-import cobble.sbp.utils.HttpClient;
-import cobble.sbp.utils.Utils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -23,6 +16,15 @@ import net.minecraft.command.ICommandSender;
 public class Dungeons extends CommandBase {	
 	public static String args0 = "";
 	public static String args1 = "";
+	private ArrayList aliases;
+	
+		public Dungeons() {
+			aliases = new ArrayList();
+			aliases.add("dgns");
+			aliases.add("dngs");
+			
+		}
+	
 		@Override
 		public String getCommandName() {
 			return "dungeons";
@@ -32,15 +34,25 @@ public class Dungeons extends CommandBase {
 		public String getCommandUsage(ICommandSender sender) {
 			return "/dungeons {player}";
 		}
+		
+		@Override
+		public List<String> getCommandAliases() {
+			return aliases;
+		}
 
 		@Override
 		public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-			
-			if( (Boolean) DataGetter.find("modToggle")) {
+			if((Boolean) DataGetter.find("APIKeyToggle")) {
 				if(args.length == 0) {
-					Utils.sendMessage(ChatFormatting.RED+"Please supply a name to look up!");
+					Utils.sendErrMsg("Please supply a name to look up!");
 					return;
 					}
+				else if(args.length == 1 && args[0].toLowerCase().equals("party")) {
+					Thread dungeonsParty = new DungeonsPartyThread();
+					dungeonsParty.start();
+				}
+				
+				
 				else if(args.length == 2) {
 					args0 = args[0];
 					args1 = args[1];
@@ -49,10 +61,10 @@ public class Dungeons extends CommandBase {
 							Thread dungeonsFloorCommand = new DungeonsFloorThread();
 							dungeonsFloorCommand.start();
 						} else {
-							Utils.sendMessage(ChatFormatting.RED+"Please supply an actual floor!");
+							Utils.sendErrMsg("Please supply an actual floor!");
 						}
 					} else {
-						Utils.sendMessage(ChatFormatting.RED+"Please supply an actual number to select a floor!");
+						Utils.sendErrMsg("Please supply an actual number to select a floor!");
 					}
 					
 				} else {
@@ -60,9 +72,9 @@ public class Dungeons extends CommandBase {
 					args0 = args[0];
 					dungeonsCommand.start();
 				}
-		} else {
-			Utils.enableMod();
-		}
+			} else {
+				Utils.sendErrMsg("You need to enable API usage to use this command!");
+			}
 		} 
 		@Override
 		public boolean canCommandSenderUseCommand(ICommandSender sender) {
