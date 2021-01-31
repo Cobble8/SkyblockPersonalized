@@ -118,7 +118,7 @@ public class Utils {
 	}
 	
 	public static void checkIfOnSkyblock() {
-		if((Boolean) DataGetter.find("onlyOnSkyblock")) {
+		if(DataGetter.findBool("onlyOnSkyblock")) {
 			String title = getBoardTitle().toLowerCase();
 			if(title.equals("skyblock")) {
 				if(!SBP.onSkyblock) { Utils.print("Logged onto Skyblock"); LobbySwapEvent.currLobby="";} SBP.onSkyblock=true;
@@ -145,7 +145,7 @@ public class Utils {
 	
 	public static void setEasterEgg(int num, String input) {
 		try {
-			String[] temp = (DataGetter.find("easterEggsFound")+"").split(";");
+			String[] temp = DataGetter.findStr("easterEggsFound").split(";");
 			ArrayList<String> temp2 = new ArrayList();
 			
 			for(int i=0;i<temp.length;i++) {
@@ -169,7 +169,7 @@ public class Utils {
 		
 		try {
 		String output = "";
-		String[] temp = (DataGetter.find("easterEggsFound")+"").split(";");
+		String[] temp = DataGetter.findStr("easterEggsFound").split(";");
 		ArrayList<String> temp2 = new ArrayList();
 		
 		for(int i=0;i<temp.length;i++) {
@@ -350,7 +350,11 @@ public class Utils {
 		
 		return finalString;
 		
-	    //return str.substring(0, str.length() - chars);
+	    //
+	}
+	
+	public static String removeIntLast(String str, int chars) {
+		return str.substring(0, str.length() - chars);
 	}
 	
 	public static Boolean checkIfArrayContains(ArrayList<String> arrayList, String stringCheck) {

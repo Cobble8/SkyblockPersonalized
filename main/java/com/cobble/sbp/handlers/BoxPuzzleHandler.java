@@ -40,7 +40,7 @@ public class BoxPuzzleHandler {
 			} else {return;}
 			
 			SBP.puzzleCount++;
-			DisablePuzzleImageThread.delay = Long.parseLong(DataGetter.find("puzzleDelay")+"");
+			DisablePuzzleImageThread.delay = Long.parseLong(DataGetter.findInt("puzzleDelay")+"");
 			Thread disableImage = new DisablePuzzleImageThread();
 			disableImage.start();
 			

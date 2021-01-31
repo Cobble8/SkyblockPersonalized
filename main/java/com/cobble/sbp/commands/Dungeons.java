@@ -42,7 +42,7 @@ public class Dungeons extends CommandBase {
 
 		@Override
 		public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-			if((Boolean) DataGetter.find("APIKeyToggle")) {
+			if((Boolean) DataGetter.findBool("APIKeyToggle")) {
 				if(args.length == 0) {
 					Utils.sendErrMsg("Please supply a name to look up!");
 					return;

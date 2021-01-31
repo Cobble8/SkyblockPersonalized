@@ -1,18 +1,14 @@
 package com.cobble.sbp;
 
-import java.io.IOException;
-
 import com.cobble.sbp.commands.Dungeons;
 import com.cobble.sbp.commands.GetConfig;
 import com.cobble.sbp.commands.LagCheck;
 import com.cobble.sbp.commands.Main;
 import com.cobble.sbp.commands.Reparty;
 import com.cobble.sbp.commands.Silverfish;
-import com.cobble.sbp.core.Quests;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.ChatRecieveEvent;
-import com.cobble.sbp.events.InteractEvent;
 import com.cobble.sbp.events.PlayerLoginEvent;
 import com.cobble.sbp.events.RenderGuiEvent;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTracker;
@@ -39,23 +35,23 @@ public class SBP
 	public static int height = 0;
 	
 	@EventHandler
-    public void preInit(FMLPreInitializationEvent event) throws IOException
+    public void preInit(FMLPreInitializationEvent event) throws Exception
     {
 		
 		ConfigHandler.registerConfig();
+		DataGetter.updateConfig("main");
 		ClientCommandHandler.instance.registerCommand(new Main());
 		
-		if((Boolean) DataGetter.find("modToggle")) {
-			
+		if(DataGetter.findBool("modToggle")) {
 			ClientCommandHandler.instance.registerCommand(new GetConfig());
 			ClientCommandHandler.instance.registerCommand(new LagCheck());
 			ClientCommandHandler.instance.registerCommand(new Silverfish());
-			if((Boolean) DataGetter.find("dungeonsCommandToggle")) {
+			if(DataGetter.findBool("dungeonsCommandToggle")) {
 				ClientCommandHandler.instance.registerCommand(new Dungeons());
 			}
 			
 		
-			if((Boolean) DataGetter.find("repartyCommandToggle")) {
+			if(DataGetter.findBool("repartyCommandToggle")) {
 				ClientCommandHandler.instance.registerCommand(new Reparty());
 			}
 			Utils.print(Reference.NAME+" Pre-Initialized");
@@ -76,14 +72,14 @@ public class SBP
     @EventHandler
     public void init(FMLInitializationEvent event) throws Exception
     {
-    	if((Boolean) DataGetter.find("modToggle")) {
+    	if(DataGetter.findBool("modToggle")) {
     		
     		CheckAPIKey.checkValidAPIKey();
     		
     		ConfigHandler.updateConfig("all");
     		
-    		if((Boolean) DataGetter.find("modLaunchToggle")) {
-    			ConfigHandler.newObject("modLaunches", Integer.parseInt(DataGetter.find("modLaunches")+"")+1);
+    		if(DataGetter.findBool("modLaunchToggle")) {
+    			ConfigHandler.newObject("modLaunches", DataGetter.findInt("modLaunches")+1);
     		}
         	Utils.print(Reference.NAME+" Initialized");
     	}
@@ -97,12 +93,12 @@ public class SBP
     	
         MinecraftForge.EVENT_BUS.register(new RenderGuiEvent());
         
-    	if((Boolean) DataGetter.find("modToggle")) {
+    	if(DataGetter.findBool("modToggle")) {
     		MinecraftForge.EVENT_BUS.register(new ChatRecieveEvent());
     		MinecraftForge.EVENT_BUS.register(new PlayerLoginEvent());
-    		DwarvenTracker.loadDwarvenLoot();
+    		//DwarvenTracker.loadDwarvenLoot();
     		Utils.print(Reference.NAME+" Post-Initialized");
-    		Quests.launchAchievements();
+    		//Quests.launchAchievements();
     		
     		
     	}

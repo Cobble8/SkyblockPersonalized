@@ -652,7 +652,7 @@ public class SettingOptions extends GuiScreen {
 					//BACKSPACE
 					else if(par2 ==Keyboard.KEY_BACK) {
 						if((optionVals.get(clickedOption)+"").length() >=1) {
-							optionVals.set(clickedOption, Utils.removeLastChars(optionVals.get(clickedOption)+"", 1));
+							optionVals.set(clickedOption, Utils.removeIntLast(optionVals.get(clickedOption)+"", 1));
 							return;
 						}
 					}
@@ -674,7 +674,7 @@ public class SettingOptions extends GuiScreen {
 					//BACKSPACE
 					else if(par2 ==Keyboard.KEY_BACK) {
 						if((optionVals.get(clickedOption)+"").length() >=1) {
-							optionVals.set(clickedOption, Utils.removeLastChars(optionVals.get(clickedOption)+"", 1));
+							optionVals.set(clickedOption, Utils.removeIntLast(optionVals.get(clickedOption)+"", 1));
 							return;
 						}
 					}
@@ -702,7 +702,7 @@ public class SettingOptions extends GuiScreen {
 								
 							if(par2 ==Keyboard.KEY_BACK) {
 								if(list[i].length() >= 1) {
-									list[i] = Utils.removeLastChars(list[i], 1);
+									list[i] = Utils.removeIntLast(list[i], 1);
 								}
 							}
 							if(Utils.checkIfCharLetter(par1+"") && par2 != Keyboard.KEY_COMMA) {

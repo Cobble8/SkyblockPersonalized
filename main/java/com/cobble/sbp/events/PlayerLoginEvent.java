@@ -18,7 +18,7 @@ public class PlayerLoginEvent {
 
 	@SubscribeEvent
 	public void onPlayerLoggedIn(FMLNetworkEvent.ClientConnectedToServerEvent event) {
-		if((Boolean) DataGetter.find("modToggle")) {
+		if(DataGetter.findBool("modToggle")) {
 			   Thread playerLogin = new LoginThread();
 			   playerLogin.start();
 		}
@@ -33,7 +33,7 @@ public class PlayerLoginEvent {
 		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(Colors.YELLOW+"Type "+Colors.AQUA+"/api new "+Colors.YELLOW+"to set your API key!").setChatStyle(runCommand));
 		Utils.sendSpecificMessage(Colors.DARK_RED+"-----------------------------------------------------");
 		if(SBP.firstLaunch) {
-			Utils.sendMessage("Hey! It seems like this is your first launch with SkyblockPersonalized! Use "+Colors.AQUA+"/sbp"+Colors.YELLOW+" to get started");
+			Utils.sendMessage("Hey! It seems like this is your first launch with SkyblockPersonalized! Use "+Colors.AQUA+"/sbp"+Colors.YELLOW+" to get started!");
 		}
 	
 	}

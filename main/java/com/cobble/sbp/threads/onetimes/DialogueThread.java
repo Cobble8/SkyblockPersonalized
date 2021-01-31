@@ -15,7 +15,7 @@ public class DialogueThread extends Thread {
 	
 	
 	public void run() {
-		if((Boolean) DataGetter.find("npcDialogueToggle")) {
+		if(DataGetter.findBool("npcDialogueToggle")) {
 			String[] splitDial = dialType.split(":");
 			String dialName = splitDial[0]+"";
 			int dialID = 0;

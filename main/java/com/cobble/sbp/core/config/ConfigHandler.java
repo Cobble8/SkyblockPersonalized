@@ -25,29 +25,35 @@ import com.google.gson.JsonParser;
 
 public class ConfigHandler {
 	
-	
+	public static Object configObj = null;
 	
 	public static JSONObject obj = new JSONObject();
 	public static JSONObject obj2 = new JSONObject();
 	public static Boolean firstLaunch = false;
 	
-	public static void registerConfig() throws IOException {
+	public static void registerConfig() throws Exception {
 		firstLaunch = Utils.invertBoolean(Utils.fileTest("config/"+Reference.MODID+"/main.cfg"));
 		if(firstLaunch || Utils.readFile("config/"+Reference.MODID+"/main.cfg").equals(" ") || Utils.readFile("config/"+Reference.MODID+"/main.cfg").equals("")) {
 			firstLaunch();
 		}
 		ConfigList.loadConfig();
+		if(firstLaunch) {
+			ConfigHandler.resetConfig();
+		}
+		
 	}
 	
 	private static void firstLaunch() throws IOException {
 		SBP.firstLaunch=true;
 		File configFolder = new File("config/"+Reference.MODID); configFolder.mkdirs();
 		File config = new File("config/"+Reference.MODID+"/main.cfg");
-		File quests = new File("config/"+Reference.MODID+"/quests.cfg");
+		//File quests = new File("config/"+Reference.MODID+"/quests.cfg");
 		try { if (config.createNewFile()) {Utils.print("The config file 'main' for "+Reference.NAME+" has been created at: "+config.getAbsolutePath());}} 
 		catch (IOException e) {System.out.println("An error occurred.");}
-		try { if (quests.createNewFile()) {Utils.print("The config file 'quests' for "+Reference.NAME+" has been created at: "+quests.getAbsolutePath());}} 
-		catch (IOException e) {System.out.println("An error occurred.");}
+
+
+		
+		
 	}
 	
 	public static void newObject(String varName, Object var) {
@@ -59,17 +65,17 @@ public class ConfigHandler {
 	        JsonParser jp = new JsonParser();
             JsonElement je = jp.parse(obj.toJSONString());
             String prettyJsonString = gson.toJson(je);
-            
             file.write(prettyJsonString);
             file.flush();
             file.close();
+            configObj=obj;
             
 	      } catch (IOException e) {
 	        System.out.println("An error occurred from newObject().");
 	        e.printStackTrace();
 	      }
 	}
-	
+	/*
 	public static void setQuest(String varName, Boolean var) {
 		//obj2.put(varName, var);
 		try {
@@ -88,7 +94,7 @@ public class ConfigHandler {
 	        System.out.println("An error occurred from setAchieve().");
 	        e.printStackTrace();
 	      }
-	}
+	}*/
 	
 	public static Object getDefaultValue(String id) {
 		Object output = "null";
@@ -110,58 +116,58 @@ public class ConfigHandler {
 			
 			
 		}
+		DataGetter.updateConfig("main");
 	}
 	
 	public static void updateConfig(String c) {
 		try {
-			DwarvenTimer.dwarvenTimerToggle = (Boolean) DataGetter.find("dwarvenTimerToggle");
-			DwarvenQuestTracker.questTrackToggle = (Boolean) DataGetter.find("dwarvenTrackToggle");
-			DwarvenDrillFuel.fuelToggle = (Boolean) DataGetter.find("dwarvenFuelToggle");
-			SettingMenu.modLaunchToggle = (Boolean) DataGetter.find("modLaunchToggle");
-			DwarvenPickaxeTimer.pickTimerToggle = (Boolean) DataGetter.find("pickTimerToggle");
+			DwarvenTimer.dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
+			DwarvenQuestTracker.questTrackToggle = DataGetter.findBool("dwarvenTrackToggle");
+			DwarvenDrillFuel.fuelToggle =  DataGetter.findBool("dwarvenFuelToggle");
+			SettingMenu.modLaunchToggle = DataGetter.findBool("modLaunchToggle");
+			DwarvenPickaxeTimer.pickTimerToggle = DataGetter.findBool("pickReminderToggle");
 			
 			
 			
 		if(c.equals(""));
 		
 		else if(c.equals("boxSolverToggle") || c.equals("iceSolverToggle")) {
-			PuzzleImage.xCoord = Integer.parseInt(DataGetter.find("puzzleX")+""); 
-			PuzzleImage.yCoord = Integer.parseInt(DataGetter.find("puzzleY")+""); 
-			PuzzleImage.puzzleColor = DataGetter.find("puzzleColor")+"";
-			RenderGuiEvent.puzzleScale=126*(Integer.parseInt(DataGetter.find("puzzleScale")+""))/10;
+			PuzzleImage.xCoord = DataGetter.findInt("puzzleX"); 
+			PuzzleImage.yCoord = DataGetter.findInt("puzzleY"); 
+			PuzzleImage.puzzleColor = DataGetter.findStr("puzzleColor")+"";
+			RenderGuiEvent.puzzleScale=126*(DataGetter.findInt("puzzleScale")/10);
 		}
 		
 	
 		//DWARVEN TIMER
 		else if(DwarvenTimer.dwarvenTimerToggle && c.equals("dwarvenTimerToggle")) {
-			DwarvenTimer.dwarvenTimerDing = (Boolean) DataGetter.find("dwarvenTimerDing");
-			DwarvenTimer.textColorID = Integer.parseInt(DataGetter.find("dwarvenTimerTextColor")+"");
-			DwarvenTimer.timerX = Integer.parseInt(DataGetter.find("dwarvenTimerX")+"");
-			DwarvenTimer.timerY = Integer.parseInt(DataGetter.find("dwarvenTimerY")+"");
+			DwarvenTimer.dwarvenTimerDing = DataGetter.findBool("dwarvenTimerDing");
+			DwarvenTimer.textColorID = DataGetter.findInt("dwarvenTimerTextColor");
+			DwarvenTimer.timerX = DataGetter.findInt("dwarvenTimerX");
+			DwarvenTimer.timerY = DataGetter.findInt("dwarvenTimerY");
 		}
 		
 		else if(DwarvenQuestTracker.questTrackToggle && c.equals("dwarvenTrackToggle")) {
-			DwarvenQuestTracker.questTrackBarToggle = (Boolean) DataGetter.find("dwarvenTrackBarToggle");
-			DwarvenQuestTracker.questTrackX = Integer.parseInt(DataGetter.find("dwarvenTrackX")+"");
-			DwarvenQuestTracker.questTrackY = Integer.parseInt(DataGetter.find("dwarvenTrackY")+"");
-			DwarvenQuestTracker.borderColorID = Integer.parseInt(DataGetter.find("dwarvenTrackBorderColor")+"");
-			DwarvenQuestTracker.yesColorID = Integer.parseInt(DataGetter.find("dwarvenTrackYesColor")+"");
-			DwarvenQuestTracker.noColorID = Integer.parseInt(DataGetter.find("dwarvenTrackNoColor")+"");
+			DwarvenQuestTracker.questTrackBarToggle = DataGetter.findBool("dwarvenTrackBarToggle");
+			DwarvenQuestTracker.questTrackX = DataGetter.findInt("dwarvenTrackX");
+			DwarvenQuestTracker.questTrackY = DataGetter.findInt("dwarvenTrackY");
+			DwarvenQuestTracker.borderColorID = DataGetter.findInt("dwarvenTrackBorderColor");
+			DwarvenQuestTracker.yesColorID = DataGetter.findInt("dwarvenTrackYesColor");
+			DwarvenQuestTracker.noColorID = DataGetter.findInt("dwarvenTrackNoColor");
 		}
 		
 		else if(DwarvenDrillFuel.fuelToggle && c.equals("dwarvenFuelToggle")) {
-			DwarvenDrillFuel.fuelX = Integer.parseInt(DataGetter.find("dwarvenFuelX")+"");
-			DwarvenDrillFuel.fuelY = Integer.parseInt(DataGetter.find("dwarvenFuelY")+"");
+			DwarvenDrillFuel.fuelX = DataGetter.findInt("dwarvenFuelX");
+			DwarvenDrillFuel.fuelY = DataGetter.findInt("dwarvenFuelY");
 		}
 		
 		else if(DwarvenPickaxeTimer.pickTimerToggle && c.equals("pickReminderToggle")) {
-			DwarvenPickaxeTimer.pickTimerX = Integer.parseInt(DataGetter.find("pickTimerX")+"");
-			DwarvenPickaxeTimer.pickTimerY = Integer.parseInt(DataGetter.find("pickTimerY")+"");		
-			DwarvenPickaxeTimer.pickTimerColorID = Integer.parseInt(DataGetter.find("pickTimerTextColor")+"");
-			DwarvenPickaxeTimer.pickActiveTimerColorID = Integer.parseInt(DataGetter.find("pickActiveTimerTextColor")+"");
-			DwarvenPickaxeTimer.onlyInDwarven = (Boolean) DataGetter.find("pickTimerDwarven");
-			DwarvenPickaxeTimer.onlyWhenHolding = (Boolean) DataGetter.find("pickTimerHolding");
-			DwarvenPickaxeTimer.barColor = DataGetter.find("pickTimerBarColor")+"";
+			DwarvenPickaxeTimer.pickTimerX = DataGetter.findInt("pickTimerX");
+			DwarvenPickaxeTimer.pickTimerY = DataGetter.findInt("pickTimerY");		
+			DwarvenPickaxeTimer.pickTimerColorID = DataGetter.findInt("pickTimerTextColor");
+			DwarvenPickaxeTimer.pickActiveTimerColorID = DataGetter.findInt("pickActiveTimerTextColor");
+			DwarvenPickaxeTimer.onlyInDwarven = DataGetter.findBool("pickTimerDwarven");
+			DwarvenPickaxeTimer.onlyWhenHolding = DataGetter.findBool("pickTimerHolding");
 		}
 		
 		
@@ -169,33 +175,32 @@ public class ConfigHandler {
 		
 		
 		else if(c.equals("all")) {
-			PuzzleImage.xCoord = Integer.parseInt(DataGetter.find("puzzleX")+""); 
-			PuzzleImage.yCoord = Integer.parseInt(DataGetter.find("puzzleY")+""); 
-			PuzzleImage.puzzleColor = DataGetter.find("puzzleColor")+"";
-			RenderGuiEvent.puzzleScale=126*(Integer.parseInt(DataGetter.find("puzzleScale")+""))/10;
+			PuzzleImage.xCoord = DataGetter.findInt("puzzleX"); 
+			PuzzleImage.yCoord = DataGetter.findInt("puzzleY"); 
+			PuzzleImage.puzzleColor = DataGetter.findStr("puzzleColor");
+			RenderGuiEvent.puzzleScale=126*DataGetter.findInt("puzzleScale")/10;
 			
-			DwarvenTimer.dwarvenTimerDing = (Boolean) DataGetter.find("dwarvenTimerDing");
-			DwarvenTimer.textColorID = Integer.parseInt(DataGetter.find("dwarvenTimerTextColor")+"");
-			DwarvenTimer.timerX = Integer.parseInt(DataGetter.find("dwarvenTimerX")+"");
-			DwarvenTimer.timerY = Integer.parseInt(DataGetter.find("dwarvenTimerY")+"");
+			DwarvenTimer.dwarvenTimerDing = DataGetter.findBool("dwarvenTimerDing");
+			DwarvenTimer.textColorID = DataGetter.findInt("dwarvenTimerTextColor");
+			DwarvenTimer.timerX = DataGetter.findInt("dwarvenTimerX");
+			DwarvenTimer.timerY = DataGetter.findInt("dwarvenTimerY");
 			
-			DwarvenQuestTracker.questTrackBarToggle = (Boolean) DataGetter.find("dwarvenTrackBarToggle");
-			DwarvenQuestTracker.questTrackX = Integer.parseInt(DataGetter.find("dwarvenTrackX")+"");
-			DwarvenQuestTracker.questTrackY = Integer.parseInt(DataGetter.find("dwarvenTrackY")+"");
-			DwarvenQuestTracker.borderColorID = Integer.parseInt(DataGetter.find("dwarvenTrackBorderColor")+"");
-			DwarvenQuestTracker.yesColorID = Integer.parseInt(DataGetter.find("dwarvenTrackYesColor")+"");
-			DwarvenQuestTracker.noColorID = Integer.parseInt(DataGetter.find("dwarvenTrackNoColor")+"");
+			DwarvenQuestTracker.questTrackBarToggle = DataGetter.findBool("dwarvenTrackBarToggle");
+			DwarvenQuestTracker.questTrackX = DataGetter.findInt("dwarvenTrackX");
+			DwarvenQuestTracker.questTrackY = DataGetter.findInt("dwarvenTrackY");
+			DwarvenQuestTracker.borderColorID = DataGetter.findInt("dwarvenTrackBorderColor");
+			DwarvenQuestTracker.yesColorID = DataGetter.findInt("dwarvenTrackYesColor");
+			DwarvenQuestTracker.noColorID = DataGetter.findInt("dwarvenTrackNoColor");
 			
-			DwarvenDrillFuel.fuelX = Integer.parseInt(DataGetter.find("dwarvenFuelX")+"");
-			DwarvenDrillFuel.fuelY = Integer.parseInt(DataGetter.find("dwarvenFuelY")+"");
+			DwarvenDrillFuel.fuelX = DataGetter.findInt("dwarvenFuelX");
+			DwarvenDrillFuel.fuelY = DataGetter.findInt("dwarvenFuelY");
 			
-			DwarvenPickaxeTimer.pickTimerX = Integer.parseInt(DataGetter.find("pickTimerX")+"");
-			DwarvenPickaxeTimer.pickTimerY = Integer.parseInt(DataGetter.find("pickTimerY")+"");		
-			DwarvenPickaxeTimer.pickTimerColorID = Integer.parseInt(DataGetter.find("pickTimerTextColor")+"");
-			DwarvenPickaxeTimer.pickActiveTimerColorID = Integer.parseInt(DataGetter.find("pickActiveTimerTextColor")+"");
-			DwarvenPickaxeTimer.onlyInDwarven = (Boolean) DataGetter.find("pickTimerDwarven");
-			DwarvenPickaxeTimer.onlyWhenHolding = (Boolean) DataGetter.find("pickTimerHolding");
-			DwarvenPickaxeTimer.barColor = DataGetter.find("pickTimerBarColor")+"";
+			DwarvenPickaxeTimer.pickTimerX = DataGetter.findInt("pickTimerX");
+			DwarvenPickaxeTimer.pickTimerY = DataGetter.findInt("pickTimerY");		
+			DwarvenPickaxeTimer.pickTimerColorID = DataGetter.findInt("pickTimerTextColor");
+			DwarvenPickaxeTimer.pickActiveTimerColorID = DataGetter.findInt("pickActiveTimerTextColor");
+			DwarvenPickaxeTimer.onlyInDwarven = DataGetter.findBool("pickTimerDwarven");
+			DwarvenPickaxeTimer.onlyWhenHolding = DataGetter.findBool("pickTimerHolding");
 		}
 		
 		

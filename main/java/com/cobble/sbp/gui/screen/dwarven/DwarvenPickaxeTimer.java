@@ -23,11 +23,10 @@ public class DwarvenPickaxeTimer extends Gui {
 	public static int pickTimerY = Integer.parseInt(DataGetter.find("pickTimerY")+"");		
 	public static int pickTimerColorID = Integer.parseInt(DataGetter.find("pickTimerTextColor")+"");
 	public static int pickActiveTimerColorID = Integer.parseInt(DataGetter.find("pickActiveTimerTextColor")+"");
-	public static Boolean onlyWhenHolding = (Boolean) DataGetter.find("pickTimerHolding");
-	public static Boolean onlyInDwarven = (Boolean) DataGetter.find("pickTimerDwarven");
+	public static Boolean onlyWhenHolding = (Boolean) DataGetter.findBool("pickTimerHolding");
+	public static Boolean onlyInDwarven = (Boolean) DataGetter.findBool("pickTimerDwarven");
 	public static Boolean abilityUsed = false;
-	public static Boolean pickTimerToggle = (Boolean) DataGetter.find("pickTimerToggle");
-	public static String barColor = DataGetter.find("pickTimerBarColor")+"";
+	public static Boolean pickTimerToggle = (Boolean) DataGetter.findBool("pickTimerToggle");
 	
 	public DwarvenPickaxeTimer() {
 		Minecraft mc = Minecraft.getMinecraft();
@@ -42,7 +41,7 @@ public class DwarvenPickaxeTimer extends Gui {
 		
 		if(!abilityUsed) {
 			timeSince = (105000-(currTime-lastUsed2));
-
+			timeSince+=1000;
 
 		} else {
 			timeSince = (15000-(currTime-lastUsed2));
@@ -53,16 +52,9 @@ public class DwarvenPickaxeTimer extends Gui {
 			long curr2 = System.currentTimeMillis();
 			long time2 = (15000-(curr2-lastUsed))*3/250;
 			
-	 		String[] temp = barColor.split(";");
-	 		float r = Float.parseFloat(temp[0]);
-	 		float g = Float.parseFloat(temp[1]);
-	 		float b = Float.parseFloat(temp[2]);
+
 			
 			GlStateManager.enableBlend();
-			mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MODID, "textures/gui/progressBar.png"));
-			mc.ingameGUI.drawModalRectWithCustomSizedTexture(w/2-91, h-29, 0, 5, 182, 5, 182, 10);
-			GlStateManager.color(r, g, b);
-			mc.ingameGUI.drawModalRectWithCustomSizedTexture(w/2-91, h-29, 0, 0, (int) time2, 5, 182, 10);
 			GlStateManager.disableBlend();
 			String text = mc.thePlayer.experienceLevel+"";
 			int x = w/2-mc.fontRendererObj.getStringWidth(text)/2;

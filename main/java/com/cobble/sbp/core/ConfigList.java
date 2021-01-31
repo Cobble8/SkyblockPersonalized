@@ -21,7 +21,7 @@ public class ConfigList {
 	
 	
 	
-	public static void loadConfig() throws IOException {
+	public static void loadConfig() throws Exception {
 		//loadDefaultValues();
 		
 		loadSetting("modToggle", true);
@@ -39,7 +39,13 @@ public class ConfigList {
 		loadSetting("boxSolverToggle", false);
 		loadSetting("iceSolverToggle", false);
 		
-		
+		loadSetting("scrtSize", 10);
+		loadSetting("scrtX", 0);
+		loadSetting("scrtY", 0);
+		loadSetting("scrtBgColor", "1.0;1.0;1.0");
+		loadSetting("scrtTextColor", 0);
+		loadSetting("scrtTransparent", false);
+		loadSetting("scrtToggle", true);
 		
 		loadSetting("dungeonsCommandToggle", true);
 		loadSetting("disableCommonDrops", false);
@@ -53,7 +59,7 @@ public class ConfigList {
 		loadSetting("puzzleX", 0);
 		loadSetting("puzzleY", 0);
 		loadSetting("puzzleScale", 10);
-		loadSetting("puzzleDelay", 15);
+		loadSetting("puzzleDelay", 30);
 		loadSetting("puzzleColor", "0.0;0.0;0.0");
 		
 		loadSetting("dwarvenTimerToggle", false);
@@ -78,7 +84,6 @@ public class ConfigList {
 		loadSetting("pickTimerToggle", false);
 		loadSetting("pickTimerTextColor", 7);
 		loadSetting("pickActiveTimerTextColor", 3);
-		loadSetting("pickTimerBarColor", "1.0;1.0;1.0");
 		loadSetting("pickTimerX", 0);
 		loadSetting("pickTimerY", 0);
 		loadSetting("pickTimerDwarven", true);
@@ -110,36 +115,19 @@ public class ConfigList {
 		a.add(id);
 	}
 	
-	//https://api.hypixel.net/player?key=&uuid=c9385237ccc74843b2c6c19385bce60a
-	private static void checkForMissingValues() throws IOException {
+	private static void checkForMissingValues() throws Exception {
 		for(int i=0;i<c.size();i++) {
-			Object currValue;
-			
+			Object currValue = null;
+
 			try {
-				currValue = DataGetter.find(c.get(i)); 
-				
-			} catch(NullPointerException e) {
-				currValue = d.get(i); 
-			}
-			if(currValue == null) {
-				currValue = d.get(i);
-			}
-			else if(currValue.equals("NOT FOUND")) {
-				currValue = d.get(i);
-			}
+			if(d.get(i) instanceof String) { currValue = DataGetter.findStr(c.get(i)); if(currValue.equals("null")) { currValue = d.get(i); }}
+			else if(d.get(i) instanceof Boolean) { currValue = DataGetter.findBool(c.get(i)); if(currValue == null) { currValue = d.get(i); }}
+			
+			else if(d.get(i) instanceof Integer) { currValue = DataGetter.findInt(c.get(i)); if(Integer.parseInt(currValue+"") == -69) { currValue = d.get(i); }}
+			} catch(Exception e) {currValue = d.get(i);}
+			
+			if(currValue == null) { currValue = d.get(i); }
 			ConfigHandler.obj.put(c.get(i), currValue);
-			
-			
-		}
-		
-		for(int i=0;i<a.size();i++) {
-			Object currValue;
-			
-			try { currValue = DataGetter.find(a.get(i));  } catch(NullPointerException e) { currValue = false; }
-			if(currValue == null) { currValue = false; }
-			else if(currValue.equals("NOT FOUND")) { currValue = false; }
-			ConfigHandler.obj2.put(a.get(i), currValue);
-			
 			
 		}
 		
@@ -153,7 +141,8 @@ public class ConfigList {
         file.flush();
         file.close();
         
-        FileWriter file2 = new FileWriter("config/"+Reference.MODID+"/quests.cfg");
+        ConfigHandler.configObj = ConfigHandler.obj;
+        /*FileWriter file2 = new FileWriter("config/"+Reference.MODID+"/quests.cfg");
         Gson gson2 = new GsonBuilder().setPrettyPrinting().create();
         JsonParser jp2 = new JsonParser();
         JsonElement je2 = jp2.parse(ConfigHandler.obj2.toJSONString());
@@ -161,7 +150,7 @@ public class ConfigList {
         
         file2.write(prettyJsonString2);
         file2.flush();
-        file2.close();
+        file2.close();*/
         
         
         Utils.print("Finished checking for missing config values");

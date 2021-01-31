@@ -101,7 +101,7 @@ public class ChatRecieveEvent {
 			
 			
 			
-			if((Boolean) DataGetter.find("disableCommonDrops")) {
+			if(DataGetter.findBool("disableCommonDrops")) {
 			
 				
 				String[] drops = (DataGetter.find("commonDropList")+"").split(", ");
@@ -117,69 +117,59 @@ public class ChatRecieveEvent {
 		
 		else if(message.toLowerCase().contains("ability") || message.toLowerCase().endsWith("expired!") || message.toLowerCase().endsWith("available!")) {
 			if(message.startsWith("You used your Mining Speed Boost Pickaxe Ability!") || message.startsWith("You used your Pikobulus Pickaxe Ability!")) {
-				if((Boolean) DataGetter.find("pickReminderToggle")) {
+				if(DataGetter.findBool("pickReminderToggle")) {
 					DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis();
 					DwarvenPickaxeTimer.abilityUsed=true;
 				}
 				
 				
 				if(!inMines()) {
-					if((Boolean) DataGetter.find("disablePickMsgs")) {
+					if(DataGetter.findBool("disablePickMsgs")) {
 						Utils.print("Cancelled Message: "+message);
 						event.setCanceled(true);
 					}
 				}
 			}
 			else if(message.startsWith("Your Mining Speed Boost has expired!") || message.startsWith("Your Pikobulus has expired!")) {
-				if((Boolean) DataGetter.find("pickReminderToggle")) {
+				if((Boolean) DataGetter.findBool("pickReminderToggle")) {
 					DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis();
 					DwarvenPickaxeTimer.abilityUsed=false;
 				}
 				
 				if(!inMines()) {
-					if((Boolean) DataGetter.find("disablePickMsgs")) {
+					if((Boolean) DataGetter.findBool("disablePickMsgs")) {
 						Utils.print("Cancelled Message: "+message);
 						event.setCanceled(true);
 					}
 				}
 			} else if(message.startsWith("This ability is on cooldown for") || message.startsWith("Your Mining Speed Boost has expired!")) {
 				if(!inMines()) {
-					if((Boolean) DataGetter.find("disablePickMsgs")) {
+					if((Boolean) DataGetter.findBool("disablePickMsgs")) {
 						Utils.print("Cancelled Message: "+message);
 						event.setCanceled(true);
 					}
 				}
 			} else if(message.startsWith("Mining Speed Boost is now available!") || message.startsWith("Pikobulus is now available!")) {
 				if(!inMines()) {
-					if((Boolean) DataGetter.find("disablePickMsgs")) {
+					if(DataGetter.findBool("disablePickMsgs")) {
 						Utils.print("Cancelled Message: "+message);
 						event.setCanceled(true);
 					}
 				} else {
-					if((Boolean) DataGetter.find("pickReminderToggle")) {
-						DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis()+1000000;
+					if(DataGetter.findBool("pickReminderToggle")) {
+						DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis()-1000000;
 						DwarvenPickaxeTimer.abilityUsed=false;
 						Utils.playDingSound();
 					}
 				}
 			}
-			
-			/*else if(message.startsWith("This ability is on cooldown for")) {
-				try {
-					if(mc.thePlayer.inventory.player.getHeldItem().getUnlocalizedName().contains("pickaxe")) {
-						
-					}
-				} catch (Exception e) {
-					
-				}
-			}*/
 		}
 		
 		
 		
 		
 		else if(message.startsWith("COMPACT!")) {	
-			if((Boolean) DataGetter.find("compactToggle")) {
+			if(DataGetter.findBool("compactToggle")) {
 				Utils.print("Cancelled Message: "+message);
 				event.setCanceled(true);
 			}
@@ -239,17 +229,16 @@ public class ChatRecieveEvent {
 			
 			
 			
-			else if(newMsg.startsWith("Puzzler") && (Boolean) DataGetter.find("puzzlerSolver")) {
+			else if(newMsg.startsWith("Puzzler") && DataGetter.findBool("puzzlerSolver")) {
 				
-				char up = '\u25b2'; char right = '\u25b6'; char down = '\u25bc'; char left = '\u25c0';
+				char up = '\u25b2'; char right = '\u25b6'; char down = '\u25bc'; char left = '\u25c0'; char peace = '\u27bf';
 				if(newMsg.startsWith("Puzzler: "+right+up+"Come")) {RenderGuiEvent.puzzlerParticles=false; return;}
 				else if(newMsg.startsWith("Puzzler: "+right+right+"Nice!")) {RenderGuiEvent.puzzlerParticles=false; return;}
 				else if(newMsg.startsWith("Puzzler gave you 1,000 Mithril Powder for solving the puzzle!")) {RenderGuiEvent.puzzlerParticles=false; return;}
-				
+				else if(newMsg.contains(peace+"")) {RenderGuiEvent.puzzlerParticles=false; return;};
 				char[] msgSplit = newMsg.replace("Puzzler: ", "").toCharArray(); int x = 0; int z = 0;
 				for(int i=0;i<msgSplit.length;i++) { if((msgSplit[i]+"").equals(up+"")) { z+=1; } else if((msgSplit[i]+"").equals(down+"")) { z-=1; } else if((msgSplit[i]+"").equals(left+"")) { x+=1; } else if((msgSplit[i]+"").equals(right+"")) { x-=1; } }
-				int startX = 181; int startZ = 135;
-				/*event.setCanceled(true);*/ String output = "";
+				int startX = 181; int startZ = 135; String output = "";
 				Utils.sendMessage("Puzzler Block Located");
 				if(z >=0) { for(int i=0;i<z;i++) { output+=up; } } else if( z < 0) { for(int i=0;i<Math.abs(z);i++) { output+=down; } } if(x >=0) { for(int i=0;i<z;i++) { output+=left; } } else if( x < 0) { for(int i=0;i<Math.abs(z);i++) { output+=right; } }
 				isDial = false;
@@ -265,7 +254,7 @@ public class ChatRecieveEvent {
 				isDial = false;
 			}
 			
-			if(isDial && (Boolean) DataGetter.find("npcDialogueToggle")) {
+			if(isDial && DataGetter.findBool("npcDialogueToggle")) {
 				
 				DialogueThread.currMessages++;
 				DialogueThread dial = new DialogueThread();
@@ -280,7 +269,7 @@ public class ChatRecieveEvent {
 		
 		
 		else if(hover.startsWith("This happened thanks toZ")) {
-			if((Boolean) DataGetter.find("jerryTimerToggle")) {
+			if(DataGetter.findBool("jerryTimerToggle")) {
 				Utils.playDingSound();
 				Utils.playDingSound();
 				

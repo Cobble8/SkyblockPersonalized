@@ -31,9 +31,9 @@ public class PuzzleImage extends Gui {
 		 		
 		 		mc.getTextureManager().bindTexture(color);
 		 		String[] temp = puzzleColor.split(";");
-		 		float r = Float.parseFloat(temp[0]);
-		 		float g = Float.parseFloat(temp[1]);
-		 		float b = Float.parseFloat(temp[2]);
+		 		float r = Float.parseFloat(temp[0].replace(",", "."));
+		 		float g = Float.parseFloat(temp[1].replace(",", "."));
+		 		float b = Float.parseFloat(temp[2].replace(",", "."));
 		 		GlStateManager.color(r, g, b, 1);
 		 		this.drawModalRectWithCustomSizedTexture(xCoord-2, yCoord-2, 0, 0, RenderGuiEvent.puzzleScale+4, RenderGuiEvent.puzzleScale+4, RenderGuiEvent.puzzleScale+4, RenderGuiEvent.puzzleScale+4);
 		 		GlStateManager.color(1, 1, 1, 1);

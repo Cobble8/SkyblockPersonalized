@@ -67,11 +67,17 @@ public class SettingMenu extends GuiScreen {
 	public static int fadeInFrames = 0;
 	private static int onOffClickFrames = 0;
 	
-	public static int modLaunches = Integer.parseInt(DataGetter.find("modLaunches")+"");
-	public static Boolean modLaunchToggle = (Boolean) DataGetter.find("modLaunchToggle");
+	public static int modLaunches = DataGetter.findInt("modLaunches");
+	public static Boolean modLaunchToggle = DataGetter.findBool("modLaunchToggle");
 	
 	public static Boolean settingsMenuOpen = false;
 	public static String currOptionName = "";
+	int l = 0;
+	
+	private static Boolean mouseDown = false;
+	private static int mouseDownX = 0;
+	private static int mouseDownY = 0;
+	
 	
 	
 	
@@ -89,10 +95,11 @@ public class SettingMenu extends GuiScreen {
 	
 	@Override
 	public void initGui() {
+		l=0;
 		SBP.width = this.width;
 		SBP.height = this.height;
 		
-		
+		mouseDown=false;
 		
 		settingsMenuOpen=true;
 		onOffClickFrames = 0;
@@ -106,7 +113,7 @@ public class SettingMenu extends GuiScreen {
 		
 		
 		//CATEGORIES/UPDATE SEARCH
-		totalLaunches = Integer.parseInt(""+DataGetter.find("modLaunches"));
+		totalLaunches = DataGetter.findInt("modLaunches");
 		
 		
 		sliderYValue = 0;
@@ -115,7 +122,7 @@ public class SettingMenu extends GuiScreen {
 		
 		//THEMES
 		updateTheme();
-		currActualTheme = Integer.parseInt(DataGetter.find("currentTheme")+"");
+		currActualTheme = DataGetter.findInt("currentTheme");
 		int randNum = Integer.parseInt(Math.round(Math.random()*250)+"");
 		if(randNum == 1) { 
 			int randTheme = Integer.parseInt(Math.round(Math.random()*totalThemes)+"");
@@ -125,7 +132,7 @@ public class SettingMenu extends GuiScreen {
 				//Utils.sendMessage(Colors.GREEN+"You have found Easter Egg #1");
 			}
 		}
-		else { currActualTheme=Integer.parseInt(DataGetter.find("currentTheme")+""); }
+		else { currActualTheme= DataGetter.findInt("currentTheme"); }
 		
 		updateSearch();
 		FPS = Minecraft.getDebugFPS();
@@ -182,6 +189,28 @@ public class SettingMenu extends GuiScreen {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		
+		if(Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+			if(!mouseDown) {
+				mouseDownX = mouseX;
+				mouseDownY = mouseY;
+			}
+			mouseDown=true;
+		} else {
+			mouseDown=false;
+			mouseDownX=0;
+			mouseDownY=0;
+		}
+		
+		
+		
+		l++;
+		if(l == 1) {
+			DataGetter.updateConfig("main");
+		} else if(l >= Minecraft.getDebugFPS()*5) {
+			l=0;
+		}
+		
 		//Utils.print(fadeIn);
 		onOffClickFrames++;
 		//currTheme = 2;
@@ -395,11 +424,19 @@ public class SettingMenu extends GuiScreen {
 				}
 				this.drawModalRectWithCustomSizedTexture(this.width/2-188-20-editGuiWidth, this.height-44, 0, 0, 1, 20, 375, 20);
 		
-		//SLIDER
-		try { GlStateManager.color(1, 1, 1, fadeIn-0.4F);
-		} catch (Exception e) { GlStateManager.color(1, 1, 1, 0.0F); }
-		mc.getTextureManager().bindTexture(slider);
-		this.drawModalRectWithCustomSizedTexture(this.width/2+210, 140+(sliderYValue/25), 0, 0, 50, 79, 50, 79);
+				if(mouseDown) {
+					if(mouseDownX >= this.width/2+210 && mouseDownX <= this.width/2+260 && mouseDownY >= 140 && mouseDownY <= 140+302) {
+						sliderYValue=((mouseY-140)*25)-100;
+						if(sliderYValue < 0) { sliderYValue = 0; } else if(sliderYValue > 223*25) { sliderYValue = 223*25; }
+					}
+				}
+				
+				
+					//SLIDER
+					try { GlStateManager.color(1, 1, 1, fadeIn-0.4F);
+					} catch (Exception e) { GlStateManager.color(1, 1, 1, 0.0F); }
+				mc.getTextureManager().bindTexture(slider);
+				this.drawModalRectWithCustomSizedTexture(this.width/2+210, 140+(sliderYValue/25), 0, 0, 50, 79, 50, 79);
 		
 		
 		//PRESET SEARCHES
@@ -662,12 +699,12 @@ public class SettingMenu extends GuiScreen {
 			}
 			
 			//SLIDER CLICK CHECK
-			if(mouseX >= this.width/2+210 && mouseX <= this.width/2+210+50 && mouseY >=140 && mouseY <= 140+300) {
-				Utils.playClickSound();
+			//if(mouseX >= this.width/2+210 && mouseX <= this.width/2+210+50 && mouseY >=140 && mouseY <= 140+300) {
+				//Utils.playClickSound();
 				
-				sliderYValue=((mouseY-140)*25)-100;
-				return;
-			}
+				//sliderYValue=((mouseY-140)*25)-100;
+				//return;
+			//}
 			
 			
 			//CHECK IF USER IS SEARCHING
@@ -765,6 +802,7 @@ public class SettingMenu extends GuiScreen {
 		//ESCAPE
 		if(par2 == Keyboard.KEY_ESCAPE) {
 			settingsMenuOpen=false;
+			DataGetter.updateConfig("main");
 			mc.thePlayer.closeScreen();
 			return;
 		}
@@ -774,7 +812,7 @@ public class SettingMenu extends GuiScreen {
 			//BACKSPACE
 			if(par2 ==Keyboard.KEY_BACK) {
 				if(searchSettingString.length()>=1 ) {
-					searchSettingString = Utils.removeLastChars(searchSettingString, 1);
+					searchSettingString = Utils.removeIntLast(searchSettingString, 1);
 				}
 				
 				//TYPE CHARACTER INTO SEARCH BAR
@@ -787,6 +825,7 @@ public class SettingMenu extends GuiScreen {
 			updateSearch();
 		} else {
 			if(par2 == Keyboard.KEY_E) {
+				DataGetter.updateConfig("main");
 				settingsMenuOpen=false;
 				mc.thePlayer.closeScreen();
 			}
@@ -819,7 +858,7 @@ public class SettingMenu extends GuiScreen {
 			
 			//GIVES ALL BASIC INFORMATION FOR SETTING
 			settingNames.add(name);
-			settingToggles.add((Boolean) DataGetter.find(id));
+			settingToggles.add(DataGetter.findBool(id));
 			settingIDs.add(id);
 			settingDesc.add(desc);
 			settingOptions.add(false);
@@ -849,7 +888,7 @@ public class SettingMenu extends GuiScreen {
 		for(int i=0;i<type.length;i++) {
 			if(type[i].startsWith("moveGUI:")) {
 				
-				if((Boolean) DataGetter.find(id)) {
+				if(DataGetter.findBool(id)) {
 					try {
 						String coords = type[i].replace("moveGUI: ", "");
 					
@@ -862,8 +901,8 @@ public class SettingMenu extends GuiScreen {
 						
 						
 						
-						int x = Integer.parseInt(DataGetter.find(id1+"X")+"");
-						int y = Integer.parseInt(DataGetter.find(id1+"Y")+"");
+						int x = DataGetter.findInt(id1+"X");
+						int y = DataGetter.findInt(id1+"Y");
 						coords+=";"+x+";"+y;
 						SettingMoveAll.settingCoords.add(coords);
 						SettingMoveAll.settingNames.add(name);
@@ -879,7 +918,7 @@ public class SettingMenu extends GuiScreen {
 
 			//GIVES ALL BASIC INFORMATION FOR SETTING
 			settingNames.add(name);
-			settingToggles.add((Boolean) DataGetter.find(id));
+			settingToggles.add(DataGetter.findBool(id));
 			settingIDs.add(id);
 			settingDesc.add(desc);
 			settingOptions.add(true);
@@ -906,7 +945,7 @@ public class SettingMenu extends GuiScreen {
 			currTheme = 0;
 		}
 		
-		currActualTheme = Integer.parseInt(DataGetter.find("currentTheme")+"");
+		currActualTheme = DataGetter.findInt("currentTheme");
 		logo = new ResourceLocation(Reference.MODID, "textures/"+currTheme+"/menu/logo.png");
 		settingBg = new ResourceLocation(Reference.MODID, "textures/"+currTheme+"/menu/settingBg.png");
 		gear = new ResourceLocation(Reference.MODID, "textures/"+currTheme+"/menu/gear.png");

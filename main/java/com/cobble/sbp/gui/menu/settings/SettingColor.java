@@ -121,9 +121,9 @@ public class SettingColor extends GuiScreen {
 				int yCoord = (this.height/2)+(g2*13)-70;
 				
 				if(mouseX >= xCoord && mouseX <= xCoord+14 && mouseY >= yCoord && mouseY <= yCoord+14) {
-					r = Float.parseFloat(df.format(r));
-					g = Float.parseFloat(df.format(g));
-					b = Float.parseFloat(df.format(b));
+					r = Float.parseFloat(df.format(r).replace(",", "."));
+					g = Float.parseFloat(df.format(g).replace(",", "."));
+					b = Float.parseFloat(df.format(b).replace(",", "."));
 					
 					oldColor = r+";"+g+";"+b;
 					

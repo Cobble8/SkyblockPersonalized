@@ -9,7 +9,7 @@ public class CheckAPIKey {
 	public static Boolean validAPIKey = false;
 	
 	public static void checkValidAPIKey() throws Exception {
-		String APIKey = (String) DataGetter.find("APIKey");
+		String APIKey = DataGetter.findStr("APIKey");
 		String file = "{\"success\":false,\"cause\":\"Invalid API key\"}";
 		try {
 		file = HttpClient.readPage("https://api.hypixel.net/player?key="+APIKey+"&uuid=c9385237ccc74843b2c6c19385bce60a");

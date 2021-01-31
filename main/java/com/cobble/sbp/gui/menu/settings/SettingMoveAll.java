@@ -69,7 +69,7 @@ public class SettingMoveAll extends GuiScreen {
 		//this.drawDefaultBackground();
 		GlStateManager.enableBlend();
 		
-		Boolean gridLocking = (Boolean) DataGetter.find("gridLockingToggle");
+		Boolean gridLocking = (Boolean) DataGetter.findBool("gridLockingToggle");
 		
 		Minecraft mc = Minecraft.getMinecraft();
 		
