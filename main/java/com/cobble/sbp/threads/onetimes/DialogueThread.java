@@ -80,6 +80,8 @@ public class DialogueThread extends Thread {
 					d.add(nameShort+"You aren't the smartest guy, are you?");
 					d.add(npcShort+"*GASP* How DARE you! I am the smartest person I know!");
 					d.add(nameShort+"Right...");
+					d.add(nameShort+"Whats 9+10?");
+					d.add(npcShort+"tWeNtY oNe!");
 				}
 			} else if(dialID == 3) {
 				if(dialName.equals(Colors.GOLD+"Castle Guard")) {
@@ -137,6 +139,8 @@ public class DialogueThread extends Thread {
 					Minecraft.getMinecraft().thePlayer.playSound("mob.villager.haggle", 0.5F, 1.0F);
 				}
 			}
+			return;
+			
 		}
 		
 	}

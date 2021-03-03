@@ -10,6 +10,9 @@ import com.cobble.sbp.simplejson.parser.JSONParser;
 import com.cobble.sbp.simplejson.parser.ParseException;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class DataGetter
 {			
@@ -62,28 +65,36 @@ public class DataGetter
 	
 	
 	public static String find(String objectName) {
-		/*JSONParser parser = new JSONParser();
-		Object dataOutput = "null";
-		try {
-			Object obj = parser.parse(new FileReader("config/"+Reference.MODID+"/main.cfg"));
- 
-			// A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
-			//JSONObject jsonObject = (JSONObject) obj;
-			JSONObject data = (JSONObject) obj;
+		/*
+		if(objectName.contains(".")) {
 			
-			dataOutput = data.get(objectName);
+			String trialConfig = "{ \"temp1\": { \"temp2\": { \"temp3\": true } } }";
 			
-
-		} catch (Exception e) {
-			//Utils.sendErrMsg("Couldn't find key: \""+objectName+"\" in the config");
-			return "NOT FOUND";
-		}
-		return dataOutput;*/
+			try {
+				String[] keyList = objectName.replace(".", "/").split("/");
+				
+				String currSearch = trialConfig;
+				Utils.print(currSearch);
+				JsonParser parser = new JsonParser();
+				for(int i=0;i<keyList.length-1;i++) {
+					
+					//Going through each key
+					JsonElement searching = parser.parse(currSearch);
+					currSearch = searching.getAsJsonObject().get(keyList[i])+"";
+					
+				}
+				
+				
+				//Output
+				return parser.parse(currSearch).getAsJsonObject().get(keyList[keyList.length-1])+"";
+			} catch(Exception e) { return "N/A";}
+			
+			
+		}*/
 		
-		if(ConfigHandler.configObj == null) {
-			updateConfig("main");
-			
-		}
+		
+		
+		if(ConfigHandler.configObj == null) { updateConfig("main"); }
 		
 		try {
 		JSONObject data = (JSONObject) ConfigHandler.configObj;

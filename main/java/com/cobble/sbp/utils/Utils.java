@@ -1,7 +1,12 @@
 package com.cobble.sbp.utils;
 
+import java.awt.Color;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,7 +21,7 @@ import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.LobbySwapEvent;
-import com.cobble.sbp.events.PlayerLoginEvent;
+import com.cobble.sbp.gui.menu.settings.SettingGlobal;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -28,16 +33,92 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.scoreboard.Score;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.ScoreObjective;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import scala.Char;
 
 public class Utils {
 
+	public static final double TWICE_PI = Math.PI*2;	
+	private static Tessellator tessellator = Tessellator.getInstance();
+	private static WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+	
+	
+	public static ArrayList<Float> getRGBColor(String input) {
+		ArrayList<Float> colors = new ArrayList();
+		try {
+			String[] tmp = input.split(";");
+			
+			
+			
+			colors.add(Float.parseFloat(tmp[0].replace(",", ".")));
+			colors.add(Float.parseFloat(tmp[1].replace(",", ".")));
+			colors.add(Float.parseFloat(tmp[2].replace(",", ".")));
+			
+			
+		} catch(Exception e) {}
+		return colors;
+		
+		
+		
+	}
+	
+	public static void openURL(String url) {
+		try {
+			Desktop.getDesktop().browse(URI.create(url));
+		} catch (IOException e) { Utils.sendErrMsg("Failed to open URL: "+url);}
+	}
+	
+	public static String getSBID() {
+        ItemStack heldItem = Minecraft.getMinecraft().thePlayer.getHeldItem();
+        return getSBID(heldItem);
+    }
+	
+	public static String getSBID(ItemStack item) {
+        if (item == null) { return ""; }
+        else if (!item.hasTagCompound()) { return ""; }
+
+        NBTTagCompound skyBlockData = item.getSubCompound("ExtraAttributes", false);
+
+        if (skyBlockData != null) { String itemId = skyBlockData.getString("id");  if (!itemId.equals("")) { return itemId.toLowerCase(); } }  return "";
+    }
+	
+	public static void drawRegularPolygon(double x, double y, int radius, int sides, int percent)
+	{
+		drawRegularPolygon(x, y, radius, sides, percent, 1, 1, 1);
+	}
+	
+	public static void drawRegularPolygon(double x, double y, int radius, int sides, int percent, float r, float g, float b) {
+		try {
+		GlStateManager.disableAlpha();
+		GlStateManager.disableBlend();
+		GlStateManager.color(1, 1, 1);
+		int rad2 = radius/2;
+		int per = percent*sides/100;
+		GlStateManager.color(r, g, b);
+		worldRenderer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
+		for(int i=0;i<per+1;i++) {
+
+			double angle = (TWICE_PI * i / sides) + Math.toRadians(180);
+			
+			worldRenderer.pos(x + Math.sin(angle) * radius / 4*3, y+ Math.cos(angle) * radius / 4*3, 0).endVertex();
+			worldRenderer.pos(x + Math.sin(angle) * radius, y + Math.cos(angle) * radius, 0).endVertex();
+		}
+		
+		
+		tessellator.draw();
+		GlStateManager.enableBlend();
+		GlStateManager.enableAlpha();
+		
+		} catch(Exception e) { }
+	}
+	
+	
 	public static void renderPlayer(int x, int y, int scaled, int lookingX, int lookingY) {
 		int posX = x;
 		int posY = y;
@@ -85,21 +166,224 @@ public class Utils {
         GlStateManager.disableTexture2D();
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 		GlStateManager.disableColorMaterial();
-		GlStateManager.disableBlend();
 	}
 	
-	public static void drawString(String text, int x, int y, int color, Boolean shadowed) {
-		Minecraft mc = Minecraft.getMinecraft();
-		mc.fontRendererObj.drawString(text, x, y, color, shadowed);
+	public static void drawString(String text, int x, int y) {
+		drawString(text, x, y, SettingGlobal.textStyle);
 	}
 	
-	public static void drawString(String text, int x, int y, int color, Boolean shadowed, Boolean bolded) {
+	
+	
+	public static void drawString(String text, int x, int y, int textStyle) {
+		
+		
+		
+		//Utils.print(text);
 		Minecraft mc = Minecraft.getMinecraft();
-		mc.fontRendererObj.drawString(text, x + 1, y, 0, false);
-        mc.fontRendererObj.drawString(text, x - 1, y, 0, false);
-        mc.fontRendererObj.drawString(text, x, y + 1, 0, false);
-        mc.fontRendererObj.drawString(text, x, y - 1, 0, false);
-        mc.fontRendererObj.drawString(text, x, y, 8453920, false);
+		String str = text;
+		String str2 = Utils.unformatText(text);
+		
+		if(str.contains(Colors.CHROMA)) {
+			String strTypes = "";
+			if(str.contains(Colors.BOLD)) {strTypes+=Colors.BOLD;}
+			if(str.contains(Colors.ITALIC)) {strTypes+=Colors.ITALIC;}
+			if(str.contains(Colors.UNDERLINE)) {strTypes+=Colors.UNDERLINE;}
+			if(str.contains(Colors.STRIKETHROUGH)) {strTypes+=Colors.STRIKETHROUGH;}
+			if(str.contains(Colors.OBFUSCATED)) {strTypes+=Colors.OBFUSCATED;}
+			str = Colors.CHROMA+Utils.unformatAllText(str)+strTypes;
+		}
+		
+		
+		
+		Boolean shadows = false;
+		if(textStyle == 0) { shadows = true; }
+		else if(textStyle == 1) { drawBoldedString(str2, x, y); }
+		else if(textStyle == 3) {
+			ResourceLocation bg = new ResourceLocation(Reference.MODID, "textures/gui/imageBorder_1.png");
+			mc.getTextureManager().bindTexture(bg); int strWidth = mc.fontRendererObj.getStringWidth(str2);
+			GlStateManager.enableBlend();
+			GlStateManager.color(0, 0, 0, 0.6F);
+			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-2, y-2, 0, 0, strWidth+3, 11, 1, 1);
+			GlStateManager.color(1, 1, 1, 1);
+		}
+		String bold = "";
+		mc.fontRendererObj.drawString(str.replace(Colors.CHROMA, ""), x, y, 0, shadows);
+		
+		
+		int chromaCount = 0;
+		char[] charArray = str.toCharArray();
+		if(str.contains(Reference.COLOR_CODE_CHAR+"z")) {
+		
+			for(int i=0;i<charArray.length;i++) {
+				try {
+					if((charArray[i]+"").equals(Reference.COLOR_CODE_CHAR+"") && (charArray[i+1]+"").equals("z")) {
+						chromaCount++;
+					}
+				} catch(Exception e) { }
+			}
+		}
+		String outputStr = str;
+		
+		for(int j=0;j<chromaCount;j++) {
+		
+		if(outputStr.contains(Colors.CHROMA)) {
+			int beginChroma = -1;
+			int endChroma = -1;
+			charArray = outputStr.toCharArray();
+			
+			ArrayList chArr= new ArrayList();
+			for(char curr : charArray) {
+				chArr.add(curr);
+			}
+			
+			
+			for(int i=0;i<chArr.size();i++) {
+				
+				
+				if(beginChroma == -1 && (chArr.get(i)+"").equals(Reference.COLOR_CODE_CHAR+"") && (chArr.get(i+1)+"").equals("z")) { beginChroma = i; }
+				
+				else if(beginChroma != -1 && endChroma == -1) {
+					if((chArr.get(i)+"").equals(Reference.COLOR_CODE_CHAR+"") || i >= chArr.size()-1) {
+						
+						endChroma = i;
+						if(j == chromaCount-1) { endChroma+=1; }
+						
+						continue;
+					}
+				}
+			}
+			try {
+				
+				outputStr+="f";
+				
+				String preStr = outputStr.substring(0, beginChroma);
+				String subStr = outputStr.substring(beginChroma+2, endChroma);
+				//Utils.print("String: "+outputStr+"  |  SubString: "+subStr);
+				String postStr = outputStr.substring(endChroma);
+				int preWidth = mc.fontRendererObj.getStringWidth(preStr);
+				int subWidth = mc.fontRendererObj.getStringWidth(subStr);
+				//if(str.contains(Colors.BOLD)) {
+					//subStr = "&l"+subStr;
+				//}
+				String strTypes = "";
+				if(str.contains(Colors.BOLD)) {strTypes+=Colors.BOLD;}
+				if(str.contains(Colors.ITALIC)) {strTypes+=Colors.ITALIC;}
+				if(str.contains(Colors.UNDERLINE)) {strTypes+=Colors.UNDERLINE;}
+				if(str.contains(Colors.STRIKETHROUGH)) {strTypes+=Colors.STRIKETHROUGH;}
+				if(str.contains(Colors.OBFUSCATED)) {strTypes+=Colors.OBFUSCATED;}
+				
+				drawChromaString(subStr, x+preWidth, y, shadows, strTypes);
+				outputStr = preStr+subStr+postStr;
+			} catch(Exception e) {
+				
+			}
+			
+			
+		}
+		}
+		
+	}
+	
+	
+	public static void drawConfinedString(String text, int x, int y, int textStyle, int maxWidth) {
+		Minecraft mc = Minecraft.getMinecraft();
+		int strWidth = mc.fontRendererObj.getStringWidth(text);
+		
+		int posX = x;
+		int posY = y;
+		
+		if(strWidth <= maxWidth) {
+			drawString(text, x, y, textStyle);
+		} else {
+			int scaledWidth = strWidth;
+			int percent = 100;
+			while(scaledWidth > maxWidth) { percent-=1; scaledWidth = strWidth*percent/100; }
+			Double scale = Double.parseDouble(percent+"")/100;
+			int heightScale = (int) (12*scale);
+			
+			
+			drawScaledString(text, posX+(scaledWidth/2), posY+(heightScale/2), 0, scale, textStyle, false);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	public static void drawTitle() {
+		
+		//int posX = Minecraft.getMinecraft().
+		//int posY = 200;
+		try {
+			int posX = Minecraft.getMinecraft().displayWidth/(Minecraft.getMinecraft().gameSettings.guiScale);
+			int posY = Minecraft.getMinecraft().displayHeight/(Minecraft.getMinecraft().gameSettings.guiScale);
+			drawScaledString(SBP.titleString, posX/2, posY/2, 0, SBP.titleScale, 0, true);
+		} catch (Exception e) { }
+		
+		//Utils.print(SBP.width);
+		
+	}
+	
+	public static void drawScaledString(String string, int x, int y, int color, double scale, int textStyle, Boolean centered) {
+
+		Minecraft mc = Minecraft.getMinecraft();
+		int strWidth = mc.fontRendererObj.getStringWidth(string);
+		int posX = x;
+		int posY = y;
+		
+		
+		posX-=(strWidth*scale/2);
+
+		
+		posY-=(6*scale);
+		GlStateManager.pushMatrix();
+		
+		GlStateManager.scale(scale, scale, scale);
+		  
+		Utils.drawString(string, (int) (posX/scale), (int) (posY/scale), textStyle);
+		GlStateManager.popMatrix();
+	}
+	
+	public static void drawChromaString(String text, int x, int y, Boolean shadow, String strType) {
+		
+		if(!strType.equals("")) {
+			//Utils.print(text);
+		}
+		
+		int chromaSpeed = 4;
+		//Utils.print(strType+text);
+		Minecraft mc = Minecraft.getMinecraft();
+        int tmpX = x; 
+        String str = text;
+        char[] chArr = str.toCharArray();
+        
+        for (int j=0;j<chArr.length;j++) {
+        	char tc = chArr[j];
+        	String output = tc+"";
+        	if(tc != Reference.COLOR_CODE_CHAR) {
+        		
+        		long t = System.currentTimeMillis() - (tmpX * 10 + y * 10);
+                int i = Color.HSBtoRGB(t % (int) (chromaSpeed*500f) / (chromaSpeed*500f), 0.8f, 0.8f);
+                
+                mc.fontRendererObj.drawString(strType+output, tmpX, y, i, shadow);
+                tmpX += mc.fontRendererObj.getStringWidth(strType+output);
+                
+        	}
+        }
+        mc.fontRendererObj.drawString(Colors.WHITE, x, y, tmpX);
+        
+    }
+	public static void drawBoldedString(String text, int x, int y) {
+		Minecraft mc = Minecraft.getMinecraft();
+		
+		mc.fontRendererObj.drawString(text, x+1, y, 0, false);
+        mc.fontRendererObj.drawString(text, x-1, y, 0, false);
+        mc.fontRendererObj.drawString(text, x, y+1, 0, false);
+        mc.fontRendererObj.drawString(text, x, y-1, 0, false);
 	}
 	
 	public static Boolean inRange(int checkNum, int num, int range) {
@@ -120,7 +404,7 @@ public class Utils {
 	public static void checkIfOnSkyblock() {
 		if(DataGetter.findBool("onlyOnSkyblock")) {
 			String title = getBoardTitle().toLowerCase();
-			if(title.equals("skyblock")) {
+			if(title.contains("skyblock")) {
 				if(!SBP.onSkyblock) { Utils.print("Logged onto Skyblock"); LobbySwapEvent.currLobby="";} SBP.onSkyblock=true;
 			} else { if(SBP.onSkyblock) { Utils.print("Logged off of Skyblock"); } SBP.onSkyblock=false; }
 		
@@ -135,7 +419,7 @@ public class Utils {
 			
 		ScoreObjective sidebarObjective = Minecraft.getMinecraft().theWorld.getScoreboard().getObjectiveInDisplaySlot(1);
 		
-		output = Utils.unformatText(sidebarObjective.getDisplayName());
+		output = Utils.unformatAllText(sidebarObjective.getDisplayName());
 		} catch(Exception e) {
 			return "null";
 		}
@@ -187,13 +471,11 @@ public class Utils {
 	
 	public static String getColorFromInt(int colorID) {
 		
-		String[] colorList = {Colors.WHITE, Colors.DARK_RED, Colors.RED, Colors.GOLD, Colors.YELLOW, Colors.GREEN, Colors.DARK_GREEN, Colors.AQUA, Colors.DARK_AQUA, Colors.BLUE, Colors.DARK_BLUE, Colors.LIGHT_PURPLE, Colors.DARK_PURPLE, Colors.GRAY, Colors.DARK_GRAY, Colors.BLACK};
-		String output = "";
+		String[] colorList = {Colors.WHITE, Colors.DARK_RED, Colors.RED, Colors.GOLD, Colors.YELLOW, Colors.GREEN, Colors.DARK_GREEN, Colors.AQUA, Colors.DARK_AQUA, Colors.BLUE, Colors.DARK_BLUE, Colors.LIGHT_PURPLE, Colors.DARK_PURPLE, Colors.GRAY, Colors.DARK_GRAY, Colors.BLACK, Colors.CHROMA};
+		String output = Colors.WHITE;
 		try {
 			output = colorList[colorID];
-		} catch(Exception e) {
-			
-		}
+		} catch(Exception e) { }
 		return output;
 		
 		
@@ -242,6 +524,38 @@ public class Utils {
 		char[] chars = string.toCharArray();
 		Boolean prevChar = false;
 		for(int i=0;i<chars.length;i++) {
+			
+			try {
+				if((chars[i]+"").equals(Reference.COLOR_CODE_CHAR+"")) {
+					if("mlnok".contains(chars[i+1]+"")) {
+						output+=chars[i];
+						continue;
+					}
+				}
+			}catch(Exception e) {}
+			
+			
+			if(!((chars[i]+"").equals(Reference.COLOR_CODE_CHAR+""))) {
+				if(!prevChar) {
+					output+=chars[i];
+				}
+				prevChar = false;
+				
+			} else if((chars[i]+"").equals(Reference.COLOR_CODE_CHAR+"")) {
+				prevChar = true;
+			}
+		}
+		
+		return output;
+	}
+	
+	public static String unformatAllText(String string) {
+		String output = "";
+		char[] chars = string.toCharArray();
+		Boolean prevChar = false;
+		for(int i=0;i<chars.length;i++) {
+			
+			
 			if(!((chars[i]+"").equals(Reference.COLOR_CODE_CHAR+""))) {
 				if(!prevChar) {
 					output+=chars[i];

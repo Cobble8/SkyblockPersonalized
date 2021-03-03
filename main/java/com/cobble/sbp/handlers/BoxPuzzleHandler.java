@@ -3,6 +3,7 @@ package com.cobble.sbp.handlers;
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.RenderGuiEvent;
+import com.cobble.sbp.gui.screen.PuzzleImage;
 import com.cobble.sbp.threads.onetimes.DisablePuzzleImageThread;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Utils;
@@ -39,61 +40,25 @@ public class BoxPuzzleHandler {
 				dR = "west"; dX = -1; dZ = -1;
 			} else {return;}
 			
-			SBP.puzzleCount++;
+			PuzzleImage.puzzleCount++;
 			DisablePuzzleImageThread.delay = Long.parseLong(DataGetter.findInt("puzzleDelay")+"");
 			Thread disableImage = new DisablePuzzleImageThread();
 			disableImage.start();
 			
 			if(Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, -8, 2), y-3, z+r.gFZ(dR, dX, dZ, -8, 2), p) && Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, 8, 2), y-3, z+r.gFZ(dR, dX, dZ, 8, 2), p)) {
 				if(Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, -2, 2), y-3, z+r.gFZ(dR, dX, dZ, -2, 2), p)) {
-					
-					r.imageID="box_6";
-					return;
-					
-				} else {
-					
-					r.imageID="box_3";
-					return;
-					
-				}
-			}
+					r.imageID="box_6"; return; } else { r.imageID="box_3"; return; } }
 			else if(Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, 2, 2), y-3, z+r.gFZ(dR, dX, dZ, 2, 2), p) && Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, 5, 2), y-3, z+r.gFZ(dR, dX, dZ, 5, 2), p)) {
-				
-				r.imageID="box_1";
-				return;
-				
-			}
+				r.imageID="box_1"; return; }
 			else if(Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, -8, 5), y-3, z+r.gFZ(dR, dX, dZ, -8, 5), p) && Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, 8, 5), y-3, z+r.gFZ(dR, dX, dZ, 8, 5), p)) {
 				if(Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, -5, 5), y-3, z+r.gFZ(dR, dX, dZ, -5, 5), p)) {
-					
-					r.imageID="box_4";
-					return;
-					
-				} else {
-					
-					r.imageID="box_2";
-					return;
-					
-				}
+					r.imageID="box_4"; return; } else { r.imageID="box_2"; return; }
 			} else if(Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, -5, 8), y-3, z+r.gFZ(dR, dX, dZ, -5, 8), p) && Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, -5, 14), y-3, z+r.gFZ(dR, dX, dZ, -5, 14), p)) {
-				
-				r.imageID="box_5";
-				return;
-				
-			} else if(Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, -8, 14), y-3, z+r.gFZ(dR, dX, dZ, -8, 14), p) && Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, 8, 14), y-3, z+r.gFZ(dR, dX, dZ, 8, 14), p)) {
-				
-				r.imageID="box_7";
-				return;
-				
-			}
-			
-			
-			
-			
+				r.imageID="box_5"; return; } else if(Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, -8, 14), y-3, z+r.gFZ(dR, dX, dZ, -8, 14), p) && Utils.checkBlock(w, x+r.gFX(dR, dX, dZ, 8, 14), y-3, z+r.gFZ(dR, dX, dZ, 8, 14), p)) {
+				r.imageID="box_7"; return; }
 			else {
 				Utils.sendMessage("Failed to find box puzzle combination, please screenshot "+Colors.YELLOW+"this and send it to "+Colors.AQUA+"Cobble8#0881 "+Colors.YELLOW+"on "+Colors.BLUE+"Discord"+Colors.YELLOW+"!");
-				r.imageID="box_starting_block";
-				return;
+				r.imageID="box_starting_block"; return;
 			}
 			
 			

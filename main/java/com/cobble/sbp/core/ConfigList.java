@@ -35,7 +35,10 @@ public class ConfigList {
 		loadSetting("onlyOnSkyblock", true);
 		loadSetting("gridLockingToggle", true);
 		loadSetting("gridLockingPx", 3);
+		loadSetting("textStyle", 0);
+		loadSetting("chromaSpeed", 4);
 		
+		//DUNGEONS
 		loadSetting("boxSolverToggle", false);
 		loadSetting("iceSolverToggle", false);
 		
@@ -52,9 +55,6 @@ public class ConfigList {
 		loadSetting("commonDropList", "Carrot, Potato");
 		loadSetting("disablePickMsgs", false);
 		
-		loadSetting("jerryTimerToggle", false);
-		loadSetting("compactToggle", false);
-		loadSetting("pickReminderToggle", false);
 		
 		loadSetting("puzzleX", 0);
 		loadSetting("puzzleY", 0);
@@ -62,42 +62,86 @@ public class ConfigList {
 		loadSetting("puzzleDelay", 30);
 		loadSetting("puzzleColor", "0.0;0.0;0.0");
 		
+		
+		
+		//DWARVEN MINES
+		loadSetting("dwarvenGuiX", 0);
+		loadSetting("dwarvenGuiY", 0);
+		loadSetting("dwarvenHOTMLevel", 0);
+		
+		loadSetting("dwarvenMithrilDisplay", true);
+		loadSetting("dwarvenMithrilTextColor", 0);
+		loadSetting("dwarvenMithrilCountColor", 6);
+		
 		loadSetting("dwarvenTimerToggle", false);
 		loadSetting("dwarvenTimerTextColor", 0);
+		loadSetting("dwarvenTimerDing", false);
 		loadSetting("dwarvenTimerX", 0);
 		loadSetting("dwarvenTimerY", 0);
-		loadSetting("dwarvenTimerDing", false);
 		
 		loadSetting("dwarvenTrackToggle", false);
-		loadSetting("dwarvenTrackX", 0);
-		loadSetting("dwarvenTrackY", 0);
+		loadSetting("dwarvenTrackCommissionColor", 9);
+		loadSetting("dwarvenTrackQuestName", 0);
 		loadSetting("dwarvenTrackBarToggle", true);
 		loadSetting("dwarvenTrackBorderColor", 6);
 		loadSetting("dwarvenTrackYesColor", 5);
-		loadSetting("dwarvenTrackNoColor", 13);
+		loadSetting("dwarvenTrackNoColor", 14);
 		
 		loadSetting("dwarvenFuelToggle", false);
 		loadSetting("dwarvenOnlyFuel", true);
-		loadSetting("dwarvenFuelX", 0);
-		loadSetting("dwarvenFuelY", 0);
+		loadSetting("dwarvenFuelDurr", true);
+		loadSetting("dwarvenFuelGui", true);
+		
+		loadSetting("dwarvenFuelDrillColor", 0);
+		loadSetting("dwarvenFuelGuiPrimeTenColor", 1);
+		loadSetting("dwarvenFuelGuiSecondTenColor", 2);
+		loadSetting("dwarvenFuelGuiPrimeHalfColor", 3);
+		loadSetting("dwarvenFuelGuiSecondHalfColor", 4);
+		loadSetting("dwarvenFuelGuiPrimeFullColor", 5);
+		loadSetting("dwarvenFuelGuiSecondFullColor", 6);
+		
+		loadSetting("dwarvenTeleport", false);
+		loadSetting("dwarvenTeleportGoblin", false);
+		loadSetting("dwarvenTeleportRaffle", false);
+		loadSetting("dwarvenTeleportQuest", true);
+		loadSetting("dwarvenTeleportNotif", true);
 		
 		loadSetting("pickTimerToggle", false);
+		loadSetting("pickTimerGui", true);
 		loadSetting("pickTimerTextColor", 7);
 		loadSetting("pickActiveTimerTextColor", 3);
 		loadSetting("pickTimerX", 0);
 		loadSetting("pickTimerY", 0);
-		loadSetting("pickTimerDwarven", true);
 		loadSetting("pickTimerHolding", true);
+		
+		loadSetting("pickTimerCircle", true);
+		loadSetting("pickTimerCircleAcc", 15);
+		loadSetting("pickTimerCircleRadius", 11);
+		loadSetting("pickTimerCircleActive", "0.0;1.0;0.0");
+		loadSetting("pickTimerCircleCd", "0.0;1.0;1.0");
+		loadSetting("pickTimerCircleReady", "1.0;1.0;0.0");
+		
 
 		loadSetting("puzzlerSolver", true);
+		loadSetting("fetchurSolver", true);
+		loadSetting("blockHoeClicks", true);
+		loadSetting("blocksInWayMsgs", true);
+		loadSetting("blockedQuickCrafts", ";;;");
+		loadSetting("toggleBlockedQuickCrafts", true);
 		
+		loadSetting("dwarvenCommBgToggle", true);
+		loadSetting("dwarvenCommBgColor", "0.0;1.0;0.0");
+		
+		//QOL
+		loadSetting("jerryTimerToggle", false);
+		
+		loadSetting("disableSuperboomPickups", false);
 		loadSetting("easterEggsFound", "???;???");
 		loadSetting("npcDialogueToggle", true);
-		
-		
-		
-		loadAchieve("fifty_launches");
-		
+		loadSetting("disableChatMessages", true);
+		loadSetting("compactToggle", false);
+		loadSetting("pickReminderToggle", false);
+		loadSetting("disableAutopetMsgs", false);
 		
 		
 		
@@ -121,7 +165,15 @@ public class ConfigList {
 
 			try {
 			if(d.get(i) instanceof String) { currValue = DataGetter.findStr(c.get(i)); if(currValue.equals("null")) { currValue = d.get(i); }}
-			else if(d.get(i) instanceof Boolean) { currValue = DataGetter.findBool(c.get(i)); if(currValue == null) { currValue = d.get(i); }}
+			else if(d.get(i) instanceof Boolean) { 
+				
+				currValue = DataGetter.findBool(c.get(i)); 
+				
+				if(currValue == null) { 
+					currValue = d.get(i); 
+				}
+				
+			}
 			
 			else if(d.get(i) instanceof Integer) { currValue = DataGetter.findInt(c.get(i)); if(Integer.parseInt(currValue+"") == -69) { currValue = d.get(i); }}
 			} catch(Exception e) {currValue = d.get(i);}

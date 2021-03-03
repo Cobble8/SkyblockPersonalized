@@ -13,7 +13,10 @@ public class CheckAPIKey {
 		String file = "{\"success\":false,\"cause\":\"Invalid API key\"}";
 		try {
 		file = HttpClient.readPage("https://api.hypixel.net/player?key="+APIKey+"&uuid=c9385237ccc74843b2c6c19385bce60a");
-		
+		JsonParser parser = new JsonParser();
+		JsonElement fileAsJson = parser.parse(file.toString());
+		Boolean success = fileAsJson.getAsJsonObject().get("success").getAsBoolean();
+		if(success) { validAPIKey = true; }
 		} catch(NullPointerException e) {
 			return;
 		} catch(IllegalArgumentException e) {
@@ -22,10 +25,7 @@ public class CheckAPIKey {
 			validAPIKey = false;
 		}
 		
-		JsonParser parser = new JsonParser();
-		JsonElement fileAsJson = parser.parse(file.toString());
-		Boolean success = fileAsJson.getAsJsonObject().get("success").getAsBoolean();
-		if(success) { validAPIKey = true; }
+
 	}
 	
 	

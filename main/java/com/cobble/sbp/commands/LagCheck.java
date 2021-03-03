@@ -1,8 +1,12 @@
 package com.cobble.sbp.commands;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
 
 import net.minecraft.client.Minecraft;
@@ -29,9 +33,14 @@ public class LagCheck extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-		Utils.sendMessage("Note: Updates on login");
-		Utils.sendMessage("Total Player Count: "+Minecraft.getMinecraft().getCurrentServerData().populationInfo);
-		Utils.sendMessage("Your Ping: "+Minecraft.getMinecraft().getCurrentServerData().pingToServer);
+		if(!Minecraft.getMinecraft().isSingleplayer()) {
+			Utils.sendMessage("Note: Updates on login");
+			Utils.sendMessage("Total Player Count: "+Minecraft.getMinecraft().getCurrentServerData().populationInfo);
+			Utils.sendMessage("Your Ping: "+Minecraft.getMinecraft().getCurrentServerData().pingToServer);
+		} else {
+			throw new CommandException("This command doesn't fucking exist!");
+		}
+
 	}
 	
 	@Override

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.cobble.sbp.events.RenderGuiEvent;
 import com.cobble.sbp.gui.menu.settings.SettingMenu;
+import com.cobble.sbp.threads.onetimes.RickRolledThread;
 import com.cobble.sbp.utils.Reference;
 
 import net.minecraft.command.CommandBase;
@@ -31,10 +32,13 @@ public class Main extends CommandBase {
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
 		
+		
 
 		RenderGuiEvent.helpMenu=true;
 		SettingMenu.fadeIn = 0;
 		SettingMenu.fadeInFrames=0;
+		
+		return;
 	}
 	
 	@Override

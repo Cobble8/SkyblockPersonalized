@@ -8,11 +8,9 @@ import org.lwjgl.input.Mouse;
 
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.events.RenderGuiEvent;
 import com.cobble.sbp.gui.screen.PuzzleImage;
-import com.cobble.sbp.gui.screen.dwarven.DwarvenDrillFuel;
+import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenPickaxeTimer;
-import com.cobble.sbp.gui.screen.dwarven.DwarvenQuestTracker;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTimer;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Reference;
@@ -28,10 +26,11 @@ public class SettingMoveAll extends GuiScreen {
 	public static ArrayList<String> settingNames = new ArrayList();
 	public static ArrayList<String> settingCoords = new ArrayList();
 	public static ArrayList<String> settingIDs = new ArrayList();
-	private static int selectedOption = settingCoords.size()+10;
+	public static int selectedOption = settingCoords.size()+10;
+	public static ArrayList<Integer> settingWidths = new ArrayList();
+	public static ArrayList<Integer> settingHeights = new ArrayList();
+	
 	private static Boolean isMouseDown = false;
-	ArrayList<Integer> settingWidths = new ArrayList();
-	ArrayList<Integer> settingHeights = new ArrayList();
 	Boolean movingOption = false;
 	int selectedXCoord = 0;
 	int selectedYCoord = 0;
@@ -45,13 +44,13 @@ public class SettingMoveAll extends GuiScreen {
 		yList.clear();
 		
 		selectedOption = settingCoords.size()+10;
-		settingWidths.clear();
-		settingHeights.clear();
-		for(int i=0;i<settingCoords.size();i++) {
-			String[] splitCoords = settingCoords.get(i).split(";");
-			settingWidths.add(Integer.parseInt(splitCoords[0]));
-			settingHeights.add(Integer.parseInt(splitCoords[1]));
-		}
+		//settingWidths.clear();
+		//settingHeights.clear();
+		//for(int i=0;i<settingCoords.size();i++) {
+			//String[] splitCoords = settingCoords.get(i).split(";");
+			//settingWidths.add(Integer.parseInt(splitCoords[0]));
+			//settingHeights.add(Integer.parseInt(splitCoords[1]));
+		//}
 		
 		SettingMenu.settingsMenuOpen=false;
 		super.initGui();
@@ -66,7 +65,6 @@ public class SettingMoveAll extends GuiScreen {
 			this.drawDefaultBackground();
 		}
 		
-		//this.drawDefaultBackground();
 		GlStateManager.enableBlend();
 		
 		Boolean gridLocking = (Boolean) DataGetter.findBool("gridLockingToggle");
@@ -98,8 +96,8 @@ public class SettingMoveAll extends GuiScreen {
 					imgWidth = settingWidths.get(i);
 					imgHeight = settingHeights.get(i);
 				} catch(Exception e) { }
-				int x = Integer.parseInt(splitCoords[2]);
-				int y = Integer.parseInt(splitCoords[3]);
+				int x = Integer.parseInt(splitCoords[0]);
+				int y = Integer.parseInt(splitCoords[1]);
 				
 				xList.add(x);
 				yList.add(y);
@@ -115,7 +113,6 @@ public class SettingMoveAll extends GuiScreen {
 			yList.add(this.height);
 			yList.add(0);
 		}
-		//Utils.print(x1List);
 		
 		Boolean hoveredOption = false;
 		
@@ -133,8 +130,8 @@ public class SettingMoveAll extends GuiScreen {
 					imgWidth = settingWidths.get(i);
 					imgHeight = settingHeights.get(i);
 				} catch(Exception e) { }
-				int x = Integer.parseInt(splitCoords[2]);
-				int y = Integer.parseInt(splitCoords[3]);
+				int x = Integer.parseInt(splitCoords[0]);
+				int y = Integer.parseInt(splitCoords[1]);
 				int x2 = x+imgWidth;
 				int y2 = y+imgHeight;
 
@@ -206,7 +203,7 @@ public class SettingMoveAll extends GuiScreen {
 							mc.getTextureManager().bindTexture(settingBorder);
 						}
 						
-						settingCoords.set(selectedOption, (imgWidth-1)+";"+(imgHeight-1)+";"+xOff+";"+yOff);
+						settingCoords.set(selectedOption, xOff+";"+yOff);
 						ConfigHandler.newObject(id+"X", xOff);
 						ConfigHandler.newObject(id+"Y", yOff);
 					} else {
@@ -220,14 +217,6 @@ public class SettingMoveAll extends GuiScreen {
 				}
 				
 				String text = settingNames.get(i);
-				if(text.equals("Box Puzzle Solver") ) { text="Puzzle Solvers"; }
-				else if(text.equals("Ice Fill Solver")) { 
-					settingNames.remove(i);
-					settingIDs.remove(i);
-					settingCoords.remove(i);
-					
-					return; 
-					}
 				
 				
 				
@@ -287,17 +276,15 @@ public class SettingMoveAll extends GuiScreen {
 				PuzzleImage.xCoord = Integer.parseInt(DataGetter.find("puzzleX")+""); 
 				PuzzleImage.yCoord = Integer.parseInt(DataGetter.find("puzzleY")+""); 
 
-				DwarvenTimer.timerX = Integer.parseInt(DataGetter.find("dwarvenTimerX")+"");
-				DwarvenTimer.timerY = Integer.parseInt(DataGetter.find("dwarvenTimerY")+"");
 
-				DwarvenQuestTracker.questTrackX = Integer.parseInt(DataGetter.find("dwarvenTrackX")+"");
-				DwarvenQuestTracker.questTrackY = Integer.parseInt(DataGetter.find("dwarvenTrackY")+"");
-				
-				DwarvenDrillFuel.fuelX = Integer.parseInt(DataGetter.find("dwarvenFuelX")+"");
-				DwarvenDrillFuel.fuelY = Integer.parseInt(DataGetter.find("dwarvenFuelY")+"");
+				DwarvenGui.posX = Integer.parseInt(DataGetter.find("dwarvenGuiX")+"");
+				DwarvenGui.posY = Integer.parseInt(DataGetter.find("dwarvenGuiY")+"");
 
 				DwarvenPickaxeTimer.pickTimerX = Integer.parseInt(DataGetter.find("pickTimerX")+"");
 				DwarvenPickaxeTimer.pickTimerY = Integer.parseInt(DataGetter.find("pickTimerY")+"");
+				
+				DwarvenTimer.posX = DataGetter.findInt("dwarvenTimerX");
+				DwarvenTimer.posY = DataGetter.findInt("dwarvenTimerY");
 				
 				Minecraft.getMinecraft().displayGuiScreen(new SettingMenu());
 				Utils.playClickSound();
@@ -311,4 +298,21 @@ public class SettingMoveAll extends GuiScreen {
 		return false;
 	}
 
+	public static void addGui(String name, String id, String idList, int width, int height) {
+		String[] idList2 = idList.split(", ");
+		Boolean passThrough = false;
+		for(int i=0;i<idList2.length;i++) { if(DataGetter.findBool(idList2[i])) { passThrough = true; continue; } }
+		if(!passThrough) { return; }
+		int x = DataGetter.findInt(id+"X");
+		int y = DataGetter.findInt(id+"Y");
+		String coords = x+";"+y;
+		settingIDs.add(id);
+		settingCoords.add(coords);
+		settingNames.add(name);
+		settingWidths.add(width);
+		settingHeights.add(height);
+		
+	}
+	
+	
 }

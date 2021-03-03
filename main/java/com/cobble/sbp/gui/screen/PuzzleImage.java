@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 public class PuzzleImage extends Gui {
 	
 	public static String puzzlePicture = (String) DataGetter.find("imageID");
-	//public static int borderID = 1;
+	public static int puzzleCount = 0;
 	public static int xCoord = Integer.parseInt(DataGetter.find("puzzleX")+"");
 	public static int yCoord = Integer.parseInt(DataGetter.find("puzzleY")+"");
 	public static String puzzleColor = DataGetter.find("puzzleColor")+"";

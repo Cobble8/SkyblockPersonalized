@@ -17,11 +17,13 @@ import net.minecraft.util.ResourceLocation;
 
 public class DwarvenTimer extends Gui {
 
-	public static Boolean dwarvenTimerToggle = (Boolean) DataGetter.findBool("dwarvenTimerToggle");
-	public static int textColorID = Integer.parseInt(""+DataGetter.find("dwarvenTimerTextColor"));
-	public static int timerX = Integer.parseInt(""+DataGetter.find("dwarvenTimerX"));
-	public static int timerY = Integer.parseInt(""+DataGetter.find("dwarvenTimerY"));
-	public static Boolean dwarvenTimerDing = (Boolean) DataGetter.findBool("dwarvenTimerDing");
+	public static Boolean dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
+	public static int textColorID = DataGetter.findInt("dwarvenTimerTextColor");
+	public static Boolean dwarvenTimerDing = DataGetter.findBool("dwarvenTimerDing");
+	
+	public static int posX = DataGetter.findInt("dwarvenTimerX");
+	public static int posY = DataGetter.findInt("dwarvenTimerY");
+	
 	Boolean ding = false;
 	public static int lastEvent = 0;
 	
@@ -29,22 +31,21 @@ public class DwarvenTimer extends Gui {
 	
 	public DwarvenTimer(Minecraft mc) {
 		
-		if(SBP.sbLocation.equals("dwarvenmines")) {
+		
 			String output = ""; int currTime = (int) (System.currentTimeMillis()); int timeSince = 1200000-(currTime-lastEvent);
 			if(lastEvent == -69) {
 				output = "N/A";
-			} else {
-				if(timeSince < 0) {timeSince=0;}
-				output = Utils.secondsToTime(timeSince);
-			}
+			} else { if(timeSince < 0) {timeSince=0;} output = Utils.secondsToTime(timeSince); }
 			
-			
+			GlStateManager.color(1, 1, 1, 1);
 			mc.getTextureManager().bindTexture(goblin);
 			GlStateManager.enableBlend();
-			this.drawModalRectWithCustomSizedTexture(timerX, timerY, 0, 0, 25, 25, 25, 25);
+			this.drawModalRectWithCustomSizedTexture(posX, posY, 0, 0, 16, 16, 16, 16);
 			GlStateManager.disableBlend();
-			mc.fontRendererObj.drawString(Utils.getColorFromInt(textColorID)+output+Colors.WHITE, timerX+27, timerY+8, 0x10, true);
-		}
+			
+			String color = ""; Boolean chroma = true;
+			color = Utils.getColorFromInt(textColorID);
+			Utils.drawString(color+output, posX+19, posY+4);
 	}
 	
 }

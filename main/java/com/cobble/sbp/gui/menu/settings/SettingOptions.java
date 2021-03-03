@@ -86,6 +86,8 @@ public class SettingOptions extends GuiScreen {
 		ResourceLocation settingBorder = new ResourceLocation(Reference.MODID, "textures/"+SettingMenu.currTheme+"/menu/settingBorder.png");
 		ResourceLocation blank = new ResourceLocation(Reference.MODID, "textures/gui/imageBorder_1.png");
 		ResourceLocation plusMinus = new ResourceLocation(Reference.MODID, "textures/"+SettingMenu.currTheme+"/menu/plusminus.png");
+		ResourceLocation settingBg = new ResourceLocation(Reference.MODID, "textures/"+SettingMenu.currTheme+"/menu/settingBg.png");
+		
 		
 		int optionCount = settingOptions.get(selectedOption).get(0).length;
 		
@@ -179,22 +181,28 @@ public class SettingOptions extends GuiScreen {
 			
 			if(type.equals("color")) {
 				String[] temp = (DataGetter.find(id)+"").split(";");
-				
-				
-				float r=Float.parseFloat(temp[0]);
-				float g=Float.parseFloat(temp[1]);
-				float b=Float.parseFloat(temp[2]);
-				GlStateManager.color(r, g, b, 1);
-				mc.getTextureManager().bindTexture(blank);
-				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26), 0, 0, strWidth+8, 25, strWidth+8, 25);
-				GlStateManager.color(0, 0, 0, 1);
-				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26), 0, 0, strWidth+8, 2, strWidth+8, 2);
-				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26)+23, 0, 0, strWidth+8, 2, strWidth+8, 2);
-				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26), 0, 0, 2, 25, 2, 25);
 				String colorColor = Colors.DARK_BLUE;
-				if(r+b+g <= 1.2) {
-					colorColor = Colors.GOLD;
+				
+				try {
+					float r=Float.parseFloat(temp[0]);
+					float g=Float.parseFloat(temp[1]);
+					float b=Float.parseFloat(temp[2]);
+					GlStateManager.color(r, g, b, 1);
+					mc.getTextureManager().bindTexture(blank);
+					this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26), 0, 0, strWidth+8, 25, strWidth+8, 25);
+					if(r+b+g <= 1.2) {
+						colorColor = Colors.GOLD;
+					}
+				} catch(Exception e) {
+					colorColor = Colors.BLUE;
 				}
+				mc.getTextureManager().bindTexture(suggestionBar);
+				
+				GlStateManager.color(1, 1, 1, 1);
+				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26), 0, 0, strWidth+8, 2, 100, 25);
+				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26)+23, 0, 23, strWidth+8, 2, 100, 25);
+				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26), 0, 0, 2, 23, 100, 25);
+				
 				
 				
 				mc.fontRendererObj.drawString(colorColor+name+": "+Colors.WHITE, this.width/2-106, this.height/4+8+(y*26), 0x10, false);
@@ -225,17 +233,22 @@ public class SettingOptions extends GuiScreen {
 				varWidth = fontRendererObj.getStringWidth("Text Color")-2;
 			}
 			
-			mc.getTextureManager().bindTexture(searchBar);
+			mc.getTextureManager().bindTexture(suggestionBar);
 			int resetTextWidth = fontRendererObj.getStringWidth("Reset")+12;
 			for(int i=0;i<resetTextWidth;i++) {
-				this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset+i, this.height/4+(y*26), 333, 0, 1, 25, 375, 25);
+				this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset+i, this.height/4+(y*26)+2, 2, 2, 1, 21, 100, 25);
 			}
-			this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+resetTextWidth+varWidth+19+booleanOffset, this.height/4+(y*26), 0, 0, 1, 25, 375, 25);
-			mc.getTextureManager().bindTexture(suggestionBar);
-			this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset, this.height/4+(y*26), 0, 0, resetTextWidth, 2, 100, 25);
-			this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset, this.height/4+(y*26)+23, 0, 0, resetTextWidth, 2, 100, 25);
-			this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset, this.height/4+(y*26), 0, 0, 2, 23, 100, 25);
-			this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset+resetTextWidth-1, this.height/4+(y*26), 0, 0, 2, 23, 100, 25);
+			this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset, this.height/4+(y*26)+2, 0, 0, 2, 21, 100, 25);
+			this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset+resetTextWidth, this.height/4+(y*26)+2, 98, 0, 2, 21, 100, 25);
+			this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset+2, this.height/4+(y*26)+2, 0, 0, resetTextWidth-2, 2, 100, 25);
+			this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset+2, this.height/4+(y*26)+2+19, 0, 23, resetTextWidth-2, 2, 100, 25);
+			//this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset, this.height/4+(y*26), 0, 0, resetTextWidth, 2, 100, 25);
+			//this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset, this.height/4+(y*26)+23, 0, 0, resetTextWidth, 2, 100, 25);
+			//this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset, this.height/4+(y*26), 0, 0, 2, 23, 100, 25);
+			//this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth+varWidth+19+booleanOffset+resetTextWidth-1, this.height/4+(y*26), 0, 0, 2, 23, 100, 25);
+			
+			
+			
 			mc.fontRendererObj.drawString(resetColor+"Reset"+Colors.WHITE, this.width/2-110+strWidth+varWidth+19+booleanOffset+7, this.height/4+(y*26)+8, 0x10, false);
 			String resetCoord = (this.width/2-110+strWidth+varWidth+19+booleanOffset)+", "+(this.width/2-110+strWidth+varWidth+19+booleanOffset+resetTextWidth-1)+", "+(this.height/4+(y*26))+", "+(this.height/4+(y*26)+23);
 			resetCoords.set(y, resetCoord);
@@ -325,11 +338,14 @@ public class SettingOptions extends GuiScreen {
 				}
 				mc.getTextureManager().bindTexture(plusMinus);
 				this.drawModalRectWithCustomSizedTexture(this.width/2-98+strWidth, this.height/4+(y*26)+2, 0, 0, 100, 20, 118, 20);
-				float currSize = (Float.parseFloat(variable))/10;
+				
+				try {
+				float currSize = (Float.parseFloat(variable.replace(",", ".")))/10;
 				DecimalFormat df = new DecimalFormat("#.#");
 				currSize = Float.parseFloat(df.format(currSize));
 				
 				mc.fontRendererObj.drawString(textColor+(currSize+"x")+Colors.WHITE, this.width/2-97+strWidth+50-(fontRendererObj.getStringWidth("x"+currSize)/2), this.height/4+8+(y*26), 0x10, false);
+				} catch(Exception e) { mc.fontRendererObj.drawString(Colors.RED+"Size Failed", this.width/2-97+strWidth+50-(fontRendererObj.getStringWidth("Size Failed")/2), this.height/4+8+(y*26), 0x10, false);}
 			}
 			
 			else if(type.equals("textColor")) {
@@ -342,9 +358,15 @@ public class SettingOptions extends GuiScreen {
 				}
 				mc.getTextureManager().bindTexture(plusMinus);
 				this.drawModalRectWithCustomSizedTexture(this.width/2-98+strWidth, this.height/4+(y*26)+2, 0, 0, 100, 20, 118, 20);
-				String textColor2 = Utils.getColorFromInt(Integer.parseInt(variable));
+				int clr = Integer.parseInt(variable);
+
+
+				String colorTextColor = Utils.getColorFromInt(clr);
+				//Utils.print(colorTextColor);
 				
-				mc.fontRendererObj.drawString(textColor2+("Text Color")+Colors.WHITE, this.width/2-97+strWidth+50-(fontRendererObj.getStringWidth("Text Color")/2), this.height/4+8+(y*26), 0x10, false);
+				
+				Utils.drawString(colorTextColor+"Text Color", this.width/2-97+strWidth+50-(fontRendererObj.getStringWidth("Text Color")/2), this.height/4+8+(y*26));
+				Utils.drawString(Colors.WHITE, 0, 0);
 			}
 			
 			//LIST
@@ -415,6 +437,7 @@ public class SettingOptions extends GuiScreen {
 		if(mouseX >= this.width/2-50 && mouseX <= this.width/2+50 && mouseY >= this.height*7/8 && mouseY <= this.height*7/8+25) {
 			RenderGuiEvent.helpMenu=true;
 			Utils.playClickSound();
+			DataGetter.updateConfig(SettingMenu.currOptionName);
 		}
 		
 		//RESET BUTTON CLICK EVENT
@@ -476,6 +499,7 @@ public class SettingOptions extends GuiScreen {
 			if(type.startsWith("moveGUI") || type.equals("color") || type.equals("boolean") || type.equals("list")) {
 				xOffset = 10;
 			}
+			
 			//CLICK ON LIST
 			if(type.equals("list")) {
 				String[] list = (optionVals.get(i)+"").split(", ");
@@ -512,7 +536,17 @@ public class SettingOptions extends GuiScreen {
 				int val = Integer.parseInt(optionVals.get(i)+"");
 				if(mouseX >= x1-32 && mouseX <= x1+20-32 && mouseY >= this.height/4+(i*26)+2 && mouseY <= this.height/4+(i*26)+22) {
 					Utils.playClickSound();
-					if(val > 0) {
+					
+					if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+						if(val >= 5) {
+							optionVals.set(i, val-5);
+							ConfigHandler.newObject(id, val-5);
+						} else {
+							optionVals.set(i, 0);
+							ConfigHandler.newObject(id, 0);
+						}
+					}
+					else if(val > 0) {
 						optionVals.set(i, val-1);
 						ConfigHandler.newObject(id, val-1);
 					}
@@ -520,7 +554,18 @@ public class SettingOptions extends GuiScreen {
 				}
 				else if(mouseX >= x1+80-32 && mouseX <= x1+100-32 && mouseY >= this.height/4+(i*26)+2 && mouseY <= this.height/4+(i*26)+22) {
 					Utils.playClickSound();
-					if(val < 15) {
+					
+					if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+						if(val < 11) {
+							optionVals.set(i, val+5);
+							ConfigHandler.newObject(id, val+5);
+						} else {
+							optionVals.set(i, 16);
+							ConfigHandler.newObject(id, 16);
+						}
+					}
+					
+					else if(val < 16) {
 						optionVals.set(i, val+1);
 						ConfigHandler.newObject(id, val+1);
 					}
@@ -616,6 +661,7 @@ public class SettingOptions extends GuiScreen {
 		//ESCAPE
 		if(par2 == Keyboard.KEY_ESCAPE || (par2 == Keyboard.KEY_E && clickedOption >= (settingOptions.get(selectedOption).get(0).length)+1)) {
 			SettingMenu.settingsMenuOpen=false;
+			DataGetter.updateConfig(SettingMenu.currOptionName);
 			mc.thePlayer.closeScreen();
 			return;
 		}

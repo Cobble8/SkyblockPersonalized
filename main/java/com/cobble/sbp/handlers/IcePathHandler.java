@@ -4,6 +4,7 @@ package com.cobble.sbp.handlers;
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.RenderGuiEvent;
+import com.cobble.sbp.gui.screen.PuzzleImage;
 import com.cobble.sbp.threads.onetimes.DisablePuzzleImageThread;
 import com.cobble.sbp.utils.Utils;
 
@@ -59,7 +60,7 @@ public class IcePathHandler {
 					//ConfigHandler.newObject("puzzleScale", 15);
 					
 					//Checks block layout around player
-					SBP.puzzleCount++;
+					PuzzleImage.puzzleCount++;
 					DisablePuzzleImageThread.delay = Long.parseLong(DataGetter.findInt("puzzleDelay")+"");
 					Thread startDelay = new DisablePuzzleImageThread();
 					startDelay.start();

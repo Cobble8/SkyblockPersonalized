@@ -5,21 +5,18 @@ import java.util.ArrayList;
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.gui.screen.dwarven.DwarvenDrillFuel;
+import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenPickaxeTimer;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTimer;
-import com.cobble.sbp.gui.screen.dwarven.DwarvenTracker;
 import com.cobble.sbp.threads.onetimes.DialogueThread;
 import com.cobble.sbp.threads.onetimes.DungeonsPartyThread;
+import com.cobble.sbp.threads.onetimes.GarryTeleportThread;
 import com.cobble.sbp.threads.onetimes.JerryTimer;
-import com.cobble.sbp.threads.onetimes.PickaxeTimerThread;
 import com.cobble.sbp.threads.onetimes.RepartyThread;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Utils;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -34,6 +31,7 @@ public class ChatRecieveEvent {
 	@SubscribeEvent
 	public void chatRecieved(ClientChatReceivedEvent event) {
 		
+		/*
 		if(event.type == 2) {
 			try {
 			RenderGuiEvent.actionBar = event.message.getUnformattedText();
@@ -51,59 +49,46 @@ public class ChatRecieveEvent {
 				setActionBar = Utils.removeLastChars(setActionBar, 3);
 			}
 			
-			if(DwarvenDrillFuel.fuelToggle) {
+			if(DwarvenGui.fuelToggle) {
 				event.message = new ChatComponentText(setActionBar);
 			}
 			} catch(Exception e) { }
-		}
+		}*/
 		
 		
 		
 		
 		Minecraft mc = Minecraft.getMinecraft();
 		String message = Utils.unformatText(event.message.getUnformattedText());
+		if(message.startsWith("Your new API key is ")) {
+			String apiKey = message.replace("Your new API key is ", "");
+			ConfigHandler.newObject("APIKey", apiKey+"");
+			Utils.sendMessage("Your Hypixel API Key has been set.");
+		}
+		
 		
 		if(SBP.onSkyblock) {
 		
+			
+		//HOVER TEXT
 		String hover = "";
 		try {
 			hover = (event.message.getChatStyle().getChatHoverEvent().toString());
 			hover = hover.replace("HoverEvent{action=SHOW_TEXT, value='TextComponent{text='", "");
-			String temp[] = hover.split("'");
-			hover = temp[0];
-			hover = Utils.unformatText(hover);
-		} catch(Exception e) {
-			hover="";
+			String temp[] = hover.split("'"); hover = temp[0]; hover = Utils.unformatText(hover);
+		} catch(Exception e) { hover=""; }
+		
+		//DISABLE AUTOPET MESSAGES
+		if(message.startsWith("Autopet")) { if(DataGetter.findBool("disableAutopetMsgs")) { event.setCanceled(true); Utils.print("Cancelled Message: "+message);} }
+		
+		else if(message.contains("has obtained Superboom TNT!") && SBP.sbLocation.equals("catacombs")) {
+			if(DataGetter.findBool("disableSuperboomPickups") ) { event.setCanceled(true); Utils.print("Cancelled Message: "+message);}
 		}
-		
-		
-		
-		
-		
-		if(message.startsWith("Your new API key is ")) {
-			String apiKey = message.replace("Your new API key is ", "");
-			ConfigHandler.newObject("APIKey", apiKey+"");
-			Utils.sendMessage(Colors.YELLOW+"Your Hypixel API Key has been set.");
-			//event.setCanceled(true);
-			
-		}
-		
 		
 		//CANCEL COMMON DROPS
 		else if(message.startsWith("RARE DROP!")) {
 			String newMsg = message.replace("RARE DROP! ", "");
-			for(int j=0;j<DwarvenTracker.dwarvenLootList.size();j++) {
-				String input = Utils.unformatText(DwarvenTracker.dwarvenLootList.get(j));
-				if((newMsg.startsWith(input))) {
-					DwarvenTracker.dwarvenLootCount.set(j, DwarvenTracker.dwarvenLootCount.get(j)+1);
-				}
-			}
-			
-			
-			
 			if(DataGetter.findBool("disableCommonDrops")) {
-			
-				
 				String[] drops = (DataGetter.find("commonDropList")+"").split(", ");
 			
 				for(int i=0;i<drops.length;i++) {
@@ -115,80 +100,76 @@ public class ChatRecieveEvent {
 			}
 		}
 		
+		
+		//PICKAXE ABILITY COOLDOWN
 		else if(message.toLowerCase().contains("ability") || message.toLowerCase().endsWith("expired!") || message.toLowerCase().endsWith("available!")) {
-			if(message.startsWith("You used your Mining Speed Boost Pickaxe Ability!") || message.startsWith("You used your Pikobulus Pickaxe Ability!")) {
-				if(DataGetter.findBool("pickReminderToggle")) {
+			if(message.startsWith("You used your Mining Speed Boost Pickaxe Ability!")) {
+				if(!inMines()) { if(DataGetter.findBool("disablePickMsgs")) { Utils.print("Cancelled Message: "+message); event.setCanceled(true); } }
+				
+				else if(DataGetter.findBool("pickReminderToggle")) {
+					DwarvenPickaxeTimer.abilityName="speed";
 					DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis();
 					DwarvenPickaxeTimer.abilityUsed=true;
-				}
+					
+				} }
+			else if(message.startsWith("Your Mining Speed Boost has expired!")) {
+				if(!inMines()) { if(DataGetter.findBool("disablePickMsgs")) { Utils.print("Cancelled Message: "+message); event.setCanceled(true); } }
 				
-				
-				if(!inMines()) {
-					if(DataGetter.findBool("disablePickMsgs")) {
-						Utils.print("Cancelled Message: "+message);
-						event.setCanceled(true);
-					}
-				}
-			}
-			else if(message.startsWith("Your Mining Speed Boost has expired!") || message.startsWith("Your Pikobulus has expired!")) {
-				if((Boolean) DataGetter.findBool("pickReminderToggle")) {
+				else if((Boolean) DataGetter.findBool("pickReminderToggle")) {
 					DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis();
 					DwarvenPickaxeTimer.abilityUsed=false;
 				}
 				
-				if(!inMines()) {
-					if((Boolean) DataGetter.findBool("disablePickMsgs")) {
-						Utils.print("Cancelled Message: "+message);
-						event.setCanceled(true);
-					}
-				}
+				
 			} else if(message.startsWith("This ability is on cooldown for") || message.startsWith("Your Mining Speed Boost has expired!")) {
-				if(!inMines()) {
-					if((Boolean) DataGetter.findBool("disablePickMsgs")) {
-						Utils.print("Cancelled Message: "+message);
-						event.setCanceled(true);
-					}
-				}
-			} else if(message.startsWith("Mining Speed Boost is now available!") || message.startsWith("Pikobulus is now available!")) {
-				if(!inMines()) {
-					if(DataGetter.findBool("disablePickMsgs")) {
-						Utils.print("Cancelled Message: "+message);
-						event.setCanceled(true);
-					}
-				} else {
-					if(DataGetter.findBool("pickReminderToggle")) {
-						DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis()-1000000;
-						DwarvenPickaxeTimer.abilityUsed=false;
-						Utils.playDingSound();
-					}
+				if(!inMines()) { if(DataGetter.findBool("disablePickMsgs")) { Utils.print("Cancelled Message: "+message); event.setCanceled(true); } }
+				
+				
+			} else if(message.startsWith("Mining Speed Boost is now available!") || message.startsWith("Pikoblokus is now available!")) {
+				if(!inMines()) { if(DataGetter.findBool("disablePickMsgs")) { Utils.print("Cancelled Message: "+message); event.setCanceled(true); } } 
+				else if(DataGetter.findBool("pickReminderToggle")) {
+					DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis()-1000000;
+					DwarvenPickaxeTimer.abilityUsed=false;
+					Utils.playDingSound();
 				}
 			}
 		}
 		
+		//DISABLE AOTE BLOCKS IN WAY MSGS
+		else if(message.equals("There are blocks in the way!")) { if(DataGetter.findBool("blocksInWayMsgs")) { event.setCanceled(true); } }
+		
+		//DISABLE COMPACT MSGS
+		else if(message.startsWith("COMPACT!")) { if(DataGetter.findBool("compactToggle")) { Utils.print("Cancelled Message: "+message); event.setCanceled(true); } } 
+		
+		//DWARVEN EVENT TIMER
+		else if((message.replace(" ", "")).startsWith("2XPOWDERSTARTED!") || (message.replace(" ", "")).startsWith("GOBLINRAIDSTARTED!") || (message.replace(" ", "")).startsWith("RAFFLESTARTED!")) {
+			if(DwarvenTimer.dwarvenTimerDing) { Utils.playDingSound(); } DwarvenTimer.lastEvent=(int) (System.currentTimeMillis()); }
 		
 		
+		//AUTO TELEPORT TO GARRY
+		else if(message.contains("event starts in 20 seconds!") && !(message.contains("["))) {
+			if(DataGetter.findBool("dwarvenTeleport")) {
+				
+			if(message.toLowerCase().contains("goblin")) { 
+				if(DataGetter.findBool("dwarvenTeleportGoblin")) {
+				} else if(DwarvenGui.currCommissions.toLowerCase().replace(" ", "").contains("goblinraid")) {
+				} else { return; }
+				
+			} else if(message.toLowerCase().contains("raffle")) { 
+				if(DataGetter.findBool("dwarvenTeleportRaffle")) {
+				} else if(DwarvenGui.currCommissions.toLowerCase().contains("raffle")) {
+				} else { return; }
+				
+			} else { return; }
+			Thread teleportThread = new GarryTeleportThread(); teleportThread.start();
+		} }
 		
-		else if(message.startsWith("COMPACT!")) {	
-			if(DataGetter.findBool("compactToggle")) {
-				Utils.print("Cancelled Message: "+message);
-				event.setCanceled(true);
-			}
-		} else if((message.replace(" ", "")).startsWith("2XPOWDERSTARTED!") || (message.replace(" ", "")).startsWith("GOBLINRAIDSTARTED!") || (message.replace(" ", "")).startsWith("RAFFLESTARTED!")) {
-			
-			if(DwarvenTimer.dwarvenTimerDing) {
-				Utils.playDingSound();
-			}
-			
-			DwarvenTimer.lastEvent=(int) (System.currentTimeMillis());
-		}
 		
-		
+		//ADDITIONAL NPC DIALOUGE
 		else if(message.startsWith("[NPC]")) {
 			
 			String newMsg = message.replace("[NPC] ", "");
 			Boolean isDial = true;
-			
-			//if((Boolean) DataGetter.find("npcDialogueToggle")) {
 			
 			if(newMsg.startsWith("Gwendolyn: One day I will be useful.")) {
 				DialogueThread.dialType=Colors.DARK_PURPLE+"Gwendolyn";
@@ -228,10 +209,11 @@ public class ChatRecieveEvent {
 			
 			
 			
-			
+			//PUZZLER SOLVER
 			else if(newMsg.startsWith("Puzzler") && DataGetter.findBool("puzzlerSolver")) {
 				
-				char up = '\u25b2'; char right = '\u25b6'; char down = '\u25bc'; char left = '\u25c0'; char peace = '\u27bf';
+				char up = '\u25b2'; char right = '\u25b6'; char down = '\u25bc'; char left = '\u25c0'; char peace = '\u270c';
+				isDial=false;
 				if(newMsg.startsWith("Puzzler: "+right+up+"Come")) {RenderGuiEvent.puzzlerParticles=false; return;}
 				else if(newMsg.startsWith("Puzzler: "+right+right+"Nice!")) {RenderGuiEvent.puzzlerParticles=false; return;}
 				else if(newMsg.startsWith("Puzzler gave you 1,000 Mithril Powder for solving the puzzle!")) {RenderGuiEvent.puzzlerParticles=false; return;}
@@ -246,38 +228,42 @@ public class ChatRecieveEvent {
 				RenderGuiEvent.puzzlerZ=startZ+z;
 				RenderGuiEvent.puzzlerParticles=true;
 				Utils.print("Cancelled Message: "+message);
-			}
-			
-			
-			
-			else {
-				isDial = false;
-			}
-			
-			if(isDial && DataGetter.findBool("npcDialogueToggle")) {
-				
-				DialogueThread.currMessages++;
-				DialogueThread dial = new DialogueThread();
-				dial.start();
-			}
-			return;
-			
-		} else if(message.startsWith("Puzzler gave you 1000")) {
-			RenderGuiEvent.puzzlerParticles=false;
-			return;
-		}
-		
-		
-		else if(hover.startsWith("This happened thanks toZ")) {
-			if(DataGetter.findBool("jerryTimerToggle")) {
-				Utils.playDingSound();
-				Utils.playDingSound();
-				
-				Thread jerryTimer = new JerryTimer();
-				jerryTimer.start();
 				return;
-			}
-		}
+				
+				
+			} 
+			
+			//FETCHUR SOLVER
+			else if(newMsg.startsWith("Fetchur: ") && DataGetter.findBool("fetchurSolver")) {
+				isDial=false;
+				String fetch = newMsg.replace("Fetchur: ", "").toLowerCase();
+				String output = "";
+				if(fetch.contains("yellow")) { output = "20 Yellow Stained Glass (Not Panes)";
+				} else if(fetch.contains("circlular")) { output = "1 Compass";
+				} else if(fetch.contains("minerals")) { output = "20 Mithril";
+				} else if(fetch.contains("celebrations")) { output = "1 Firework Rocket";
+				} else if(fetch.contains("hot")) { output = "1 Cheap or Decent Coffee";
+				} else if(fetch.contains("tall")) { output = "1 Wooden Door";
+				} else if(fetch.contains("explosive")) { output = "1 Superboom TNT";
+				} else if(fetch.contains("wearable")) { output = "1 Pumpkin";
+				} else if(fetch.contains("shiny")) { output = "1 Flint and Steel";
+				} else if(fetch.contains("soft")) { output = "50 Red Wool";
+				} else if(fetch.contains("red")) { output = "50 Nether Quartz Ore";
+				} else if(fetch.contains("round")) { output = "16 Ender Pearls";
+				} else if(fetch.contains("brown")) { output = "3 Rabbit Feet";
+				}else { return; }
+				
+				
+				Utils.sendMessage(Colors.AQUA+"Fetchur "+Colors.YELLOW+"wants: "+Colors.AQUA+output);
+				return;
+			} else { isDial = false; }
+			
+			if(isDial && DataGetter.findBool("npcDialogueToggle")) { DialogueThread.currMessages++; DialogueThread dial = new DialogueThread(); dial.start();} return;
+			
+		} else if(message.startsWith("Puzzler gave you 1000")) { RenderGuiEvent.puzzlerParticles=false; return; }
+		
+		
+		else if(hover.startsWith("This happened thanks toZ")) { if(DataGetter.findBool("jerryTimerToggle")) { Utils.playDingSound(); Utils.playDingSound(); Thread jerryTimer = new JerryTimer(); jerryTimer.start(); return; } }
 		
 		
 		
@@ -327,48 +313,33 @@ public class ChatRecieveEvent {
 			else if(message.startsWith("Party Moderators")) {
 				String[] tempArray = removeRankFromString(message.replace("Party Moderators: ", "")).split(" "+dot+" ");
 				for(int i=0;i<tempArray.length;i++) {
-					Utils.print("Moderator "+i+" Name: "+tempArray[i]);
-					if(!Utils.checkIfArrayContains(curArrList, tempArray[i]) && !tempArray[i].equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
-						curArrList.add(tempArray[i]);
-					}
-				}
-				Utils.print("Cancelled Message: "+message);
-				event.setCanceled(true);
+					if(!Utils.checkIfArrayContains(curArrList, tempArray[i]) && !tempArray[i].equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) { curArrList.add(tempArray[i]); } }
+				Utils.print("Cancelled Message: "+message); event.setCanceled(true);
 			}
 			else if(message.replace(" ", "").equals("")) {
 				Utils.print("Cancelled Message: "+message);
 				event.setCanceled(true);
 			} else if(message.startsWith("You are not in a party right now.") || message.startsWith("You are not currently in a party.")) {
-				DungeonsPartyThread.partyMemberList.clear();
-				RepartyThread.nameList.clear();
-				//Utils.sendMessage(""+togglePartyMessage);
-				if(togglePartyMessage) {
-					Utils.print("Cancelled Message: "+message);
-					event.setCanceled(true);
-				}
+				DungeonsPartyThread.partyMemberList.clear(); RepartyThread.nameList.clear();
+				if(togglePartyMessage) { Utils.print("Cancelled Message: "+message); event.setCanceled(true); }
 			}
 		}
 
 		}
 	}
 	
+	//REMOVE RANKS FROM A STRING
 	public static String removeRankFromString(String string) {
 		String temp = string;
-		temp = temp.replace("[VIP] ", "");
-		temp = temp.replace("[VIP+] ", "");
-		temp = temp.replace("[MVP] ", "");
-		temp = temp.replace("[MVP+] ", "");
-		temp = temp.replace("[MVP++] ", "");
+		temp = temp.replace("[VIP] ", ""); temp = temp.replace("[VIP+] ", ""); temp = temp.replace("[MVP] ", ""); temp = temp.replace("[MVP+] ", ""); temp = temp.replace("[MVP++] ", "");
 		return temp;
 	}
 	
+	
+	//CHECK IF IN MINING AREA
 	public static Boolean inMines() {
 		Boolean output = false;
-		if(SBP.sbLocation.equals("dwarvenmines") || SBP.sbLocation.equals("deepcaverns") || SBP.sbLocation.equals("goldmine")) {
-			output = true;
-		}
-		return output;
-		
+		if(SBP.sbLocation.equals("dwarvenmines") || SBP.sbLocation.equals("deepcaverns") || SBP.sbLocation.equals("goldmine")) { output = true; } return output;
 	}
 	
 }

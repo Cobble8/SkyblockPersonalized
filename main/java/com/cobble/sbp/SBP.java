@@ -1,17 +1,22 @@
 package com.cobble.sbp;
 
+import com.cobble.sbp.commands.Bedwars;
 import com.cobble.sbp.commands.Dungeons;
 import com.cobble.sbp.commands.GetConfig;
 import com.cobble.sbp.commands.LagCheck;
 import com.cobble.sbp.commands.Main;
 import com.cobble.sbp.commands.Reparty;
+import com.cobble.sbp.commands.SetConfig;
 import com.cobble.sbp.commands.Silverfish;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.ChatRecieveEvent;
+import com.cobble.sbp.events.MenuClickEvent;
 import com.cobble.sbp.events.PlayerLoginEvent;
+import com.cobble.sbp.events.PressKeyEvent;
 import com.cobble.sbp.events.RenderGuiEvent;
-import com.cobble.sbp.gui.screen.dwarven.DwarvenTracker;
+import com.cobble.sbp.handlers.KeyBindingHandler;
+import com.cobble.sbp.handlers.UpdateCheckHandler;
 import com.cobble.sbp.utils.CheckAPIKey;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -28,33 +33,35 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class SBP
 {
 	public static Boolean firstLaunch = false;
-	public static int puzzleCount = 0;
 	public static Boolean onSkyblock = false;
 	public static String sbLocation = "hub";
-	public static int width = 0;
-	public static int height = 0;
+	public static String titleString = "";
+	public static double titleScale = 4.0;
+	
 	
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) throws Exception
     {
 		
+		UpdateCheckHandler.check();
+		
 		ConfigHandler.registerConfig();
 		DataGetter.updateConfig("main");
 		ClientCommandHandler.instance.registerCommand(new Main());
-		
+		KeyBindingHandler.register();
+		MinecraftForge.EVENT_BUS.register(new PressKeyEvent());
 		if(DataGetter.findBool("modToggle")) {
 			ClientCommandHandler.instance.registerCommand(new GetConfig());
+			ClientCommandHandler.instance.registerCommand(new SetConfig());
 			ClientCommandHandler.instance.registerCommand(new LagCheck());
 			ClientCommandHandler.instance.registerCommand(new Silverfish());
-			if(DataGetter.findBool("dungeonsCommandToggle")) {
-				ClientCommandHandler.instance.registerCommand(new Dungeons());
-			}
-			
+			if(DataGetter.findBool("dungeonsCommandToggle")) { ClientCommandHandler.instance.registerCommand(new Dungeons()); }
+			ClientCommandHandler.instance.registerCommand(new Bedwars());
 		
-			if(DataGetter.findBool("repartyCommandToggle")) {
-				ClientCommandHandler.instance.registerCommand(new Reparty());
-			}
+			if(DataGetter.findBool("repartyCommandToggle")) { ClientCommandHandler.instance.registerCommand(new Reparty()); }
 			Utils.print(Reference.NAME+" Pre-Initialized");
+			
+			
 		}
 		
         
@@ -96,7 +103,7 @@ public class SBP
     	if(DataGetter.findBool("modToggle")) {
     		MinecraftForge.EVENT_BUS.register(new ChatRecieveEvent());
     		MinecraftForge.EVENT_BUS.register(new PlayerLoginEvent());
-    		//DwarvenTracker.loadDwarvenLoot();
+    		MinecraftForge.EVENT_BUS.register(new MenuClickEvent());
     		Utils.print(Reference.NAME+" Post-Initialized");
     		//Quests.launchAchievements();
     		

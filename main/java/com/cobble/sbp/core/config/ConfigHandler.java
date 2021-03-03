@@ -9,9 +9,8 @@ import com.cobble.sbp.core.ConfigList;
 import com.cobble.sbp.events.RenderGuiEvent;
 import com.cobble.sbp.gui.menu.settings.SettingMenu;
 import com.cobble.sbp.gui.screen.PuzzleImage;
-import com.cobble.sbp.gui.screen.dwarven.DwarvenDrillFuel;
+import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenPickaxeTimer;
-import com.cobble.sbp.gui.screen.dwarven.DwarvenQuestTracker;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTimer;
 import com.cobble.sbp.simplejson.JSONObject;
 import com.cobble.sbp.utils.Reference;
@@ -121,11 +120,13 @@ public class ConfigHandler {
 	
 	public static void updateConfig(String c) {
 		try {
-			DwarvenTimer.dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
-			DwarvenQuestTracker.questTrackToggle = DataGetter.findBool("dwarvenTrackToggle");
-			DwarvenDrillFuel.fuelToggle =  DataGetter.findBool("dwarvenFuelToggle");
+			//DwarvenTimer.dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
+			DwarvenGui.commTrackToggle = DataGetter.findBool("dwarvenTrackToggle");
+			DwarvenGui.fuelToggle =  DataGetter.findBool("dwarvenFuelToggle");
 			SettingMenu.modLaunchToggle = DataGetter.findBool("modLaunchToggle");
 			DwarvenPickaxeTimer.pickTimerToggle = DataGetter.findBool("pickReminderToggle");
+			DwarvenGui.mithrilToggle = DataGetter.findBool("dwarvenMithrilDisplay");
+			DwarvenTimer.dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
 			
 			
 			
@@ -136,6 +137,7 @@ public class ConfigHandler {
 			PuzzleImage.yCoord = DataGetter.findInt("puzzleY"); 
 			PuzzleImage.puzzleColor = DataGetter.findStr("puzzleColor")+"";
 			RenderGuiEvent.puzzleScale=126*(DataGetter.findInt("puzzleScale")/10);
+			
 		}
 		
 	
@@ -143,64 +145,56 @@ public class ConfigHandler {
 		else if(DwarvenTimer.dwarvenTimerToggle && c.equals("dwarvenTimerToggle")) {
 			DwarvenTimer.dwarvenTimerDing = DataGetter.findBool("dwarvenTimerDing");
 			DwarvenTimer.textColorID = DataGetter.findInt("dwarvenTimerTextColor");
-			DwarvenTimer.timerX = DataGetter.findInt("dwarvenTimerX");
-			DwarvenTimer.timerY = DataGetter.findInt("dwarvenTimerY");
+			DwarvenTimer.posX = DataGetter.findInt("dwarvenTimerX");
+			DwarvenTimer.posY = DataGetter.findInt("dwarvenTimerY");
 		}
 		
-		else if(DwarvenQuestTracker.questTrackToggle && c.equals("dwarvenTrackToggle")) {
-			DwarvenQuestTracker.questTrackBarToggle = DataGetter.findBool("dwarvenTrackBarToggle");
-			DwarvenQuestTracker.questTrackX = DataGetter.findInt("dwarvenTrackX");
-			DwarvenQuestTracker.questTrackY = DataGetter.findInt("dwarvenTrackY");
-			DwarvenQuestTracker.borderColorID = DataGetter.findInt("dwarvenTrackBorderColor");
-			DwarvenQuestTracker.yesColorID = DataGetter.findInt("dwarvenTrackYesColor");
-			DwarvenQuestTracker.noColorID = DataGetter.findInt("dwarvenTrackNoColor");
+		else if(DwarvenGui.commTrackToggle && c.equals("dwarvenTrackToggle")) {
+			DwarvenGui.commissionID = DataGetter.findInt("dwarvenTrackCommissionColor");
+			DwarvenGui.commNameID = DataGetter.findInt("dwarvenTrackQuestName");
+			DwarvenGui.commTrackBarToggle = DataGetter.findBool("dwarvenTrackBarToggle");
+			DwarvenGui.posX = DataGetter.findInt("dwarvenGuiX");
+			DwarvenGui.posY = DataGetter.findInt("dwarvenGuiY");
+			DwarvenGui.commBorderColorID = DataGetter.findInt("dwarvenTrackBorderColor");
+			DwarvenGui.commYesColorID = DataGetter.findInt("dwarvenTrackYesColor");
+			DwarvenGui.commNoColorID = DataGetter.findInt("dwarvenTrackNoColor");
 		}
 		
-		else if(DwarvenDrillFuel.fuelToggle && c.equals("dwarvenFuelToggle")) {
-			DwarvenDrillFuel.fuelX = DataGetter.findInt("dwarvenFuelX");
-			DwarvenDrillFuel.fuelY = DataGetter.findInt("dwarvenFuelY");
+		else if(DwarvenGui.fuelToggle && c.equals("dwarvenFuelToggle")) {
+			DwarvenGui.posX = DataGetter.findInt("dwarvenGuiX");
+			DwarvenGui.posY = DataGetter.findInt("dwarvenGuiY");
+			DwarvenGui.fuelGui = DataGetter.findBool("dwarvenFuelGui");
+			DwarvenGui.fuelDurr = DataGetter.findBool("dwarvenFuelDurr");
+			
+			DwarvenGui.fuelGuiDrillFuel = DataGetter.findInt("dwarvenFuelDrillColor");
+			DwarvenGui.fuelGuiPrimaryFull = DataGetter.findInt("dwarvenFuelGuiPrimeFullColor");
+			DwarvenGui.fuelGuiSecondaryFull = DataGetter.findInt("dwarvenFuelGuiSecondFullColor");
+			DwarvenGui.fuelGuiPrimaryHalf = DataGetter.findInt("dwarvenFuelGuiPrimeHalfColor");
+			DwarvenGui.fuelGuiSecondaryHalf = DataGetter.findInt("dwarvenFuelGuiSecondHalfColor");
+			DwarvenGui.fuelGuiPrimaryTen = DataGetter.findInt("dwarvenFuelGuiPrimeTenColor");
+			DwarvenGui.fuelGuiSecondaryTen = DataGetter.findInt("dwarvenFuelGuiSecondTenColor");
+			
+		} else if(DwarvenGui.mithrilToggle && c.equals("dwarvenMithrilDisplay")) {
+			DwarvenGui.posX = DataGetter.findInt("dwarvenGuiX");
+			DwarvenGui.posY = DataGetter.findInt("dwarvenGuiY");
+			DwarvenGui.mithrilTextColor = DataGetter.findInt("dwarvenMithrilTextColor");
+			DwarvenGui.mithrilCountColor = DataGetter.findInt("dwarvenMithrilCountColor");
 		}
 		
 		else if(DwarvenPickaxeTimer.pickTimerToggle && c.equals("pickReminderToggle")) {
 			DwarvenPickaxeTimer.pickTimerX = DataGetter.findInt("pickTimerX");
 			DwarvenPickaxeTimer.pickTimerY = DataGetter.findInt("pickTimerY");		
+			DwarvenPickaxeTimer.HotMLevel = DataGetter.findInt("dwarvenHOTMLevel");
 			DwarvenPickaxeTimer.pickTimerColorID = DataGetter.findInt("pickTimerTextColor");
 			DwarvenPickaxeTimer.pickActiveTimerColorID = DataGetter.findInt("pickActiveTimerTextColor");
-			DwarvenPickaxeTimer.onlyInDwarven = DataGetter.findBool("pickTimerDwarven");
 			DwarvenPickaxeTimer.onlyWhenHolding = DataGetter.findBool("pickTimerHolding");
-		}
-		
-		
-		
-		
-		
-		else if(c.equals("all")) {
-			PuzzleImage.xCoord = DataGetter.findInt("puzzleX"); 
-			PuzzleImage.yCoord = DataGetter.findInt("puzzleY"); 
-			PuzzleImage.puzzleColor = DataGetter.findStr("puzzleColor");
-			RenderGuiEvent.puzzleScale=126*DataGetter.findInt("puzzleScale")/10;
-			
-			DwarvenTimer.dwarvenTimerDing = DataGetter.findBool("dwarvenTimerDing");
-			DwarvenTimer.textColorID = DataGetter.findInt("dwarvenTimerTextColor");
-			DwarvenTimer.timerX = DataGetter.findInt("dwarvenTimerX");
-			DwarvenTimer.timerY = DataGetter.findInt("dwarvenTimerY");
-			
-			DwarvenQuestTracker.questTrackBarToggle = DataGetter.findBool("dwarvenTrackBarToggle");
-			DwarvenQuestTracker.questTrackX = DataGetter.findInt("dwarvenTrackX");
-			DwarvenQuestTracker.questTrackY = DataGetter.findInt("dwarvenTrackY");
-			DwarvenQuestTracker.borderColorID = DataGetter.findInt("dwarvenTrackBorderColor");
-			DwarvenQuestTracker.yesColorID = DataGetter.findInt("dwarvenTrackYesColor");
-			DwarvenQuestTracker.noColorID = DataGetter.findInt("dwarvenTrackNoColor");
-			
-			DwarvenDrillFuel.fuelX = DataGetter.findInt("dwarvenFuelX");
-			DwarvenDrillFuel.fuelY = DataGetter.findInt("dwarvenFuelY");
-			
-			DwarvenPickaxeTimer.pickTimerX = DataGetter.findInt("pickTimerX");
-			DwarvenPickaxeTimer.pickTimerY = DataGetter.findInt("pickTimerY");		
-			DwarvenPickaxeTimer.pickTimerColorID = DataGetter.findInt("pickTimerTextColor");
-			DwarvenPickaxeTimer.pickActiveTimerColorID = DataGetter.findInt("pickActiveTimerTextColor");
-			DwarvenPickaxeTimer.onlyInDwarven = DataGetter.findBool("pickTimerDwarven");
-			DwarvenPickaxeTimer.onlyWhenHolding = DataGetter.findBool("pickTimerHolding");
+			DwarvenPickaxeTimer.pickTimerGui = DataGetter.findBool("pickTimerGui");
+			DwarvenPickaxeTimer.circle = DataGetter.findBool("pickTimerCircle");
+			DwarvenPickaxeTimer.circleRadius = DataGetter.findInt("pickTimerCircleRadius");
+			DwarvenPickaxeTimer.circleAccuracy = DataGetter.findInt("pickTimerCircleAcc");
+			DwarvenPickaxeTimer.circleActiveColor = DataGetter.findStr("pickTimerCircleActive");
+			DwarvenPickaxeTimer.circleCdColor = DataGetter.findStr("pickTimerCircleCd");
+			DwarvenPickaxeTimer.circleReadyColor = DataGetter.findStr("pickTimerCircleReady");
 		}
 		
 		

@@ -9,7 +9,9 @@ public class LobbySwapEvent {
 	
 	public LobbySwapEvent() {
 		DwarvenTimer.lastEvent = -69;
-		DwarvenPickaxeTimer.lastUsed = (System.currentTimeMillis())-45000;
+		//DwarvenPickaxeTimer.lastUsed = (System.currentTimeMillis())-45000;
+		DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis();
+		DwarvenPickaxeTimer.abilityName="lobbySwap";
 	}
 	
 }
