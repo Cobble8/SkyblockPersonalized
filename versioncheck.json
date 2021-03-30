@@ -1,1 +1,6 @@
-{"rel": "1.5.1.0"}
+{
+  "rel": "1.5.1.0",
+  "activeDungeons": [
+    "catacombs"
+  ]
+}
