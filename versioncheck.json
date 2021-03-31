@@ -4,10 +4,10 @@
       "catacombs"
    ],
    "forceDisable":[
-      
+      "modToggle"
    ],
    "forceEnable":[
-      
+      "pickTimerToggle"
    ],
    "disabledVersions":[
       
