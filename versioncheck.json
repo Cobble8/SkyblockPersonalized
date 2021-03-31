@@ -1,15 +1,15 @@
 {
-  "rel": "1.5.1.0",
-  "activeDungeons": [
-    "catacombs"
-  ],
-  "forceDisable": [
+   "rel":"1.5.1.0",
+   "activeDungeons":[
+      "catacombs"
+   ],
+   "forceDisable":[
       
    ],
-  "forceEnable": [
-    
+   "forceEnable":[
+      
    ],
-  "disabledVersions": [
-    
-  ]
+   "disabledVersions":[
+      
+   ]
 }
