@@ -1,7 +1,8 @@
 {
    "rel":"1.5.1.0",
    "activeDungeons":[
-      "catacombs"
+      "catacombs",
+      "desert"
    ],
    "forceDisable":[
       
