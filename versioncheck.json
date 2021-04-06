@@ -4,10 +4,10 @@
       "catacombs"
    ],
    "forceDisable":[
-      
+      "onlyOnSkyblock"
    ],
    "forceEnable":[
-      
+      "gridLockingToggle"
    ],
    "disabledVersions":[
       
