@@ -4,11 +4,14 @@
       "catacombs"
    ],
    "forceDisable":[
+      
    ],
    "forceEnable":[
+      
    ],
    "disabledVersions":[
       
    ],
-   "#3": 6
+   "#3":6,
+   "dgnImgVer":1
 }
