@@ -4,10 +4,10 @@
       "catacombs"
    ],
    "forceDisable":[
-      
+      "boxSolverToggle"
    ],
    "forceEnable":[
-      
+      "iceSolverToggle"
    ],
    "disabledVersions":[
       
