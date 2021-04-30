@@ -4,16 +4,11 @@ import java.util.ArrayList;
 
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.RenderGuiEvent;
-import com.cobble.sbp.utils.Reference;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.ColorUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.util.ResourceLocation;
 
 public class DwarvenCompletedCommissions extends Gui {
 
@@ -33,7 +28,7 @@ public class DwarvenCompletedCommissions extends Gui {
 			try {
 				int currSlot = Integer.parseInt(completedSlots.get(i))-8;
 				
-				ArrayList<Float> color = Utils.getRGBColor(DataGetter.findStr("dwarvenCommBgColor"));
+				ArrayList<Float> color = ColorUtils.getColor(DataGetter.findStr("dwarvenCommBgColor"));
 				float r = color.get(0);
 				float g = color.get(1);
 				float b = color.get(2);

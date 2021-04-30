@@ -1,5 +1,6 @@
 package com.cobble.sbp.gui.menu.settings;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import org.lwjgl.input.Keyboard;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.RenderGuiEvent;
+import com.cobble.sbp.utils.ColorUtils;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -180,7 +182,7 @@ public class SettingOptions extends GuiScreen {
 			//VARIABLE NAME BOXES
 			
 			if(type.equals("color")) {
-				String[] temp = (DataGetter.find(id)+"").split(";");
+				/*String[] temp = (DataGetter.find(id)+"").split(";");
 				String colorColor = Colors.DARK_BLUE;
 				
 				try {
@@ -189,13 +191,16 @@ public class SettingOptions extends GuiScreen {
 					float b=Float.parseFloat(temp[2]);
 					GlStateManager.color(r, g, b, 1);
 					mc.getTextureManager().bindTexture(blank);
-					this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26), 0, 0, strWidth+8, 25, strWidth+8, 25);
+					
 					if(r+b+g <= 1.2) {
 						colorColor = Colors.GOLD;
 					}
 				} catch(Exception e) {
 					colorColor = Colors.BLUE;
-				}
+				}*/
+				mc.getTextureManager().bindTexture(blank);
+				ColorUtils.setColor(DataGetter.findStr(id));
+				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26), 0, 0, strWidth+8, 25, strWidth+8, 25);
 				mc.getTextureManager().bindTexture(suggestionBar);
 				
 				GlStateManager.color(1, 1, 1, 1);
@@ -203,9 +208,16 @@ public class SettingOptions extends GuiScreen {
 				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26)+23, 0, 23, strWidth+8, 2, 100, 25);
 				this.drawModalRectWithCustomSizedTexture(this.width/2-110, this.height/4+(y*26), 0, 0, 2, 23, 100, 25);
 				
+				int finTxtClr = 0xFFFFFF;
+				try {
+					ArrayList<Float> txtClr = ColorUtils.getColor(DataGetter.findStr(id));
+					int txtR = (int) (255*(1-txtClr.get(0))); int txtG = (int) (255*(1-txtClr.get(1))); int txtB = (int) (255*(1-txtClr.get(2)));
+					Color txtClrNew = new Color(txtR, txtG, txtB);
+					finTxtClr = txtClrNew.getRGB();
+				} catch(Exception e) {  }
 				
+				mc.fontRendererObj.drawString(name+": "+Colors.WHITE, this.width/2-106, this.height/4+8+(y*26), finTxtClr, false);
 				
-				mc.fontRendererObj.drawString(colorColor+name+": "+Colors.WHITE, this.width/2-106, this.height/4+8+(y*26), 0x10, false);
 				
 				GlStateManager.color(1, 1, 1, 1);
 			} else {
@@ -216,6 +228,8 @@ public class SettingOptions extends GuiScreen {
 				}
 				this.drawModalRectWithCustomSizedTexture(this.width/2-110+strWidth, this.height/4+(y*26), 90, 0, 10, 25, 100, 25);
 				mc.fontRendererObj.drawString(textColor+name+": "+Colors.WHITE, this.width/2-106, this.height/4+8+(y*26), 0x10, false);
+
+				
 			}
 			
 			//RESET BOX
@@ -365,8 +379,8 @@ public class SettingOptions extends GuiScreen {
 				//Utils.print(colorTextColor);
 				
 				
-				Utils.drawString(colorTextColor+"Text Color", this.width/2-97+strWidth+50-(fontRendererObj.getStringWidth("Text Color")/2), this.height/4+8+(y*26));
-				Utils.drawString(Colors.WHITE, 0, 0);
+				Utils.drawString(colorTextColor+"Text Color"+Colors.WHITE+"", this.width/2-97+strWidth+50-(fontRendererObj.getStringWidth("Text Color")/2), this.height/4+8+(y*26));
+				
 			}
 			
 			//LIST

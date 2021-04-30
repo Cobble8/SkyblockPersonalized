@@ -27,6 +27,7 @@ public class ConfigList {
 		loadSetting("modToggle", true);
 		loadSetting("APIKeyToggle", true);
 		loadSetting("APIKey", "NOT_SET");
+		loadSetting("APIWarning", false);
 		loadSetting("repartyCommandToggle", true);
 		loadSetting("pingDelay", 1000);
 		loadSetting("modLaunchToggle", true);
@@ -37,18 +38,19 @@ public class ConfigList {
 		loadSetting("gridLockingPx", 3);
 		loadSetting("textStyle", 0);
 		loadSetting("chromaSpeed", 4);
+		loadSetting("dgnImgVers", 0);
 		
 		//DUNGEONS
 		loadSetting("boxSolverToggle", false);
 		loadSetting("iceSolverToggle", false);
 		
 		loadSetting("scrtSize", 10);
-		loadSetting("scrtX", 0);
-		loadSetting("scrtY", 0);
-		loadSetting("scrtBgColor", "1.0;1.0;1.0");
+		loadCoords("scrt");
+		loadSetting("scrtBgColor", "0.0;0.0;0.0");
 		loadSetting("scrtTextColor", 0);
-		loadSetting("scrtTransparent", false);
 		loadSetting("scrtToggle", true);
+		loadSetting("scrtAutoDownload", false);
+		loadSetting("scrtAutoRemove", true);
 		
 		loadSetting("dungeonsCommandToggle", true);
 		loadSetting("disableCommonDrops", false);
@@ -56,17 +58,9 @@ public class ConfigList {
 		loadSetting("disablePickMsgs", false);
 		
 		
-		loadSetting("puzzleX", 0);
-		loadSetting("puzzleY", 0);
-		loadSetting("puzzleScale", 10);
-		loadSetting("puzzleDelay", 30);
-		loadSetting("puzzleColor", "0.0;0.0;0.0");
-		
-		
 		
 		//DWARVEN MINES
-		loadSetting("dwarvenGuiX", 0);
-		loadSetting("dwarvenGuiY", 0);
+		loadCoords("dwarvenGui");
 		loadSetting("dwarvenHOTMLevel", 0);
 		
 		loadSetting("dwarvenMithrilDisplay", true);
@@ -76,8 +70,7 @@ public class ConfigList {
 		loadSetting("dwarvenTimerToggle", false);
 		loadSetting("dwarvenTimerTextColor", 0);
 		loadSetting("dwarvenTimerDing", false);
-		loadSetting("dwarvenTimerX", 0);
-		loadSetting("dwarvenTimerY", 0);
+		loadCoords("dwarvenTimer");
 		
 		loadSetting("dwarvenTrackToggle", false);
 		loadSetting("dwarvenTrackCommissionColor", 9);
@@ -106,12 +99,11 @@ public class ConfigList {
 		loadSetting("dwarvenTeleportQuest", true);
 		loadSetting("dwarvenTeleportNotif", true);
 		
-		loadSetting("pickTimerToggle", false);
+		loadSetting("pickReminderToggle", false);
 		loadSetting("pickTimerGui", true);
 		loadSetting("pickTimerTextColor", 7);
 		loadSetting("pickActiveTimerTextColor", 3);
-		loadSetting("pickTimerX", 0);
-		loadSetting("pickTimerY", 0);
+		loadCoords("pickTimer");
 		loadSetting("pickTimerHolding", true);
 		
 		loadSetting("pickTimerCircle", true);
@@ -143,8 +135,15 @@ public class ConfigList {
 		loadSetting("pickReminderToggle", false);
 		loadSetting("disableAutopetMsgs", false);
 		
+		loadSetting("abilityDamageToggle", false);
+		loadCoords("abilityDamage", 100, 100);
+		loadSetting("abilityDamagePoof", 5);
 		
-		
+		loadSetting("comboMsgToggle", false);
+		loadCoords("comboMsg", 100, 100);
+		loadSetting("comboMsgPoof", 5);
+		loadSetting("werewolfToggle", false);
+		loadSetting("updateNotifs", true);
 		
 		
 		checkForMissingValues();
@@ -208,6 +207,12 @@ public class ConfigList {
         Utils.print("Finished checking for missing config values");
 	}
 	
-	
+	public static void loadCoords(String coordName, int x, int y) {
+		loadSetting(coordName+"X", x);
+		loadSetting(coordName+"Y", y);
+	}
+	public static void loadCoords(String coordName) {
+		loadCoords(coordName, 0, 0);
+	}
 	
 }

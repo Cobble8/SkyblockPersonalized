@@ -3,7 +3,9 @@ package com.cobble.sbp.gui.screen.dwarven;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.DataGetter;
+import com.cobble.sbp.gui.menu.settings.SettingGlobal;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Utils;
 
@@ -53,16 +55,15 @@ public class DwarvenGui extends Gui{
 	
 	
 	
-	
-	
-	public static void drawGuiElements() {
+	public DwarvenGui(int x, int y) {
 		String[] stringArray = currString.split(";");
-		for(int i=0;i<stringArray.length;i++) {
-			String currStr = stringArray[i]; 
-			Utils.drawString(currStr, posX, posY+(i*11));
+		int aO = 0;
+		if(x > SBP.width/2) {
+			aO=108;
 		}
-		Utils.drawString(Colors.WHITE, 0, 0);
+		Utils.drawString(stringArray, posX+aO, posY, SettingGlobal.textStyle, true);
 	}
+
 	
 	public static void manageDrillFuel() {
 		try {

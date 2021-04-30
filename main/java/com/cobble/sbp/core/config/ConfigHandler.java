@@ -3,15 +3,17 @@ package com.cobble.sbp.core.config;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.ConfigList;
-import com.cobble.sbp.events.RenderGuiEvent;
 import com.cobble.sbp.gui.menu.settings.SettingMenu;
-import com.cobble.sbp.gui.screen.PuzzleImage;
+import com.cobble.sbp.gui.screen.dungeons.SecretImage;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenPickaxeTimer;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTimer;
+import com.cobble.sbp.gui.screen.misc.AbilityMessages;
+import com.cobble.sbp.gui.screen.misc.ComboMessages;
 import com.cobble.sbp.simplejson.JSONObject;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -29,6 +31,9 @@ public class ConfigHandler {
 	public static JSONObject obj = new JSONObject();
 	public static JSONObject obj2 = new JSONObject();
 	public static Boolean firstLaunch = false;
+	
+	public static ArrayList<String> forceDisabled = new ArrayList();
+	public static ArrayList<String> forceEnabled = new ArrayList();
 	
 	public static void registerConfig() throws Exception {
 		firstLaunch = Utils.invertBoolean(Utils.fileTest("config/"+Reference.MODID+"/main.cfg"));
@@ -56,10 +61,22 @@ public class ConfigHandler {
 	}
 	
 	public static void newObject(String varName, Object var) {
+		Object val = var;
+		Boolean isBool = false;
+		try { Boolean tmp = Boolean.parseBoolean(var+""); isBool=true; } catch(Exception e) {}
+		if(isBool) {
+			for(int i=0;i<forceDisabled.size();i++) {
+				if(varName.equals(forceDisabled.get(i))) { val = false; }
+			}
+			for(int i=0;i<forceEnabled.size();i++) {
+				if(varName.equals(forceEnabled.get(i))) { val = true; }
+			}
+		}
+		
 		//obj.put(varName, var);
 		try {
 	        FileWriter file = new FileWriter("config/"+Reference.MODID+"/main.cfg");
-	        obj.put(varName, var);
+	        obj.put(varName, val);
 	        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	        JsonParser jp = new JsonParser();
             JsonElement je = jp.parse(obj.toJSONString());
@@ -120,26 +137,42 @@ public class ConfigHandler {
 	
 	public static void updateConfig(String c) {
 		try {
-			//DwarvenTimer.dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
+			DwarvenTimer.dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
 			DwarvenGui.commTrackToggle = DataGetter.findBool("dwarvenTrackToggle");
 			DwarvenGui.fuelToggle =  DataGetter.findBool("dwarvenFuelToggle");
 			SettingMenu.modLaunchToggle = DataGetter.findBool("modLaunchToggle");
 			DwarvenPickaxeTimer.pickTimerToggle = DataGetter.findBool("pickReminderToggle");
 			DwarvenGui.mithrilToggle = DataGetter.findBool("dwarvenMithrilDisplay");
 			DwarvenTimer.dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
-			
-			
-			
+			AbilityMessages.abilityMsgToggle = DataGetter.findBool("abilityDamageToggle");
+			ComboMessages.abilityMsgToggle = DataGetter.findBool("comboMsgToggle");
+		
 		if(c.equals(""));
 		
-		else if(c.equals("boxSolverToggle") || c.equals("iceSolverToggle")) {
-			PuzzleImage.xCoord = DataGetter.findInt("puzzleX"); 
-			PuzzleImage.yCoord = DataGetter.findInt("puzzleY"); 
-			PuzzleImage.puzzleColor = DataGetter.findStr("puzzleColor")+"";
-			RenderGuiEvent.puzzleScale=126*(DataGetter.findInt("puzzleScale")/10);
-			
+		//SECRET IMAGES
+		else if(c.equals("scrtToggle")) {
+			SecretImage.imgX = DataGetter.findInt("scrtX");
+			SecretImage.imgY = DataGetter.findInt("scrtY");
+			SecretImage.bgColorID = DataGetter.findStr("scrtBgColor");
+			SecretImage.secretSize = DataGetter.findInt("scrtSize");
+			SecretImage.scrtColorID = DataGetter.findInt("scrtTextColor");
 		}
 		
+
+		
+		//ABILITY MESSAGES
+		else if(AbilityMessages.abilityMsgToggle && c.equals("abilityDamageToggle")) {
+			AbilityMessages.x = DataGetter.findInt("abilityDamageX");
+			AbilityMessages.y = DataGetter.findInt("abilityDamageY");
+			AbilityMessages.delay = DataGetter.findInt("abilityDamagePoof");
+		}
+		
+		//COMBO MESSAGES
+		else if(ComboMessages.abilityMsgToggle && c.equals("comboMsgToggle")) {
+			ComboMessages.x = DataGetter.findInt("comboMsgX");
+			ComboMessages.y = DataGetter.findInt("comboMsgY");
+			ComboMessages.delay = DataGetter.findInt("comboMsgPoof");
+		}
 	
 		//DWARVEN TIMER
 		else if(DwarvenTimer.dwarvenTimerToggle && c.equals("dwarvenTimerToggle")) {
@@ -195,6 +228,11 @@ public class ConfigHandler {
 			DwarvenPickaxeTimer.circleActiveColor = DataGetter.findStr("pickTimerCircleActive");
 			DwarvenPickaxeTimer.circleCdColor = DataGetter.findStr("pickTimerCircleCd");
 			DwarvenPickaxeTimer.circleReadyColor = DataGetter.findStr("pickTimerCircleReady");
+		} else if(c.equals("scrtToggle")) {
+			SecretImage.bgColorID = DataGetter.findStr("scrtBgColor");
+			SecretImage.scrtColorID = DataGetter.findInt("scrtTextColor");
+			SecretImage.imgX = DataGetter.findInt("scrtX");
+			SecretImage.imgY = DataGetter.findInt("scrtY");
 		}
 		
 		

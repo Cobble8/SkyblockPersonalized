@@ -29,8 +29,8 @@ public class DwarvenTimer extends Gui {
 	
 	ResourceLocation goblin = new ResourceLocation(Reference.MODID, "textures/gui/goblin.png");
 	
-	public DwarvenTimer(Minecraft mc) {
-		
+	public DwarvenTimer(int x, int y) {
+		Minecraft mc = Minecraft.getMinecraft();
 		
 			String output = ""; int currTime = (int) (System.currentTimeMillis()); int timeSince = 1200000-(currTime-lastEvent);
 			if(lastEvent == -69) {

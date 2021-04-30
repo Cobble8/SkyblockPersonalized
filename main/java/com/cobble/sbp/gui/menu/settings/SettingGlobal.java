@@ -77,6 +77,7 @@ public class SettingGlobal extends GuiScreen {
 		textStyleNames.add("Bordered");
 		textStyleNames.add("Blank");
 		textStyleNames.add("Background");
+		textStyleNames.add("Tooltip");
 		String currTextStyle = textStyleNames.get(textStyle);
 		
 		
@@ -147,7 +148,7 @@ public class SettingGlobal extends GuiScreen {
 			}
 		}
 		else if(mouseX>=this.width/2-100-18 && mouseX<=this.width/2-100 && mouseY >= 142+12 && mouseY <= 142+20+12) {
-			if(textStyle < 3) {
+			if(textStyle < 4) {
 				textStyle++;
 				Utils.playClickSound();
 				ConfigHandler.newObject("textStyle", textStyle);

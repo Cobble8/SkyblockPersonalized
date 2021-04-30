@@ -1,6 +1,6 @@
 package com.cobble.sbp.handlers;
 
-import com.cobble.sbp.threads.onetimes.LoginThread;
+import com.cobble.sbp.threads.misc.LoginThread;
 import com.cobble.sbp.utils.HttpClient;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -30,7 +30,7 @@ public class UpdateCheckHandler {
 				Utils.print(Reference.NAME+" is up to date!");
 				return;
 			}
-			Utils.print(rel);
+			//Utils.print(rel);
 			rel = rel.replace(".", "/");
 			String[] relArr = rel.split("/");
 			
@@ -42,7 +42,7 @@ public class UpdateCheckHandler {
 			if(c != 0); {relType = "Beta Release";}
 			if(d != 0) {relType+=" (Bug Fix)";}
 			LoginThread.updateType = relType;
-			Utils.print(rel+": "+relType);
+			//Utils.print(rel+": "+relType);
 		} catch (Exception e) { Utils.print("Failed to check for update!"); e.printStackTrace(); }
 	}
 	

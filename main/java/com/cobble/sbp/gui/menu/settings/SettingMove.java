@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
+import com.cobble.sbp.events.RenderGuiEvent;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -25,7 +26,13 @@ public class SettingMove extends GuiScreen {
 	
 	@Override
 	public void initGui() {
-		
+		if(mc.gameSettings.guiScale == 2 && RenderGuiEvent.oldGuiScale != -1) {
+			mc.gameSettings.guiScale=RenderGuiEvent.oldGuiScale;
+			RenderGuiEvent.currSettingMenu="move";
+			RenderGuiEvent.helpMenu=true;
+			mc.thePlayer.closeScreen();
+		}
+		SettingMenu.settingsMenuOpen=false;
 		super.initGui();
 	}
 	
@@ -74,7 +81,9 @@ public class SettingMove extends GuiScreen {
 		if(par2 == Keyboard.KEY_ESCAPE) {
 			Utils.playClickSound();
 			Minecraft.getMinecraft().displayGuiScreen(new SettingOptions());
-			
+			if(RenderGuiEvent.oldGuiScale == 0 || RenderGuiEvent.oldGuiScale > 2) {
+				mc.gameSettings.guiScale = 2;
+			}
 		}
 	}
 	

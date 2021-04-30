@@ -21,6 +21,18 @@ public class DataGetter
 	 */
 	public static Boolean findBool(String boolName) {
 		try {
+			for(String var : ConfigHandler.forceEnabled) {
+				if(boolName.equals(var)) {
+					ConfigHandler.newObject(boolName, true);
+					return true;
+				}
+			}
+			for(String var : ConfigHandler.forceDisabled) {
+				if(boolName.equals(var)) {
+					ConfigHandler.newObject(boolName, false);
+					return false;
+				}
+			}
 		return Boolean.parseBoolean(find(boolName));
 		} catch (Exception e) {
 			try {

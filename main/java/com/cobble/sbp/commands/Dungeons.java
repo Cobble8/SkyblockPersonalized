@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.threads.onetimes.DungeonsFloorThread;
-import com.cobble.sbp.threads.onetimes.DungeonsPartyThread;
-import com.cobble.sbp.threads.onetimes.DungeonsThread;
+import com.cobble.sbp.threads.commands.DungeonsFloorThread;
+import com.cobble.sbp.threads.commands.DungeonsPartyThread;
+import com.cobble.sbp.threads.commands.DungeonsThread;
 import com.cobble.sbp.utils.Utils;
 
 import net.minecraft.command.CommandBase;

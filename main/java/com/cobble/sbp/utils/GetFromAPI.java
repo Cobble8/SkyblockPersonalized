@@ -2,7 +2,7 @@ package com.cobble.sbp.utils;
 
 import java.util.Arrays;
 
-import com.cobble.sbp.threads.onetimes.DungeonsFloorThread;
+import com.cobble.sbp.threads.commands.DungeonsFloorThread;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

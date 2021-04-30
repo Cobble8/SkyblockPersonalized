@@ -47,7 +47,7 @@ public class DwarvenPickaxeTimer extends Gui {
 	ResourceLocation settingBorder = new ResourceLocation(Reference.MODID, "textures/gui/imageBorder_1.png");
 	
 	
-	public DwarvenPickaxeTimer() {
+	public DwarvenPickaxeTimer(int x, int y) {
 		Minecraft mc = Minecraft.getMinecraft();
 		int lastUsed2 = (int) lastUsed;
 		int currTime = (int) System.currentTimeMillis();

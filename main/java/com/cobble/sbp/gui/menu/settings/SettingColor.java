@@ -2,12 +2,13 @@ package com.cobble.sbp.gui.menu.settings;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.cobble.sbp.core.config.ConfigHandler;
-import com.cobble.sbp.core.config.DataGetter;
+import com.cobble.sbp.utils.ColorUtils;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -54,16 +55,33 @@ public class SettingColor extends GuiScreen {
 		GlStateManager.color(0.1F, 0.1F, 0.1F, 0.7F);
 		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)-5, this.height/2-103, 0, 0, clickAnywhereWidth+10, 212, clickAnywhereWidth+10, 176);
 		GlStateManager.color(1, 1, 1, 1);
-		mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MODID, "textures/"+SettingMenu.currTheme+"/menu/switch.png"));
-		int transOffset = 0;
+		
+		drawButton("Transparent", (this.width/2)-70-1, this.height/2-61-1+144, mouseX, mouseY, 73, oldColorSave);
+		drawButton("Chroma", (this.width/2), this.height/2-61-1+144, mouseX, mouseY, 73, oldColorSave);
+
 		
 		
-		if(!DataGetter.findStr(id).equals("transparent")) {
-			transOffset = 20;
-		}
 		
-		this.drawModalRectWithCustomSizedTexture(this.width/2-20, this.height/2+this.height/6, 0, 0+transOffset, 40, 20, 40, 40);
 		
+		//PREVIEW COLOR BORDER MANAGER
+		mc.getTextureManager().bindTexture(color);
+		try {
+			ArrayList<Float> tmp = ColorUtils.getColor(oldColorSave);
+			float r = tmp.get(0); float g = tmp.get(1); float b = tmp.get(2);
+			GlStateManager.color(flipFloat(r), flipFloat(g), flipFloat(b), 1);
+		} catch(Exception e) { ColorUtils.resetColor(); }
+		
+		//PREVIEW BORDER
+		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13-1, this.height/2+3-20-1, 0, 0, 42, 1, 1, 1);
+		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13-1, this.height/2+3-20-1, 0, 0, 1, 42, 1, 1);
+		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13+40, this.height/2+3-20-1, 0, 0, 1, 42, 1, 1);
+		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+12, this.height/2+3-20+40, 0, 0, 42, 1, 1, 1);
+
+
+		//PREVIEW
+		ColorUtils.setColor(oldColorSave);
+		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13, this.height/2+3-20, 0, 0, 40, 40, 1, 1);
+
 		//MAKE SURE THE PAGE EXISTS
 		if(b >= 1.1F) { b=0.0F; } else if(b < 0) { b=1.0F; }
 		int currPage = (int) (b*10);
@@ -112,7 +130,7 @@ public class SettingColor extends GuiScreen {
 		}
 		String colorName = SettingOptions.settingName+" Colors";
 		
-		this.drawCenteredString(fontRendererObj, Colors.AQUA+"Transparent", this.width/2-(fontRendererObj.getStringWidth("Transparent"))+8, this.height/2+89, 0x10);
+		//this.drawCenteredString(fontRendererObj, Colors.AQUA+"Transparent", this.width/2-(fontRendererObj.getStringWidth("Transparent"))+8, this.height/2+89, 0x10);
 		this.drawCenteredString(fontRendererObj, Colors.YELLOW+Colors.BOLD+colorName, this.width/2, this.height/2-75-24, 0x10);
 		this.drawCenteredString(fontRendererObj, Colors.AQUA+"Scroll to see the next set of colors", this.width/2, this.height/2-75-12, 0x10);
 		this.drawCenteredString(fontRendererObj, Colors.GREEN+"Page: "+currPage+"/10", this.width/2, this.height/2-75, 0x10);
@@ -122,7 +140,7 @@ public class SettingColor extends GuiScreen {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		
-		if(mouseX >= this.width/2-20 && mouseX <= this.width/2+20 && mouseY >= this.height/2+this.height/6 && mouseY <= this.height/2+this.height/6+20) {
+		/*if(mouseX >= this.width/2-20 && mouseX <= this.width/2+20 && mouseY >= this.height/2+this.height/6 && mouseY <= this.height/2+this.height/6+20) {
 			Utils.playClickSound();
 			if(!DataGetter.findStr(id).equals("transparent")) {
 				ConfigHandler.newObject(id, "transparent");
@@ -133,7 +151,18 @@ public class SettingColor extends GuiScreen {
 			}
 			
 			return;
-		}
+		}*/
+		//drawButton(Colors.WHITE+"Transparent", (this.width/2)-70-1, this.height/2-61-1+144, mouseX, mouseY, 73);
+		//drawButton(Colors.WHITE+"Chroma", (this.width/2), this.height/2-61-1+144, mouseX, mouseY, 73);
+		if(mouseX >= (this.width/2)-70 && mouseX <= (this.width/2)-1 && mouseY >= this.height/2-61+144 && mouseY <= this.height/2-61+144+18-1) {
+			ConfigHandler.newObject(id, "transparent");
+			oldColorSave="transparent";
+			Utils.playClickSound();
+		} else if(mouseX >= (this.width/2)+1 && mouseX <= (this.width/2)+70 && mouseY >= this.height/2-61+144 && mouseY <= this.height/2-61+144+18-1) {
+			ConfigHandler.newObject(id, "chroma");
+			oldColorSave="chroma";
+			Utils.playClickSound();
+		} 
 		
 		
 		
@@ -190,5 +219,28 @@ public class SettingColor extends GuiScreen {
 	
 	private static float flipFloat(float floatVal) {
 		return 1-floatVal;
+	}
+	
+private static void drawButton(String text, int x, int y, int mouseX, int mouseY, int width, String selected) {
+		
+		Minecraft mc = Minecraft.getMinecraft();
+		mc.getTextureManager().bindTexture(SettingMenu.searchBar);
+		
+		GlStateManager.color(0.6F, 0.6F, 0.6F, 0.8F);
+		
+		if(mouseX >= x+1 && mouseX <= x+width-3 && mouseY >= y+1 && mouseY <= y+18) {
+			GlStateManager.color(1, 1, 1, 1);
+			Utils.print(text.toLowerCase()+", "+(selected));
+		} else if(text.toLowerCase().equals(selected)) {
+			GlStateManager.color(1, 1, 1, 1);
+		}
+		mc.currentScreen.drawModalRectWithCustomSizedTexture(x, y, 0, 0, 1, 20, 375, 20);
+		mc.currentScreen.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width-2, 20, 375, 20);
+		mc.currentScreen.drawModalRectWithCustomSizedTexture(x+width-2, y, 0, 0, 1, 20, 375, 20);
+		Utils.drawString(Colors.WHITE+text, (x+(width/2))-mc.fontRendererObj.getStringWidth(text)/2, y+6, 2);
+		GlStateManager.enableBlend();
+		
+
+		
 	}
 }

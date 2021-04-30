@@ -8,10 +8,13 @@ import org.lwjgl.input.Mouse;
 
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.gui.screen.PuzzleImage;
+import com.cobble.sbp.events.RenderGuiEvent;
+import com.cobble.sbp.gui.screen.dungeons.SecretImage;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenPickaxeTimer;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTimer;
+import com.cobble.sbp.gui.screen.misc.AbilityMessages;
+import com.cobble.sbp.gui.screen.misc.ComboMessages;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -40,6 +43,8 @@ public class SettingMoveAll extends GuiScreen {
 	
 	@Override
 	public void initGui() {
+		Minecraft mc = Minecraft.getMinecraft();
+		
 		xList.clear();
 		yList.clear();
 		
@@ -51,6 +56,13 @@ public class SettingMoveAll extends GuiScreen {
 			//settingWidths.add(Integer.parseInt(splitCoords[0]));
 			//settingHeights.add(Integer.parseInt(splitCoords[1]));
 		//}
+		
+		if(mc.gameSettings.guiScale == 2 && RenderGuiEvent.oldGuiScale != -1) {
+			mc.gameSettings.guiScale=RenderGuiEvent.oldGuiScale;
+			RenderGuiEvent.helpMenu=true;
+			RenderGuiEvent.currSettingMenu="moveall";
+			mc.thePlayer.closeScreen();
+		}
 		
 		SettingMenu.settingsMenuOpen=false;
 		super.initGui();
@@ -254,7 +266,7 @@ public class SettingMoveAll extends GuiScreen {
 				int textX = x+(imgWidth/2)-(fontRendererObj.getStringWidth(text) / 2);
 				int textY = y-4+(imgHeight/2);
 				
-				
+				//new MoveGuiCore(id, x, y);
 				mc.fontRendererObj.drawString(textColor+text, textX, textY, 0x10, true);
 			
 			} catch(Exception e) {
@@ -273,8 +285,9 @@ public class SettingMoveAll extends GuiScreen {
 				
 				SettingMenu.settingsMenuOpen=true;
 				
-				PuzzleImage.xCoord = Integer.parseInt(DataGetter.find("puzzleX")+""); 
-				PuzzleImage.yCoord = Integer.parseInt(DataGetter.find("puzzleY")+""); 
+				if(RenderGuiEvent.oldGuiScale == 0 || RenderGuiEvent.oldGuiScale > 2) {
+					mc.gameSettings.guiScale = 2;
+				}
 
 
 				DwarvenGui.posX = Integer.parseInt(DataGetter.find("dwarvenGuiX")+"");
@@ -285,6 +298,15 @@ public class SettingMoveAll extends GuiScreen {
 				
 				DwarvenTimer.posX = DataGetter.findInt("dwarvenTimerX");
 				DwarvenTimer.posY = DataGetter.findInt("dwarvenTimerY");
+				
+				AbilityMessages.x = DataGetter.findInt("abilityDamageX");
+				AbilityMessages.y = DataGetter.findInt("abilityDamageY");
+				
+				ComboMessages.x = DataGetter.findInt("comboMsgX");
+				ComboMessages.y = DataGetter.findInt("comboMsgY");
+				
+				SecretImage.imgX = DataGetter.findInt("scrtX");
+				SecretImage.imgY = DataGetter.findInt("scrtY");
 				
 				Minecraft.getMinecraft().displayGuiScreen(new SettingMenu());
 				Utils.playClickSound();

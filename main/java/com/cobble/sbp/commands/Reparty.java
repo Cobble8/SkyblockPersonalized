@@ -3,7 +3,7 @@ package com.cobble.sbp.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cobble.sbp.threads.onetimes.RepartyThread;
+import com.cobble.sbp.threads.commands.RepartyThread;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;

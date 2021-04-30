@@ -1,12 +1,9 @@
 package com.cobble.sbp.commands;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cobble.sbp.utils.Reference;
+import com.cobble.sbp.handlers.DownloadSecretsHandler;
 import com.cobble.sbp.utils.Utils;
 
 import net.minecraft.client.Minecraft;
@@ -18,7 +15,6 @@ public class LagCheck extends CommandBase {
 	ArrayList<String> aliases;
 	public LagCheck() {
 		aliases = new ArrayList();
-		//aliases.add("aliasHere");
 	}
 	
 	@Override
@@ -33,12 +29,16 @@ public class LagCheck extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+		
+		if(!sender.getDisplayName().getUnformattedText().equals("Cobble8")) {return;}
+		
 		if(!Minecraft.getMinecraft().isSingleplayer()) {
 			Utils.sendMessage("Note: Updates on login");
 			Utils.sendMessage("Total Player Count: "+Minecraft.getMinecraft().getCurrentServerData().populationInfo);
 			Utils.sendMessage("Your Ping: "+Minecraft.getMinecraft().getCurrentServerData().pingToServer);
 		} else {
-			throw new CommandException("This command doesn't fucking exist!");
+			new DownloadSecretsHandler().start();
+			//throw new CommandException("This command doesn't fucking exist!");
 		}
 
 	}

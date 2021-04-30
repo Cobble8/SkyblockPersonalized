@@ -30,7 +30,6 @@ public class Bedwars extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-		
 		if(args.length >= 1) {
 			String arg = args[0].toLowerCase();
 			if(arg.equals("solo") || arg.equals("solos") || arg.equals("1") || arg.equals("1v1")) {
