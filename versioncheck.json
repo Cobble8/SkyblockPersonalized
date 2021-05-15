@@ -1,6 +1,182 @@
 {
    "rel":"1.5.3.1",
-   "updateUrl": "https://github.com/Cobble8/SkyblockPersonalized/releases/download/1.5.3.1/1.8.9.SkyblockPersonalized.1.5.3.1.jar",
+   "updateUrl":"https://github.com/Cobble8/SkyblockPersonalized/releases/download/1.5.3.1/1.8.9.SkyblockPersonalized.1.5.3.1.jar",
+   "changelog":[
+      {
+         "0.0.1.0":[
+            "Basic Time"
+         ],
+         "0.0.2.0":[
+            "Added Chroma"
+         ],
+         "0.0.3.0":[
+            "/timetoggle - Toggles time",
+            "/rainbowtime - Toggles chroma"
+         ],
+         "0.0.4.0":[
+            "/militarytime - Toggles military time"
+         ],
+         "0.0.5.0":[
+            "/rainbowspeed - Changes the speed of chroma"
+         ],
+         "0.0.6.0":[
+            "/timecolor <hex value> - Sets color for time (when chroma is disabled)"
+         ],
+         "0.0.7.0":[
+            "/sbp - Opens settings menu, buttons/ways to change for all below settings",
+            "Text shadows are toggleable",
+            "Ability to have date/time/both",
+            "Added bold/italic/underline text modes"
+         ],
+         "0.0.7.1":[
+            "Fixed bold italic and underline setting buttons in GUI menu"
+         ],
+         "0.0.7.2":[
+            "Fixed bold italic and underline on GUI (when chroma is disabled)"
+         ],
+         "0.0.7.3":[
+            "/sbp now works on servers"
+         ],
+         "0.0.8.0":[
+            "Added X and Y coord sliders to the GUI menu",
+            "Fixed bold italic and underline in GUI"
+         ],
+         "0.0.8.1":[
+            "Got rid of useless commands (such as /timetoggle)",
+            "Updated mcmod.info",
+            "X and Y sliders adjust to monitor size",
+            "Cleaned up a bunch of code for better performance"
+         ],
+         "0.0.9.0":[
+            "/showconfig - Puts your config into chat for debugging"
+         ],
+         "0.0.10.0":[
+            "Reworked config system to be less bad",
+            "Fixed a massive bug causing the config to reset on new game launch"
+         ],
+         "0.0.11.0":[
+            "Added FPS to GUI",
+            "Added a universal settings menu that was revamped",
+            "Added the ability to add a prefix/suffix to whatever you're changing the setting of",
+            "Attempted use of color codes through '&' but doesn't work outside programming space"
+         ],
+         "0.0.11.1":[
+            "Fixed a small bug with the display"
+         ],
+         "0.0.11.2":[
+            "Fixed a bug causing the prefix/suffix to display twice"
+         ],
+         "0.0.12.0":[
+            "Added coords to GUI display",
+            "A bunch of backend stuff that makes it easier to add new settings"
+         ],
+         "1.0.0.0":[
+            "Removed all previous things but still kept some of the same backend stuff",
+            "/dungeons [player] - Shows general dungeon stats for a player",
+            "/sbpsetkey [APIKey] - Sets your hypixel API key"
+         ],
+         "1.0.0.1":[
+            "Removed all previous things but still kept some of the same backend stuff"
+         ],
+         "1.0.0.2":[
+            "Hopefully fixed /sbpsetkey"
+         ],
+         "1.1.0.0":[
+            "Cut the API calls for /dungeons from 2 to 1 reducing time for the command to work"
+         ],
+         "1.2.0.0":[
+            "First public release!",
+            "Made the command run in the background so it doesn't freeze your game",
+            "/disablesbp - Disables the mod until the mod is attempted to be used"
+         ],
+         "1.3.0.0":[
+            "/sbp - Acts as a hub for all other menu based features",
+            "/dungeons [player] [floor] - Returns info about the specified splayer for the specified floor",
+            "/versioncheck - Checks your mod version to see if there is an update (also available in /sbp)",
+            "/showconfig - Shows the config in chat for debugging",
+            "/silverfish - Shows an image of how to solve silverfish puzzle on screen for x seconds (you can set it to how ever long you want)",
+            "/sbphelp - Opens the help menu (can also be done in /sbp)",
+            "/autopuzzle - Displays information on the automatic puzzle solvers (also in /sbp)",
+            "/setimagedelay [seconds] - Set how long you want the puzzle solver images to remain on screen (also in /sbp)",
+            "/sbpforum - Gets a link to the mods forum post so you can share the mod with your friends",
+            "/toggleautopuzzle - Toggles the automatic puzzle solvers (also in /sbp) NOTE: They don't solve it for you, they show you how to solve it",
+            "/sbpsetkey [key] - Manually set your hypixel API key (also in /sbp)",
+            "On login, the mod will let you know if theres an update available",
+            "Will let you know if you need to set your API key",
+            "Config will now automatically update so you don't need to delete it every update",
+            "Automatically sets your API key when the user runs /api new",
+            "When enabled, automatically shows how to solve both the Box Puzzle and Ice Fill Puzzles"
+         ],
+         "1.4.0.0": [
+            "/dungeons party - Gets brief dungeon stats about the people in your party",
+            "Reworked /sbphelp",
+            "Added some extra ice-fill/box puzzle solvers combinations",
+            "Fixed a bunch of small weird glitches",
+            "Added support for external mod 'DungeonSecrets' - Basically an in game DungeonSecretGuide, will show images for your specified room for how to do the secrets",
+            "Command for this is: /secrets [roomSize] [secretCount]",
+            "Example: /secrets 1x1 3",
+            "Default keybinds are 'B' for previous, 'N' for next, and 'M' for get image off screen",
+            "You can change the color of the background and text of the secret imaeges",
+            "/reparty - Disbands and parties back all previous party members for dungeons",
+            "Did a lot of backend improvements"
+         ],
+         "1.4.1.0": [
+            "WARNING: THIS IS A BETA VERSION AND ISN'T FULLY FINISHED. It was rushed due to high demand for the Jerry timer",
+            "Reworked config system",
+            "MASSIVE gui changes (will explain more in full update)",
+            "Jerry Timer",
+            "Disable Compact Messages"
+         ],
+         "1.5.0.0": [
+            "Dwarven Mines Update:",
+            "",
+            "Complete Setting Menu revamp that includes:",
+            " - Search Bar",
+            " - Categories",
+            " - Subsettings",
+            " - Many subsettings types (text, toggle, number, color, text color, resize, move location)",
+            " - Each setting has an info icon and will give a brief description of the feature when you hover over it",
+            " - Move all enabled GUI elements in one spot with customizable grid snapping",
+            " - Scroll bar/scrolling",
+            " - Player preview",
+            " - Themes (Dark, Light, Time)",
+            " - Reset entire config button (with a confirm so you don't do it accidentally)",
+            "",
+            "Dwarven Mines:",
+            "Drill Fuel Display",
+            "Commission Display (with progress bars)",
+            "Puzzler Solver",
+            "Disable Mining Speed Messages outside mining areas",
+            "Pickaxe Ability Timer GUI element",
+            "",
+            "Other:",
+            "Toggleable Commands (requires restart) for conflicting mods",
+            "Additional NPC Dialogue",
+            "Mod Launch Counter",
+            "Only enable GUI in skyblock setting",
+            "Support for external mod DungeonSecrets"
+         ],
+         "1.5.1.0": [
+            "Fetchur Solver",
+            "Many FPS improvements",
+            "Added durability as drill fuel (conflicts w/ NEUs drill durability as pickaxe ability cd)",
+            "Added a circle around your crosshair for pickaxe ability cooldowns (if you are HotM5 or have skymall simply open /hotm to update it)",
+            "Added chroma text color",
+            "Added text styles",
+            "Added global settings (currently just text styles, more in the future)",
+            "Open config folder button, github button, discord button",
+            "Added compatability for resourcepacks like FurfSkyReborn",
+            "Added block farming hoe right clicks",
+            "Added mithril powder GUI element",
+            "Added an automatic garry teleport (along with only when you have specific commission for event) NO this isn't hacking, it just runs the command /garry which TPs you to garry",
+            "Added lock quick crafting slots (default key is 'L' and doesn't conflict with SBAs keybind for locking",
+            "Added disable superboom pickup messages",
+            "Added an update notifier back",
+            "Added backgrounds behind commissions",
+            "Fixed invisible GUI glitch"
+         ]
+      }
+   ],
    "activeDungeons":[
       "catacombs"
    ],
