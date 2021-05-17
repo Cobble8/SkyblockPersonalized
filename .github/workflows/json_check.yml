@@ -23,6 +23,7 @@ jobs:
           #!/bin/bash
           echo "Linting contents..."
           for filename in **/*.json ; do
+            echo "$filename"
             if ! python -mjson.tool "$filename" &> /dev/null ; then
                 echo "Linting $filename failed:"
                 python -mjson.tool "$filename" > /dev/null
