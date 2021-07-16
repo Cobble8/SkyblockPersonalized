@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.handlers.DownloadSecretsHandler;
-import com.cobble.sbp.utils.HttpClient;
-import com.cobble.sbp.utils.Reference;
-import com.cobble.sbp.utils.SecretUtils;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.handlers.UpdateCheckHandler;
+import com.cobble.sbp.utils.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -22,14 +20,13 @@ public class LaunchThread extends Thread {
 	public static int dgnImgVersCurr = DataGetter.findInt("dgnImgVers");
 	
 	public void run() {
-		
-		
+
+		UpdateCheckHandler.check();
 		
 		String file = "";
 		try { file = HttpClient.readPage("https://raw.githubusercontent.com/Cobble8/SkyblockPersonalized/main/versioncheck.json");
 		} catch (Exception e) { return; }
 		JsonElement info = new JsonParser().parse(file);
-		file="";
 		dgnImgVersLatest = info.getAsJsonObject().get("dgnImgVer").getAsInt();
 		JsonArray tmp = info.getAsJsonObject().get("forceDisable").getAsJsonArray();
 		ConfigHandler.forceDisabled.clear(); for(Object str : tmp) { ConfigHandler.forceDisabled.add((str+"").replace("\"", "")); }
@@ -37,8 +34,9 @@ public class LaunchThread extends Thread {
 		ConfigHandler.forceEnabled.clear(); for(Object str : tmp2) { ConfigHandler.forceEnabled.add((str+"").replace("\"", "")); }
 		JsonArray tmp3 = info.getAsJsonObject().get("disabledVersions").getAsJsonArray();
 		for(Object str : tmp3) {
-			if(((str+"").replace("\"", "")).equals(Reference.VERSION)) {
-				invalidVersion=true;
+			if (((str + "").replace("\"", "")).equals(Reference.VERSION)) {
+				invalidVersion = true;
+				break;
 			}
 		}
 		if(!invalidVersion) {

@@ -1,53 +1,107 @@
 package com.cobble.sbp.handlers;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class AnimationHandler {
 
 	public static long mainAnim = -1;
+	public static long bpsAnim = -1;
 	public static long animLast = 0;
 	private static long currAnimFrame = 0;
-	
+	public static double bpsLastX = 0;
+	public static double bpsLastY = 0;
+	public static double bpsLastZ = 0;
+	public static double playerSpeed = 0;
+	private static final ArrayList<Double> recentSpeeds = new ArrayList();
+
 	public AnimationHandler() {
 		if(currAnimFrame != System.currentTimeMillis()) {
 			currAnimFrame = System.currentTimeMillis();
 			long sub = currAnimFrame - (animLast);
 			animLast = currAnimFrame;
-			double tmp = sub/10;
+			//double tmp = sub/10;
 			
 			mainAnim+=sub;
+			bpsAnim+=sub;
 			if(AnimationHandler.mainAnim > 1000) {mainAnim = 0;}
+			if(bpsAnim > 250) {
+				bpsAnim=0;
+				try {
+					EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+					double xOff = player.posX-bpsLastX;
+					double yOff = player.posY-bpsLastY;
+					double zOff = player.posZ-bpsLastZ;
+					if(xOff < 0) {xOff*=-1;}
+					if(yOff < 0) {yOff*=-1;}
+					if(zOff < 0) {zOff*=-1;}
+
+					double tmpSpeed = (xOff+yOff+zOff)*4;
+					try {
+						recentSpeeds.add(Double.parseDouble(new DecimalFormat("#.##").format(tmpSpeed)));
+					} catch(Exception ignored) {}
+
+					while(recentSpeeds.size() > 5) {recentSpeeds.remove(0);}
+
+					double speed1 = getMode(recentSpeeds);
+
+					ArrayList<Double> tmp = new ArrayList<>();
+					for (Double recentSpeed : recentSpeeds) {
+						if (!(recentSpeed+"").equals(playerSpeed+"") && recentSpeed != 0) {
+							tmp.add(recentSpeed);
+						}  //Utils.print(recentSpeed+" == "+playerSpeed);
+
+					}
+					double speed2 = getMode(tmp);
+
+					playerSpeed = Math.min(speed1, speed2);
+					/*if(speed1 == speed2) {
+						Utils.sendMessage(speed1);
+						Utils.print(speed1+" : ");
+						Utils.print(recentSpeeds);
+						Utils.print(speed2+" : ");
+						Utils.print(tmp);
+					}*/
+					//if(playerSpeed == -1) {playerSpeed = tmpSpeed;}
+					//else if(playerSpeed > 10.2) {
+						//Utils.sendMessage(speed1+", "+speed2);
+					//}
+
+					bpsLastX = player.posX;
+					bpsLastY = player.posY;
+					bpsLastZ = player.posZ;
+				} catch(Exception ignored) {}
+
+
+			}
+
+		}
+		String outputSpeed = new DecimalFormat("#.#").format(playerSpeed);
+		//Utils.drawString(Colors.GOLD+"Speed: "+outputSpeed, 10, 10);
+	}
+
+	public static double getMode(ArrayList<Double> a) {
+		double output = a.get(0);
+		int maxSize = 0;
+		for(int i=0;i<a.size();i++) {
+			int count = 0;
+			double currNum = a.get(i);
+
+			for (Double aDouble : a) {
+				if (aDouble.equals(currNum)) {
+					count++;
+				}
+			}
+			if(count > maxSize) {
+				maxSize=count;
+				output=currNum;
+			}
 		}
 
-		/*
-		long currStage = AnimationHandler.mainAnim;
-		int tmpX = 0;
-		int tmpY = 0;
-		if(AnimationHandler.mainAnim <= 1000) {
-			tmpX = (int) (currStage/-10)+100;
-			tmpY = 100;
-			
-		} else if(AnimationHandler.mainAnim <= 2000) {
-			currStage-=1000;
-			tmpY = (int) (currStage/-10)+100;
-			
-		} else if(AnimationHandler.mainAnim <= 3000) {
-			currStage-=2000;
-			tmpX = (int) (currStage/10);
-			
-		} else if(AnimationHandler.mainAnim <= 4000) {
-			currStage-=3000;
-			tmpY = (int) (currStage/10);
-			tmpX = 100;
-		}
-		mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MODID, "textures/gui/imageBorder_1.png"));
-		GlStateManager.enableBlend();
-		GlStateManager.color(0, 0, 0, 0.8F);
-		mc.currentScreen.drawModalRectWithCustomSizedTexture(145+280, 145+50, 0, 0, 110, 110, 110, 110);
-		GlStateManager.color(0.3F, 0.7F, 1, 1);
-		mc.currentScreen.drawModalRectWithCustomSizedTexture(150+tmpX+280, 150+50, 0, 0, 2, 100, 2, 100);
-		mc.currentScreen.drawModalRectWithCustomSizedTexture(150+280, 150+tmpY+50, 0, 0, 100, 2, 100, 2);
-		GlStateManager.color(1, 1, 1, 1);*/
+		return output;
 	}
 	
 }

@@ -1,8 +1,11 @@
 package com.cobble.sbp.events.skyblock;
 
 import com.cobble.sbp.gui.screen.dungeons.SecretImage;
+import com.cobble.sbp.gui.screen.dwarven.CrystalHollowsMap;
+import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenPickaxeTimer;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTimer;
+import com.cobble.sbp.utils.MusicUtils;
 
 public class LobbySwapEvent {
 
@@ -13,6 +16,10 @@ public class LobbySwapEvent {
 		DwarvenPickaxeTimer.lastUsed = System.currentTimeMillis();
 		DwarvenPickaxeTimer.abilityName="lobbySwap";
 		SecretImage.roomSecretsID="NONE";
+		MusicUtils.stopSong();
+		DwarvenGui.sentryLast="Unknown";
+		CrystalHollowsMap.resetLocs();
+		CrystalHollowsMap.markers.clear();
 	}
 	
 }

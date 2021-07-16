@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import net.minecraft.client.gui.Gui;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -43,8 +44,12 @@ public class SettingColor extends GuiScreen {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		
 		
-		if(mouseDWheel != 0) {if(mouseDWheel > 0) {b-=0.1F;Utils.playClickSound();} else {b+=0.1F;Utils.playClickSound();}} mouseDWheel = Mouse.getDWheel();
-		DecimalFormat df = new DecimalFormat("#.#");
+		if(mouseDWheel != 0) {if(mouseDWheel > 0) {b-=0.03F;
+		} else {b+=0.03F;
+		}
+			Utils.playClickSound();
+		} mouseDWheel = Mouse.getDWheel();
+		DecimalFormat df = new DecimalFormat("#.##");
 		ResourceLocation color = new ResourceLocation(Reference.MODID, "textures/gui/imageBorder_1.png");
 		
 		int clickAnywhereWidth = fontRendererObj.getStringWidth("Click anywhere or scroll to see the next set of colors");
@@ -53,7 +58,7 @@ public class SettingColor extends GuiScreen {
 		GlStateManager.enableBlend();
 		mc.getTextureManager().bindTexture(color);
 		GlStateManager.color(0.1F, 0.1F, 0.1F, 0.7F);
-		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)-5, this.height/2-103, 0, 0, clickAnywhereWidth+10, 212, clickAnywhereWidth+10, 176);
+		drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)-5, this.height/2-103, 0, 0, clickAnywhereWidth+10, 212, clickAnywhereWidth+10, 176);
 		GlStateManager.color(1, 1, 1, 1);
 		
 		drawButton("Transparent", (this.width/2)-70-1, this.height/2-61-1+144, mouseX, mouseY, 73, oldColorSave);
@@ -72,19 +77,35 @@ public class SettingColor extends GuiScreen {
 		} catch(Exception e) { ColorUtils.resetColor(); }
 		
 		//PREVIEW BORDER
-		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13-1, this.height/2+3-20-1, 0, 0, 42, 1, 1, 1);
-		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13-1, this.height/2+3-20-1, 0, 0, 1, 42, 1, 1);
-		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13+40, this.height/2+3-20-1, 0, 0, 1, 42, 1, 1);
-		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+12, this.height/2+3-20+40, 0, 0, 42, 1, 1, 1);
+		drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13-1, this.height/2+3-20-1, 0, 0, 42, 1, 1, 1);
+		drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13-1, this.height/2+3-20-1, 0, 0, 1, 42, 1, 1);
+		drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13+40, this.height/2+3-20-1, 0, 0, 1, 42, 1, 1);
+		drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+12, this.height/2+3-20+40, 0, 0, 42, 1, 1, 1);
 
 
 		//PREVIEW
 		ColorUtils.setColor(oldColorSave);
-		this.drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13, this.height/2+3-20, 0, 0, 40, 40, 1, 1);
+		drawModalRectWithCustomSizedTexture((this.width/2)-(clickAnywhereWidth/2)+13, this.height/2+3-20, 0, 0, 40, 40, 1, 1);
 
 		//MAKE SURE THE PAGE EXISTS
-		if(b >= 1.1F) { b=0.0F; } else if(b < 0) { b=1.0F; }
+		if(b >= 1.01F) { b=0.0F; } else if(b < 0) { b=1.0F; }
 		int currPage = (int) (b*10);
+
+		/*for(int i=0;i<100;i++) {
+			for(int j=0;j<100;j++) {
+				float r = i/100f;
+				float g = j/100f;
+				r = Float.parseFloat(df.format(r));
+				g = Float.parseFloat(df.format(g));
+				mc.getTextureManager().bindTexture(color);
+				int x = this.width/2-50+i;
+				int y = this.height/2-50+j;
+				GlStateManager.color(r, g, b);
+				//Utils.print(r+", "+g);
+				//drawModalRectWithCustomSizedTexture(x, y, 0, 0, 1, 1, 1, 1);
+			}
+		}*/
+
 		//DRAW EACH COLOR
 		for(r=0; r<1.1;r+=0.1F) {
 			for(g=0; g<1.1;g+=0.1F) {
@@ -130,7 +151,7 @@ public class SettingColor extends GuiScreen {
 		}
 		String colorName = SettingOptions.settingName+" Colors";
 		
-		//this.drawCenteredString(fontRendererObj, Colors.AQUA+"Transparent", this.width/2-(fontRendererObj.getStringWidth("Transparent"))+8, this.height/2+89, 0x10);
+		this.drawCenteredString(fontRendererObj, Colors.AQUA+"Transparent", this.width/2-(fontRendererObj.getStringWidth("Transparent"))+8, this.height/2+89, 0x10);
 		this.drawCenteredString(fontRendererObj, Colors.YELLOW+Colors.BOLD+colorName, this.width/2, this.height/2-75-24, 0x10);
 		this.drawCenteredString(fontRendererObj, Colors.AQUA+"Scroll to see the next set of colors", this.width/2, this.height/2-75-12, 0x10);
 		this.drawCenteredString(fontRendererObj, Colors.GREEN+"Page: "+currPage+"/10", this.width/2, this.height/2-75, 0x10);
@@ -230,13 +251,13 @@ private static void drawButton(String text, int x, int y, int mouseX, int mouseY
 		
 		if(mouseX >= x+1 && mouseX <= x+width-3 && mouseY >= y+1 && mouseY <= y+18) {
 			GlStateManager.color(1, 1, 1, 1);
-			Utils.print(text.toLowerCase()+", "+(selected));
+			//Utils.print(text.toLowerCase()+", "+(selected));
 		} else if(text.toLowerCase().equals(selected)) {
 			GlStateManager.color(1, 1, 1, 1);
 		}
-		mc.currentScreen.drawModalRectWithCustomSizedTexture(x, y, 0, 0, 1, 20, 375, 20);
-		mc.currentScreen.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width-2, 20, 375, 20);
-		mc.currentScreen.drawModalRectWithCustomSizedTexture(x+width-2, y, 0, 0, 1, 20, 375, 20);
+		drawModalRectWithCustomSizedTexture(x, y, 0, 0, 1, 20, 375, 20);
+		drawModalRectWithCustomSizedTexture(x, y, 0, 0, width-2, 20, 375, 20);
+		drawModalRectWithCustomSizedTexture(x+width-2, y, 0, 0, 1, 20, 375, 20);
 		Utils.drawString(Colors.WHITE+text, (x+(width/2))-mc.fontRendererObj.getStringWidth(text)/2, y+6, 2);
 		GlStateManager.enableBlend();
 		

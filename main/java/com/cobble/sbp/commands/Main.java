@@ -8,14 +8,13 @@ import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.RenderGuiEvent;
 import com.cobble.sbp.gui.menu.settings.SettingMenu;
-import com.cobble.sbp.threads.misc.RickRolledThread;
-import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.Reference;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
+import com.cobble.sbp.utils.*;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
@@ -23,7 +22,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 
 public class Main extends CommandBase {
-	ArrayList<String> aliases;
+	ArrayList aliases;
 	public Main() {
 		aliases = new ArrayList();
 		aliases.add("skyblockpersonalized");
@@ -40,41 +39,74 @@ public class Main extends CommandBase {
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+	public void processCommand(ICommandSender sender, String[] args) {
 		
 		if(args.length > 0) {
 			String args0 = args[0].toLowerCase();
-			if(args0.equals("setconfig")) {
-				try {
-					setConfig(args[1], args[2], args[3]);
-				} catch(Exception e) {
-					Utils.sendErrMsg("Failed to set the config variable! Usage: /"+Reference.MODID+" setconfig newValueType configVariable newValue");
-				}
-				return;
-			} else if(args0.equals("getconfig")) {
-				try {
-					String args1 = "";
-					String args2 = "";
-					if(args.length >= 3) {args2 = args[2];}
-					if(args.length >= 2) {args1 = args[1];}
-					getConfig(args1, args2, args.length-1);
-				} catch(Exception e) {
-					e.printStackTrace();
-					Utils.sendErrMsg("Failed to get the config variable! Usage: /"+Reference.MODID+" getconfig configVariable");
-				}
-				return;
+			switch (args0) {
+				case "dev":
+					//DwarvenGui.manageCommissions(" Golden Goblin Slayer: 0%");
+					return;
+				case "reloadconfig":
+					Utils.sendMessage("Reloaded Config!");
+					ConfigHandler.updateConfig("main");
+
+					return;
+				case "game":
+					RenderGuiEvent.currSettingMenu="game";
+					RenderGuiEvent.helpMenu=true;
+					return;
+				case "life":
+					RenderGuiEvent.currSettingMenu="life";
+					RenderGuiEvent.helpMenu=true;
+					return;
+				case "update":
+
+					new sbpUpdater().start();
+
+					return;
+				case "setconfig":
+					try {
+						setConfig(args[1], args[2], args[3]);
+					} catch (Exception e) {
+						Utils.sendErrMsg("Failed to set the config variable! Usage: /" + Reference.MODID + " setconfig newValueType configVariable newValue");
+					}
+					return;
+				case "getconfig":
+					try {
+						String args1 = "";
+						String args2 = "";
+						if (args.length >= 3) {
+							args2 = args[2];
+						}
+						if (args.length >= 2) {
+							args1 = args[1];
+						}
+						getConfig(args1, args2, args.length - 1);
+					} catch (Exception e) {
+						e.printStackTrace();
+						Utils.sendErrMsg("Failed to get the config variable! Usage: /" + Reference.MODID + " getconfig configVariable");
+					}
+					return;
+				case "lagcheck":
+
+					if(!sender.getDisplayName().getUnformattedText().equals("Cobble8")) {return;}
+
+					if(!Minecraft.getMinecraft().isSingleplayer()) {
+						Utils.sendMessage("Note: Updates on login");
+						Utils.sendMessage("Total Player Count: "+Minecraft.getMinecraft().getCurrentServerData().populationInfo);
+						Utils.sendMessage("Your Ping: "+Minecraft.getMinecraft().getCurrentServerData().pingToServer);
+					}
+					return;
+
 			}
 			
 		}
 		RenderGuiEvent.helpMenu=true;
 		SettingMenu.fadeIn = 0;
 		SettingMenu.fadeInFrames=0;
-		
-		
 
-		
-		
-		return;
+
 	}
 	
 	@Override
@@ -87,11 +119,28 @@ public class Main extends CommandBase {
 		return true;
 	}
 
-	
+	public static class sbpUpdater extends Thread {
+		public void run() {
+			Utils.sendMessage("Downloading new "+Reference.NAME+" version!");
+			String file;
+			try { file = HttpClient.readPage("https://raw.githubusercontent.com/Cobble8/SkyblockPersonalized/main/versioncheck.json");
+			} catch (Exception e) { return; }
+
+			JsonElement info = new JsonParser().parse(file);
+			String updateUrl = info.getAsJsonObject().get("updateUrl").getAsString();
+			Utils.sendMessage("Found update URL:");
+			Utils.sendSpecificMessage(Colors.AQUA+updateUrl);
+			new AutoUpdater(updateUrl);
+
+			Utils.sendMessage("Finished Downloading! "+Colors.GOLD+"Restart Minecraft for the update to take effect!");
+			Utils.playDingSound();
+		}
+
+	}
 	
 	
 	private static void setConfig(String type, String configValue, String newValue) {
-		if(type.toLowerCase().equals("int")) {
+		if(type.equalsIgnoreCase("int")) {
 			try {
 				
 				if(DataGetter.findInt(configValue) == -69) {
@@ -105,7 +154,7 @@ public class Main extends CommandBase {
 			} catch(Exception e) {
 				Utils.sendErrMsg("That is not a valid number!");
 			}
-		} else if(type.toLowerCase().equals("str") || type.toLowerCase().equals("string")) {
+		} else if(type.equalsIgnoreCase("str") || type.equalsIgnoreCase("string")) {
 			
 			
 			try {
@@ -120,7 +169,7 @@ public class Main extends CommandBase {
 				Utils.sendErrMsg("That is not a valid string!");
 			}
 			
-		} else if(type.toLowerCase().equals("bool") || type.toLowerCase().equals("boolean")) {
+		} else if(type.equalsIgnoreCase("bool") || type.equalsIgnoreCase("boolean")) {
 			
 			
 			try {
@@ -144,7 +193,7 @@ public class Main extends CommandBase {
 		String string = "";
 		if(argslength == 0) {
 			Boolean currColor = false;
-			String currPrefix = Colors.AQUA;
+			String currPrefix;
 			
 			Utils.sendSpecificMessage(Colors.YELLOW+"--------------------");
 			Utils.sendMessage(Colors.YELLOW+"Config List:");
@@ -182,7 +231,6 @@ public class Main extends CommandBase {
 		hoverText.setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, output));
 		hoverText.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(Colors.YELLOW+"Click to put the output into chat")));
 		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(string).setChatStyle(hoverText));
-		
-		return;
+
 	}
 }

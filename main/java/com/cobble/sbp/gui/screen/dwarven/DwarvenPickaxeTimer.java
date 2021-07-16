@@ -1,6 +1,7 @@
 package com.cobble.sbp.gui.screen.dwarven;
 
 import com.cobble.sbp.core.config.DataGetter;
+import com.cobble.sbp.utils.ColorUtils;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -16,21 +17,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayList;
+
 public class DwarvenPickaxeTimer extends Gui {
 
-	
-	public static int pickTimerX = DataGetter.findInt("pickTimerX");
-	public static int pickTimerY = DataGetter.findInt("pickTimerY");
-	
-	public static int pickTimerColorID = Integer.parseInt(DataGetter.find("pickTimerTextColor")+"");
-	public static int pickActiveTimerColorID = Integer.parseInt(DataGetter.find("pickActiveTimerTextColor")+"");
 	public static Boolean onlyWhenHolding = DataGetter.findBool("pickTimerHolding");
 	public static Boolean abilityUsed = false;
-	public static Boolean pickTimerToggle = DataGetter.findBool("pickTimerToggle");
-	public static Boolean pickTimerGui = DataGetter.findBool("pickTimerGui");;
+	public static Boolean pickTimerToggle = DataGetter.findBool("pickReminderToggle");
 	
 	//Mouse Thing Settings
-	public static Boolean circle = DataGetter.findBool("pickTimerCircle");
 	public static int circleRadius = DataGetter.findInt("pickTimerCircleRadius");
 	public static int circleAccuracy = DataGetter.findInt("pickTimerCircleAcc");
 	public static String circleActiveColor = DataGetter.findStr("pickTimerCircleActive");
@@ -47,7 +42,7 @@ public class DwarvenPickaxeTimer extends Gui {
 	ResourceLocation settingBorder = new ResourceLocation(Reference.MODID, "textures/gui/imageBorder_1.png");
 	
 	
-	public DwarvenPickaxeTimer(int x, int y) {
+	public DwarvenPickaxeTimer() {
 		Minecraft mc = Minecraft.getMinecraft();
 		int lastUsed2 = (int) lastUsed;
 		int currTime = (int) System.currentTimeMillis();
@@ -113,7 +108,7 @@ public class DwarvenPickaxeTimer extends Gui {
 		
 		if(abilityName.equals("lobbySwap")) {pickaxeCdTime = lobbySwapCdTime;}
 		
-		if(isSkymall) { pickaxeCdTime *= (80/100); }
+		if(isSkymall) { pickaxeCdTime *= 8; pickaxeCdTime /= 10; }
 			
 
 		if(!abilityUsed) {
@@ -130,83 +125,66 @@ public class DwarvenPickaxeTimer extends Gui {
 		String output = Utils.secondsToTime(timeSince);
 		
 		GlStateManager.color(1, 1, 1);
-		
-		String activeColor = "";
+
 		GlStateManager.enableBlend();
 		
 		
 		if(!abilityUsed) {
 
-			
-			activeColor = Utils.getColorFromInt(pickTimerColorID);
+
 			
 			GlStateManager.color(1, 1, 1, 1);
-			if(circle && !(output.equals("0:00"))) {
+			if(!(output.equals("0:00"))) {
 				try {
 						int circlePercent = timeSince*100/pickaxeCdTime;
-						String[] tmp = circleCdColor.split(";");
-						float r = Float.parseFloat(tmp[0].replace(",", "."));
-						float g = Float.parseFloat(tmp[1].replace(",", "."));
-						float b = Float.parseFloat(tmp[2].replace(",", "."));
+
+						ArrayList<Float> tmp = ColorUtils.getColor(circleCdColor);
 						mc.getTextureManager().bindTexture(settingBorder);
-						Utils.drawRegularPolygon(xC+0.5, yC+0.5, circleRadius, circleAccuracy, circlePercent, r, g, b);
-			} catch(Exception e) {  }}
+
+						Utils.drawAntiAliasPolygon(xC+0.5, yC+0.5, circleRadius, circleAccuracy, 100-circlePercent, tmp.get(0), tmp.get(1), tmp.get(2));
+						//Utils.drawRegularPolygon(xC+0.5, yC+0.5, circleRadius, circleAccuracy, circlePercent, r, g, b, 1);
+			} catch(Exception ignored) {  }}
 			
 			mc.getTextureManager().bindTexture(new ResourceLocation("textures/items/iron_pickaxe.png"));
 		} else {
 
-			
-			activeColor = Utils.getColorFromInt(pickActiveTimerColorID);
+
 			
 			GlStateManager.color(1, 1, 1, 1);
-			if(circle) {
+
 				
 				try {
 					
 					int circlePercent = timeSince*100/pickaxeUsableTime;
-					String[] tmp = circleActiveColor.split(";");
-					float r = Float.parseFloat(tmp[0].replace(",", "."));
-					float g = Float.parseFloat(tmp[1].replace(",", "."));
-					float b = Float.parseFloat(tmp[2].replace(",", "."));
+					ArrayList<Float> tmp = ColorUtils.getColor(circleActiveColor);
 					mc.getTextureManager().bindTexture(settingBorder);
-					Utils.drawRegularPolygon(xC+0.5, yC+0.5, circleRadius, circleAccuracy, circlePercent, r, g, b);
-				} catch(Exception e) {  }
+					Utils.drawAntiAliasPolygon(xC+0.5, yC+0.5, circleRadius, circleAccuracy, circlePercent, tmp.get(0), tmp.get(1), tmp.get(2));
+					//Utils.drawRegularPolygon(xC+0.5, yC+0.5, circleRadius, circleAccuracy, circlePercent, r, g, b, 1);
+				} catch(Exception ignored) {  }
 				
-			}
+
 			mc.getTextureManager().bindTexture(new ResourceLocation("textures/items/gold_pickaxe.png"));
 			
 		}
 		
 		if(output.equals("0:00")) {
 			if(!abilityUsed) {
-				activeColor = Utils.getColorFromInt(pickActiveTimerColorID);
 				
 				GlStateManager.color(1, 1, 1, 1);
-				if(circle) {
+
 					try {
-						String[] tmp = circleReadyColor.split(";");
-						float r = Float.parseFloat(tmp[0].replace(",", "."));
-						float g = Float.parseFloat(tmp[1].replace(",", "."));
-						float b = Float.parseFloat(tmp[2].replace(",", "."));
+						ArrayList<Float> tmp = ColorUtils.getColor(circleReadyColor);
 						
 						mc.getTextureManager().bindTexture(settingBorder);
-						Utils.drawRegularPolygon(xC+0.5, yC+0.5, circleRadius, circleAccuracy, 100, r, g, b);
+						Utils.drawAntiAliasPolygon(xC+0.5, yC+0.5, circleRadius, circleAccuracy, 100, tmp.get(0), tmp.get(1), tmp.get(2));
+						//Utils.drawRegularPolygon(xC+0.5, yC+0.5, circleRadius, circleAccuracy, 100, r, g, b, 1);
 						} catch(Exception e) { e.printStackTrace(); }
-				}
-				output = "Available";
+
 				mc.getTextureManager().bindTexture(new ResourceLocation("textures/items/diamond_pickaxe.png"));
 				
 			}
 		}
 		GlStateManager.color(1, 1, 1, 1);
-		if(pickTimerGui) {
-			GlStateManager.enableBlend();
-
-			
-			this.drawModalRectWithCustomSizedTexture(pickTimerX, pickTimerY, 0, 0, 16, 16, 16, 16);
-			
-			Utils.drawString(activeColor+output, pickTimerX+20, pickTimerY+5);
-		}
 		GlStateManager.color(1, 1, 1, 1);
 		
 	}

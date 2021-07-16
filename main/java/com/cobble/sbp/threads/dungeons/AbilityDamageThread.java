@@ -12,11 +12,11 @@ public class AbilityDamageThread extends Thread {
 		int currCombo = ComboMessages.comboMsgCount;
 		
 		try {
-			Thread.sleep(AbilityMessages.delay*1000);
+			Thread.sleep(AbilityMessages.delay* 1000L);
 		} catch (InterruptedException e) { Utils.sendErrMsg("Failed to start AbilityDamageThread");}
 		
 		if(currMsg == AbilityMessages.damageMsgCount) { AbilityMessages.lastDamage=""; } else {return;}
-		if(currCombo == ComboMessages.comboMsgCount) { ComboMessages.lastCombo=""; } else {return;}
+		if(currCombo == ComboMessages.comboMsgCount) { ComboMessages.lastCombo=""; }
 	}
 	
 }

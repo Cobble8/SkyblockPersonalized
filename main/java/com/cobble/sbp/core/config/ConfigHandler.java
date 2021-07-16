@@ -9,11 +9,13 @@ import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.ConfigList;
 import com.cobble.sbp.gui.menu.settings.SettingMenu;
 import com.cobble.sbp.gui.screen.dungeons.SecretImage;
+import com.cobble.sbp.gui.screen.dwarven.CrystalHollowsMap;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenPickaxeTimer;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTimer;
 import com.cobble.sbp.gui.screen.misc.AbilityMessages;
 import com.cobble.sbp.gui.screen.misc.ComboMessages;
+import com.cobble.sbp.gui.screen.misc.JerryTimer;
 import com.cobble.sbp.simplejson.JSONObject;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -27,21 +29,24 @@ import com.google.gson.JsonParser;
 public class ConfigHandler {
 	
 	public static Object configObj = null;
+
+	public static Object oldConfig = null;
 	
 	public static JSONObject obj = new JSONObject();
-	public static JSONObject obj2 = new JSONObject();
 	public static Boolean firstLaunch = false;
 	
 	public static ArrayList<String> forceDisabled = new ArrayList();
 	public static ArrayList<String> forceEnabled = new ArrayList();
 	
 	public static void registerConfig() throws Exception {
-		firstLaunch = Utils.invertBoolean(Utils.fileTest("config/"+Reference.MODID+"/main.cfg"));
+		firstLaunch = !Utils.fileTest("config/"+Reference.MODID+"/main.cfg");
 		if(firstLaunch || Utils.readFile("config/"+Reference.MODID+"/main.cfg").equals(" ") || Utils.readFile("config/"+Reference.MODID+"/main.cfg").equals("")) {
 			firstLaunch();
 		}
+		ConfigHandler.oldConfig = Utils.readFile("config/"+Reference.MODID+"/main.cfg");
 		ConfigList.loadConfig();
 		if(firstLaunch) {
+			Utils.print("FIRST LAUNCH!!!");
 			ConfigHandler.resetConfig();
 		}
 		
@@ -62,14 +67,20 @@ public class ConfigHandler {
 	
 	public static void newObject(String varName, Object var) {
 		Object val = var;
-		Boolean isBool = false;
-		try { Boolean tmp = Boolean.parseBoolean(var+""); isBool=true; } catch(Exception e) {}
+		boolean isBool = false;
+		try { Boolean tmp = Boolean.parseBoolean(var+""); isBool=true; } catch(Exception ignored) {}
 		if(isBool) {
-			for(int i=0;i<forceDisabled.size();i++) {
-				if(varName.equals(forceDisabled.get(i))) { val = false; }
+			for (String s : forceDisabled) {
+				if (varName.equals(s)) {
+					val = false;
+					break;
+				}
 			}
-			for(int i=0;i<forceEnabled.size();i++) {
-				if(varName.equals(forceEnabled.get(i))) { val = true; }
+			for (String s : forceEnabled) {
+				if (varName.equals(s)) {
+					val = true;
+					break;
+				}
 			}
 		}
 		
@@ -137,28 +148,45 @@ public class ConfigHandler {
 	
 	public static void updateConfig(String c) {
 		try {
+			CrystalHollowsMap.mapToggle = DataGetter.findBool("crystalMap");
 			DwarvenTimer.dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
 			DwarvenGui.commTrackToggle = DataGetter.findBool("dwarvenTrackToggle");
 			DwarvenGui.fuelToggle =  DataGetter.findBool("dwarvenFuelToggle");
 			SettingMenu.modLaunchToggle = DataGetter.findBool("modLaunchToggle");
 			DwarvenPickaxeTimer.pickTimerToggle = DataGetter.findBool("pickReminderToggle");
 			DwarvenGui.mithrilToggle = DataGetter.findBool("dwarvenMithrilDisplay");
+			DwarvenGui.sentryToggle = DataGetter.findBool("starSentryHelper");
 			DwarvenTimer.dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
 			AbilityMessages.abilityMsgToggle = DataGetter.findBool("abilityDamageToggle");
 			ComboMessages.abilityMsgToggle = DataGetter.findBool("comboMsgToggle");
-		
-		if(c.equals(""));
-		
-		//SECRET IMAGES
-		else if(c.equals("scrtToggle")) {
+			JerryTimer.jerryToggle = DataGetter.findBool("jerryToggle");
+
+
+		if(c.equals("scrtToggle")) {
 			SecretImage.imgX = DataGetter.findInt("scrtX");
 			SecretImage.imgY = DataGetter.findInt("scrtY");
 			SecretImage.bgColorID = DataGetter.findStr("scrtBgColor");
 			SecretImage.secretSize = DataGetter.findInt("scrtSize");
-			SecretImage.scrtColorID = DataGetter.findInt("scrtTextColor");
+			SecretImage.scrtColorID = DataGetter.findStr("scrtTextColor");
 		}
-		
 
+		else if(c.equals("crystalMap")) {
+			CrystalHollowsMap.mapX = DataGetter.findInt("crystalMapX");
+			CrystalHollowsMap.mapY = DataGetter.findInt("crystalMapY");
+			CrystalHollowsMap.scale = DataGetter.findInt("crystalMapSize")/10f;
+
+		}
+
+		else if(c.equals("starSentryHelper")) {
+			DwarvenGui.sentryX = DataGetter.findInt("starSentryHelperX");
+			DwarvenGui.sentryY = DataGetter.findInt("starSentryHelperY");
+		}
+
+		else if(c.equals("jerryToggle")) {
+			JerryTimer.jerryX = DataGetter.findInt("jerryX");
+			JerryTimer.jerryY = DataGetter.findInt("jerryY");
+			JerryTimer.jerryColor = DataGetter.findStr("jerryTextColor");
+		}
 		
 		//ABILITY MESSAGES
 		else if(AbilityMessages.abilityMsgToggle && c.equals("abilityDamageToggle")) {
@@ -177,62 +205,54 @@ public class ConfigHandler {
 		//DWARVEN TIMER
 		else if(DwarvenTimer.dwarvenTimerToggle && c.equals("dwarvenTimerToggle")) {
 			DwarvenTimer.dwarvenTimerDing = DataGetter.findBool("dwarvenTimerDing");
-			DwarvenTimer.textColorID = DataGetter.findInt("dwarvenTimerTextColor");
+			DwarvenTimer.textColorID = DataGetter.findStr("dwarvenTimerTextColor");
 			DwarvenTimer.posX = DataGetter.findInt("dwarvenTimerX");
 			DwarvenTimer.posY = DataGetter.findInt("dwarvenTimerY");
 		}
-		
+
+
 		else if(DwarvenGui.commTrackToggle && c.equals("dwarvenTrackToggle")) {
-			DwarvenGui.commissionID = DataGetter.findInt("dwarvenTrackCommissionColor");
-			DwarvenGui.commNameID = DataGetter.findInt("dwarvenTrackQuestName");
+			DwarvenGui.commissionID = DataGetter.findStr("dwarvenTrackCommissionColor");
+			DwarvenGui.commNums = DataGetter.findBool("dwarvenTrackNumsToggle");
+			DwarvenGui.commNameID = DataGetter.findStr("dwarvenTrackQuestName");
 			DwarvenGui.commTrackBarToggle = DataGetter.findBool("dwarvenTrackBarToggle");
 			DwarvenGui.posX = DataGetter.findInt("dwarvenGuiX");
 			DwarvenGui.posY = DataGetter.findInt("dwarvenGuiY");
-			DwarvenGui.commBorderColorID = DataGetter.findInt("dwarvenTrackBorderColor");
-			DwarvenGui.commYesColorID = DataGetter.findInt("dwarvenTrackYesColor");
-			DwarvenGui.commNoColorID = DataGetter.findInt("dwarvenTrackNoColor");
+			DwarvenGui.commBorderColorID = DataGetter.findStr("dwarvenTrackBorderColor");
+			DwarvenGui.commYesColorID = DataGetter.findStr("dwarvenTrackYesColor");
+			DwarvenGui.commNoColorID = DataGetter.findStr("dwarvenTrackNoColor");
+			DwarvenGui.scale = DataGetter.findInt("dwarvenGuiScale")/10d;
 		}
 		
 		else if(DwarvenGui.fuelToggle && c.equals("dwarvenFuelToggle")) {
 			DwarvenGui.posX = DataGetter.findInt("dwarvenGuiX");
 			DwarvenGui.posY = DataGetter.findInt("dwarvenGuiY");
-			DwarvenGui.fuelGui = DataGetter.findBool("dwarvenFuelGui");
-			DwarvenGui.fuelDurr = DataGetter.findBool("dwarvenFuelDurr");
 			
-			DwarvenGui.fuelGuiDrillFuel = DataGetter.findInt("dwarvenFuelDrillColor");
-			DwarvenGui.fuelGuiPrimaryFull = DataGetter.findInt("dwarvenFuelGuiPrimeFullColor");
-			DwarvenGui.fuelGuiSecondaryFull = DataGetter.findInt("dwarvenFuelGuiSecondFullColor");
-			DwarvenGui.fuelGuiPrimaryHalf = DataGetter.findInt("dwarvenFuelGuiPrimeHalfColor");
-			DwarvenGui.fuelGuiSecondaryHalf = DataGetter.findInt("dwarvenFuelGuiSecondHalfColor");
-			DwarvenGui.fuelGuiPrimaryTen = DataGetter.findInt("dwarvenFuelGuiPrimeTenColor");
-			DwarvenGui.fuelGuiSecondaryTen = DataGetter.findInt("dwarvenFuelGuiSecondTenColor");
+			DwarvenGui.fuelGuiDrillFuel = DataGetter.findStr("dwarvenFuelDrillColor");
+			DwarvenGui.fuelGuiPrimaryFull = DataGetter.findStr("dwarvenFuelGuiPrimeFullColor");
+			DwarvenGui.fuelGuiSecondaryFull = DataGetter.findStr("dwarvenFuelGuiSecondFullColor");
+			DwarvenGui.fuelGuiPrimaryHalf = DataGetter.findStr("dwarvenFuelGuiPrimeHalfColor");
+			DwarvenGui.fuelGuiSecondaryHalf = DataGetter.findStr("dwarvenFuelGuiSecondHalfColor");
+			DwarvenGui.fuelGuiPrimaryTen = DataGetter.findStr("dwarvenFuelGuiPrimeTenColor");
+			DwarvenGui.fuelGuiSecondaryTen = DataGetter.findStr("dwarvenFuelGuiSecondTenColor");
 			
 		} else if(DwarvenGui.mithrilToggle && c.equals("dwarvenMithrilDisplay")) {
 			DwarvenGui.posX = DataGetter.findInt("dwarvenGuiX");
 			DwarvenGui.posY = DataGetter.findInt("dwarvenGuiY");
-			DwarvenGui.mithrilTextColor = DataGetter.findInt("dwarvenMithrilTextColor");
-			DwarvenGui.mithrilCountColor = DataGetter.findInt("dwarvenMithrilCountColor");
+			DwarvenGui.mithrilTextColor = DataGetter.findStr("dwarvenMithrilTextColor");
+			DwarvenGui.mithrilCountColor = DataGetter.findStr("dwarvenMithrilCountColor");
+			DwarvenGui.gemTextColor = DataGetter.findStr("dwarvenGemstoneTextColor");
+			DwarvenGui.gemCountColor = DataGetter.findStr("dwarvenGemstoneCountColor");
 		}
 		
 		else if(DwarvenPickaxeTimer.pickTimerToggle && c.equals("pickReminderToggle")) {
-			DwarvenPickaxeTimer.pickTimerX = DataGetter.findInt("pickTimerX");
-			DwarvenPickaxeTimer.pickTimerY = DataGetter.findInt("pickTimerY");		
 			DwarvenPickaxeTimer.HotMLevel = DataGetter.findInt("dwarvenHOTMLevel");
-			DwarvenPickaxeTimer.pickTimerColorID = DataGetter.findInt("pickTimerTextColor");
-			DwarvenPickaxeTimer.pickActiveTimerColorID = DataGetter.findInt("pickActiveTimerTextColor");
 			DwarvenPickaxeTimer.onlyWhenHolding = DataGetter.findBool("pickTimerHolding");
-			DwarvenPickaxeTimer.pickTimerGui = DataGetter.findBool("pickTimerGui");
-			DwarvenPickaxeTimer.circle = DataGetter.findBool("pickTimerCircle");
 			DwarvenPickaxeTimer.circleRadius = DataGetter.findInt("pickTimerCircleRadius");
 			DwarvenPickaxeTimer.circleAccuracy = DataGetter.findInt("pickTimerCircleAcc");
 			DwarvenPickaxeTimer.circleActiveColor = DataGetter.findStr("pickTimerCircleActive");
 			DwarvenPickaxeTimer.circleCdColor = DataGetter.findStr("pickTimerCircleCd");
 			DwarvenPickaxeTimer.circleReadyColor = DataGetter.findStr("pickTimerCircleReady");
-		} else if(c.equals("scrtToggle")) {
-			SecretImage.bgColorID = DataGetter.findStr("scrtBgColor");
-			SecretImage.scrtColorID = DataGetter.findInt("scrtTextColor");
-			SecretImage.imgX = DataGetter.findInt("scrtX");
-			SecretImage.imgY = DataGetter.findInt("scrtY");
 		}
 		
 		

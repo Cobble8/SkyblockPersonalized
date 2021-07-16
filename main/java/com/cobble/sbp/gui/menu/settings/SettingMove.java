@@ -1,7 +1,9 @@
 package com.cobble.sbp.gui.menu.settings;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
+import net.minecraft.client.gui.Gui;
 import org.lwjgl.input.Keyboard;
 
 import com.cobble.sbp.core.config.ConfigHandler;
@@ -42,29 +44,29 @@ public class SettingMove extends GuiScreen {
 		GlStateManager.enableBlend();
 		mc.fontRendererObj.drawString(Colors.WHITE+"Press ESCAPE to cancel", this.width/2-(fontRendererObj.getStringWidth("Press ESCAPE to cancel")/2), this.height/4, 0x10, true);
 		
-		ResourceLocation settingBorder = new ResourceLocation(Reference.MODID, "textures/gui/imageBorder_1.png");
+		ResourceLocation settingBorder = SettingMenu.blank;
 		mc.getTextureManager().bindTexture(settingBorder);
 		
-		int oldX = Integer.parseInt(DataGetter.find(id+"X")+"");
-		int oldY = Integer.parseInt(DataGetter.find(id+"Y")+"");
+		int oldX = DataGetter.findInt(id+"X");
+		int oldY = DataGetter.findInt(id+"Y");
 		GlStateManager.color(0.2F, 0.2F, 0.2F, 0.5F);
-		this.drawModalRectWithCustomSizedTexture(oldX, oldY, 0, 0, imgWidth, imgHeight, imgWidth, imgHeight);
+		drawModalRectWithCustomSizedTexture(oldX, oldY, 0, 0, imgWidth, imgHeight, imgWidth, imgHeight);
 		
 		GlStateManager.color(0.3F, 0.8F, 1, 1);
-		this.drawModalRectWithCustomSizedTexture(oldX, oldY, 0, 0, imgWidth, 1, imgWidth, 1);
-		this.drawModalRectWithCustomSizedTexture(oldX, oldY+imgHeight-1, 0, 0, imgWidth, 1, imgWidth, 1);
-		this.drawModalRectWithCustomSizedTexture(oldX, oldY, 0, 0, 1, imgHeight, 1, imgHeight);
-		this.drawModalRectWithCustomSizedTexture(oldX+imgWidth-1, oldY, 0, 0, 1, imgHeight, 1, imgHeight);
+		drawModalRectWithCustomSizedTexture(oldX, oldY, 0, 0, imgWidth, 1, imgWidth, 1);
+		drawModalRectWithCustomSizedTexture(oldX, oldY+imgHeight-1, 0, 0, imgWidth, 1, imgWidth, 1);
+		drawModalRectWithCustomSizedTexture(oldX, oldY, 0, 0, 1, imgHeight, 1, imgHeight);
+		drawModalRectWithCustomSizedTexture(oldX+imgWidth-1, oldY, 0, 0, 1, imgHeight, 1, imgHeight);
 		
 		
 		
 		GlStateManager.color(0.2F, 0.2F, 0.2F, 0.5F);
-		this.drawModalRectWithCustomSizedTexture(mouseX, mouseY, 0, 0, imgWidth, imgHeight, imgWidth, imgHeight);
+		drawModalRectWithCustomSizedTexture(mouseX, mouseY, 0, 0, imgWidth, imgHeight, imgWidth, imgHeight);
 		GlStateManager.color(0, 1, 0, 1);
-		this.drawModalRectWithCustomSizedTexture(mouseX, mouseY, 0, 0, imgWidth, 1, imgWidth, 1);
-		this.drawModalRectWithCustomSizedTexture(mouseX, mouseY+imgHeight-1, 0, 0, imgWidth, 1, imgWidth, 1);
-		this.drawModalRectWithCustomSizedTexture(mouseX, mouseY, 0, 0, 1, imgHeight, 1, imgHeight);
-		this.drawModalRectWithCustomSizedTexture(mouseX+imgWidth-1, mouseY, 0, 0, 1, imgHeight, 1, imgHeight);
+		drawModalRectWithCustomSizedTexture(mouseX, mouseY, 0, 0, imgWidth, 1, imgWidth, 1);
+		drawModalRectWithCustomSizedTexture(mouseX, mouseY+imgHeight-1, 0, 0, imgWidth, 1, imgWidth, 1);
+		drawModalRectWithCustomSizedTexture(mouseX, mouseY, 0, 0, 1, imgHeight, 1, imgHeight);
+		drawModalRectWithCustomSizedTexture(mouseX+imgWidth-1, mouseY, 0, 0, 1, imgHeight, 1, imgHeight);
 		GlStateManager.disableBlend();
 	}
 	
@@ -72,7 +74,18 @@ public class SettingMove extends GuiScreen {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		ConfigHandler.newObject(id+"X", mouseX);
 		ConfigHandler.newObject(id+"Y", mouseY);
-		Minecraft.getMinecraft().displayGuiScreen(new SettingOptions());
+		RenderGuiEvent.helpMenu=true;
+		/*
+
+		String[] findID = SettingOptions.settingOptions.get(SettingMenu.clickedSubOption).get(2);
+		for(int i=0;i<findID.length;i++) {
+			if(id.equals(findID[i])) {
+				RenderGuiEvent.currSettingMenu="main:"+i;
+				RenderGuiEvent.helpMenu=true;
+				break;
+			}
+		}*/
+
 		Utils.playClickSound();
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
@@ -80,10 +93,16 @@ public class SettingMove extends GuiScreen {
 	protected void keyTyped(char par1, int par2) throws IOException {
 		if(par2 == Keyboard.KEY_ESCAPE) {
 			Utils.playClickSound();
-			Minecraft.getMinecraft().displayGuiScreen(new SettingOptions());
-			if(RenderGuiEvent.oldGuiScale == 0 || RenderGuiEvent.oldGuiScale > 2) {
-				mc.gameSettings.guiScale = 2;
-			}
+
+			Minecraft.getMinecraft().displayGuiScreen(new SettingMenu());
+
+			/*String[] findID = SettingOptions.settingOptions.get(SettingMenu.clickedSubOption).get(2);
+			for(int i=0;i<findID.length;i++) {
+				if(id.equals(findID[i])) {
+					SettingMenu.clickedSubOption=i;
+					break;
+				}
+			}*/
 		}
 	}
 	

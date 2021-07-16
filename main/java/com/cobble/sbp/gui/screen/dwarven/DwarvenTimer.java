@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.DataGetter;
+import com.cobble.sbp.utils.ColorUtils;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
@@ -18,7 +19,7 @@ import net.minecraft.util.ResourceLocation;
 public class DwarvenTimer extends Gui {
 
 	public static Boolean dwarvenTimerToggle = DataGetter.findBool("dwarvenTimerToggle");
-	public static int textColorID = DataGetter.findInt("dwarvenTimerTextColor");
+	public static String textColorID = DataGetter.findStr("dwarvenTimerTextColor");
 	public static Boolean dwarvenTimerDing = DataGetter.findBool("dwarvenTimerDing");
 	
 	public static int posX = DataGetter.findInt("dwarvenTimerX");
@@ -40,11 +41,11 @@ public class DwarvenTimer extends Gui {
 			GlStateManager.color(1, 1, 1, 1);
 			mc.getTextureManager().bindTexture(goblin);
 			GlStateManager.enableBlend();
-			this.drawModalRectWithCustomSizedTexture(posX, posY, 0, 0, 16, 16, 16, 16);
+			drawModalRectWithCustomSizedTexture(posX, posY, 0, 0, 16, 16, 16, 16);
 			GlStateManager.disableBlend();
 			
 			String color = ""; Boolean chroma = true;
-			color = Utils.getColorFromInt(textColorID);
+			color = ColorUtils.textColor(textColorID);
 			Utils.drawString(color+output, posX+19, posY+4);
 	}
 	

@@ -1,6 +1,7 @@
 package com.cobble.sbp.utils;
 
 import java.awt.Color;
+import java.sql.Ref;
 import java.util.ArrayList;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,8 +17,11 @@ public class ColorUtils {
 		if(tmp.length < 3) {
 			for(int i=0;i<4;i++) { colors.add(1.0F); }
 		}
-		for(int i=0;i<tmp.length;i++) {
-			try { colors.add(Float.parseFloat(tmp[i].replace(",", "."))); } catch(Exception e) {continue;}
+		for (String s : tmp) {
+			try {
+				colors.add(Float.parseFloat(s.replace(",", ".")));
+			} catch (Exception ignored) {
+			}
 		}
 		
 		if(tmp.length < 4) {
@@ -25,7 +29,11 @@ public class ColorUtils {
 		}
 		return colors;
 	}
-	
+
+	public static String textColor(String input) {
+		return input.replace("&", Reference.COLOR_CODE_CHAR+"");
+	}
+
 	public static void setColor(String color) {
 		GlStateManager.enableBlend();
 		GlStateManager.enableAlpha();
@@ -38,11 +46,63 @@ public class ColorUtils {
 			GlStateManager.color(0, 0, 0, 1);
 		}
 	}
-	
+
+	public static String getFromColorName(String colorName) {
+		String clr = Colors.WHITE;
+		switch(colorName){
+			case("DARK_RED"): clr=Colors.DARK_RED; break;
+			case("RED"): clr=Colors.RED; break;
+			case("GOLD"): clr=Colors.GOLD; break;
+			case("YELLOW"): clr=Colors.YELLOW; break;
+			case("GREEN"): clr=Colors.GREEN; break;
+			case("DARK_GREEN"): clr=Colors.DARK_GREEN; break;
+			case("AQUA"): clr=Colors.AQUA; break;
+			case("DARK_AQUA"): clr=Colors.DARK_AQUA; break;
+			case("BLUE"): clr=Colors.BLUE; break;
+			case("DARK_BLUE"): clr=Colors.DARK_BLUE; break;
+			case("LIGHT_PURPLE"): clr=Colors.LIGHT_PURPLE; break;
+			case("DARK_PURPLE"): clr=Colors.DARK_PURPLE; break;
+			case("WHITE"): clr=Colors.WHITE; break;
+			case("GRAY"): clr=Colors.GRAY; break;
+			case("DARK_GRAY"): clr=Colors.DARK_GRAY; break;
+			case("BLACK"): clr=Colors.BLACK; break;
+			case("CHROMA"): clr=Colors.CHROMA; break;
+		}
+		return clr;
+	}
+
+	public static String colorArrayToString(ArrayList<Float> c) {
+		StringBuilder output = new StringBuilder();
+
+		for(int i=0;i<c.size();i++) {
+			output.append(c.get(i));
+			if(i != c.size()-1) { output.append(";"); }
+		}
+		return output.toString();
+	}
+
+
 	public static ArrayList<Float> getRGBFromColorCode(String c) {
 		ArrayList<Float> output = new ArrayList();
 		String rgb = "";
-		if(c.endsWith("0")) rgb = "0;0;0";
+		if(c.endsWith("0x")) rgb = "255;255;255";
+		else if(c.endsWith("1x")) rgb = "0;0;100";
+		else if(c.endsWith("2x")) rgb = "0;100;0";
+		else if(c.endsWith("3x")) rgb = "0;100;100";
+		else if(c.endsWith("4x")) rgb = "100;0;0";
+		else if(c.endsWith("5x")) rgb = "100;0;100";
+		else if(c.endsWith("6x")) rgb = "185;100;0";
+		else if(c.endsWith("7x")) rgb = "100;100;100";
+		else if(c.endsWith("8x")) rgb = "15;15;15";
+		else if(c.endsWith("9x")) rgb = "15;15;185";
+		else if(c.endsWith("ax")) rgb = "15;185;15";
+		else if(c.endsWith("bx")) rgb = "15;185;185";
+		else if(c.endsWith("cx")) rgb = "185;15;15";
+		else if(c.endsWith("dx")) rgb = "185;15;185";
+		else if(c.endsWith("ex")) rgb = "185;185;15";
+		else if(c.endsWith("fx")) rgb = "0;0;0";
+		else if(c.endsWith("zx")) return getChroma(25, 25);
+		else if(c.endsWith("0")) rgb = "0;0;0";
 		else if(c.endsWith("1")) rgb = "0;0;170";
 		else if(c.endsWith("2")) rgb = "0;170;0";
 		else if(c.endsWith("3")) rgb = "0;170;170";
@@ -61,11 +121,11 @@ public class ColorUtils {
 		else if(c.endsWith("z")) return getChroma(0, 0);
 		String[] rgb2 = rgb.split(";");
 		try {
-			Double r = (Double.parseDouble(rgb2[0])/255);
-			Double g = (Double.parseDouble(rgb2[1])/255);
-			Double b = (Double.parseDouble(rgb2[2])/255);
+			double r = (Double.parseDouble(rgb2[0])/255d);
+			double g = (Double.parseDouble(rgb2[1])/255d);
+			double b = (Double.parseDouble(rgb2[2])/255d);
 			
-			output.add(r.floatValue()); output.add(g.floatValue()); output.add(b.floatValue()); output.add(1F);
+			output.add((float) r); output.add((float) g); output.add((float) b); output.add(1F);
 		} catch(Exception e) {
 			output.add(1F); output.add(1F); output.add(1F); output.add(1F);
 		}
@@ -131,15 +191,15 @@ public class ColorUtils {
 	
 	public static ArrayList<Float> getChroma(int x, int y) {
 		ArrayList<Float> tmp = new ArrayList();
-		long t = System.currentTimeMillis() - (x * 10 + y * 10);
+		long t = System.currentTimeMillis() - (x * 10L + y * 10L);
         Color clr = Color.getHSBColor(t % (int) (Utils.chromaSpeed*500f) / (Utils.chromaSpeed*500f), 0.8f, 0.8f);
         try {
-        Double r = (double) clr.getRed()/ (double) 255;
-        Double g = (double) clr.getGreen()/ (double) 255;
-        Double b = (double) clr.getBlue()/ (double) 255;
-        tmp.add(r.floatValue());
-        tmp.add(g.floatValue());
-        tmp.add(b.floatValue());
+        double r = (double) clr.getRed()/ (double) 255;
+        double g = (double) clr.getGreen()/ (double) 255;
+        double b = (double) clr.getBlue()/ (double) 255;
+        tmp.add((float) r);
+        tmp.add((float) g);
+        tmp.add((float) b);
         tmp.add(1F);
         } catch(Exception e) {
         	tmp.add(1F);

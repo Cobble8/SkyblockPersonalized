@@ -39,7 +39,7 @@ public class UpdateCheckHandler {
 			int c = Integer.parseInt(relArr[2]);
 			int d = Integer.parseInt(relArr[3]);
 			String relType = "Full Release";
-			if(c != 0); {relType = "Beta Release";}
+			if(c != 0) {relType = "Beta Release";}
 			if(d != 0) {relType+=" (Bug Fix)";}
 			LoginThread.updateType = relType;
 			//Utils.print(rel+": "+relType);

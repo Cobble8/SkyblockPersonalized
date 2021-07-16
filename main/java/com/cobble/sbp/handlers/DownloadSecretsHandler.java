@@ -23,8 +23,9 @@ public class DownloadSecretsHandler extends Thread {
 	public static ArrayList<String> dungeons = new ArrayList();
 	
 	public void run() {
+		running = true;
 		currText = "Starting download process...";
-		try { Thread.sleep(250); } catch (InterruptedException e) { }
+		try { Thread.sleep(250); } catch (InterruptedException ignored) { }
 		
 		File delOld = new File("config/"+Reference.MODID+"/secrets");
 		currText = "Deleting old images...";
@@ -38,12 +39,13 @@ public class DownloadSecretsHandler extends Thread {
 		Utils.print("Starting DungeonSecrets image download...");
 		SecretUtils.updateDungeonList();
 		progress=0;
-		running = true;
+
 		currText = "Downloading image descriptions...";
-		for(int i=0;i<dungeons.size();i++) {
-			File infoLoc = new File("config/"+Reference.MODID+"/secrets/"+dungeons.get(i)+"/SecretImageText.json"); infoLoc.getParentFile().mkdirs();
-			Utils.saveImage("https://raw.githubusercontent.com/Cobble8/DungeonSecrets/master/secrets/"+dungeons.get(i)+"/SecretImageText.json", infoLoc.getPath());
-			Utils.print("Downloaded image description file for dungeon: "+dungeons.get(i));
+		for (String dungeon : dungeons) {
+			File infoLoc = new File("config/" + Reference.MODID + "/secrets/" + dungeon + "/SecretImageText.json");
+			infoLoc.getParentFile().mkdirs();
+			Utils.saveImage("https://raw.githubusercontent.com/Cobble8/DungeonSecrets/master/secrets/" + dungeon + "/SecretImageText.json", infoLoc.getPath());
+			Utils.print("Downloaded image description file for dungeon: " + dungeon);
 		}
 		
 		
@@ -56,35 +58,36 @@ public class DownloadSecretsHandler extends Thread {
 		try { imageURLs = HttpClient.readPage("https://raw.githubusercontent.com/Cobble8/DungeonSecrets/master/imageurls.txt").split(","); } catch (Exception e1) { Utils.sendErrMsg("Failed to download images."); return; }
 		total = imageURLs.length;
 
-		for(int i=0;i<imageURLs.length;i++) {
-			String imageUrl = imageURLs[i];
-			if(imageUrl.startsWith("//") || (imageUrl.replace(",", "").equals(""))) { total--;continue; }
+		for (String imageUrl : imageURLs) {
+			if (imageUrl.startsWith("//") || (imageUrl.replace(",", "").equals(""))) {
+				total--;
+			}
 		}
-		
-		
 
-		
-		
-		
-		for(int i=0;i<imageURLs.length;i++) {
-			currText = "Images Downloaded: "+Colors.YELLOW+DownloadSecretsHandler.progress+"/"+DownloadSecretsHandler.total;
+
+		for (String imageURL : imageURLs) {
+			currText = "Images Downloaded: " + Colors.YELLOW + DownloadSecretsHandler.progress + "/" + (DownloadSecretsHandler.total - 1);
 			//String imageUrl = "https://raw.githubusercontent.com/Cobble8/DungeonSecrets/master/src/main/resources/assets/dgnscrts/textures/gui/secrets/1x1/andesite/0.png";
-			
+
 			try {
-				
-				String imageUrl = imageURLs[i];
-				if(imageUrl.startsWith("//") || (imageUrl.replace(",", "").equals(""))) { continue; }
-				String[] tmp = imageUrl.split("/");
-				String dungeonName = tmp[tmp.length-4]; 
-				String roomSize = tmp[tmp.length-3];
-				String roomName = tmp[tmp.length-2];
-				String imgName = tmp[tmp.length-1];
-				String loc = "config/"+Reference.MODID+"/secrets/"+dungeonName+"/"+roomSize+"/"+roomName;
-				File imgFolder = new File(loc); imgFolder.mkdirs();
-				loc+="/"+imgName;
-				Utils.saveImage(imageUrl, loc);
-				Utils.print("Saved image: '"+imageUrl+"' at: '"+loc+"'");
-			} catch(Exception e) {continue;}
+
+				if (imageURL.startsWith("//") || (imageURL.replace(",", "").equals(""))) {
+					continue;
+				}
+				String[] tmp = imageURL.split("/");
+				String dungeonName = tmp[tmp.length - 4];
+				String roomSize = tmp[tmp.length - 3];
+				String roomName = tmp[tmp.length - 2];
+				String imgName = tmp[tmp.length - 1];
+				String loc = "config/" + Reference.MODID + "/secrets/" + dungeonName + "/" + roomSize + "/" + roomName;
+				File imgFolder = new File(loc);
+				imgFolder.mkdirs();
+				loc += "/" + imgName;
+				Utils.saveImage(imageURL, loc);
+				Utils.print("Saved image: '" + imageURL + "' at: '" + loc + "'");
+			} catch (Exception e) {
+				continue;
+			}
 			progress++;
 		}
 		if(!SettingMenu.settingsMenuOpen) {
@@ -94,7 +97,7 @@ public class DownloadSecretsHandler extends Thread {
 		
 		Utils.playDingSound();
 		Utils.print("Completed DungeonSecret image download!");
-		try { Thread.sleep(3000); } catch (InterruptedException e) { }
+		try { Thread.sleep(3000); } catch (InterruptedException ignored) { }
 		running = false;
 		currText="";
 	}

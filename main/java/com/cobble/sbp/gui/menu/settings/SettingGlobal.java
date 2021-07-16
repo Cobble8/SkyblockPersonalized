@@ -3,6 +3,7 @@ package com.cobble.sbp.gui.menu.settings;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import net.minecraft.client.gui.Gui;
 import org.lwjgl.input.Keyboard;
 
 import com.cobble.sbp.core.config.ConfigHandler;
@@ -52,7 +53,7 @@ public class SettingGlobal extends GuiScreen {
 		
 		//LOGO
 		mc.getTextureManager().bindTexture(logo);
-		this.drawModalRectWithCustomSizedTexture(this.width/2-200, 17+22, 0, 0, 400, 100, 400, 100);
+		drawModalRectWithCustomSizedTexture(this.width/2-200, 17+22, 0, 0, 400, 100, 400, 100);
 		mc.fontRendererObj.drawString(Colors.YELLOW+"Version: "+Colors.AQUA+Reference.VERSION, this.width/2+194-(mc.fontRendererObj.getStringWidth("Version: "+Reference.VERSION)), 17+22+100-14-11, 0x1f99fa, false);
 		mc.fontRendererObj.drawString(Colors.YELLOW+"Made by "+Colors.RESET+"Cobble8", this.width/2+194-(mc.fontRendererObj.getStringWidth("Made by Cobble8")), 17+22+100-14, 0x1f99fa, false);
 		
@@ -62,13 +63,13 @@ public class SettingGlobal extends GuiScreen {
 		mc.getTextureManager().bindTexture(plusMinus);
 		GlStateManager.color(1, 1, 1, 0.8F); 
 		if(mouseX >= this.width/2-200 && mouseX <= this.width/2-200+20 && mouseY >= 142+12 && mouseY <= 142+20+12) { GlStateManager.color(1, 1, 1, 1); }
-		this.drawModalRectWithCustomSizedTexture(this.width/2-200, 142+12, 0, 0, 20, 20, 118, 20);
+		drawModalRectWithCustomSizedTexture(this.width/2-200, 142+12, 0, 0, 20, 20, 118, 20);
 		GlStateManager.color(1, 1, 1, 0.8F);
 		
 		if(mouseX >= this.width/2-200+80 && mouseX <= this.width/2-200+100 && mouseY >= 142+12 && mouseY <= 142+20+12) { GlStateManager.color(1, 1, 1, 1); }
-		this.drawModalRectWithCustomSizedTexture(this.width/2-200+80, 142+12, 80, 0, 20, 20, 118, 20);
+		drawModalRectWithCustomSizedTexture(this.width/2-200+80, 142+12, 80, 0, 20, 20, 118, 20);
 		GlStateManager.color(1, 1, 1, 0.8F);
-		this.drawModalRectWithCustomSizedTexture(this.width/2-200+20, 142+12, 20, 0, 60, 20, 118, 20);
+		drawModalRectWithCustomSizedTexture(this.width/2-200+20, 142+12, 20, 0, 60, 20, 118, 20);
 		
 		//this.drawModalRectWithCustomSizedTexture(this.width/2-200, 142, 0, 0, 100, 20, 118, 20);
 		
@@ -91,34 +92,34 @@ public class SettingGlobal extends GuiScreen {
 		mc.getTextureManager().bindTexture(settingBg);
 		GlStateManager.enableBlend();
 		GlStateManager.color(1, 1, 1, 0.7F);
-		this.drawModalRectWithCustomSizedTexture(posX-32, posY-90, 0, 0, 33, 33, 92, 55);
-		this.drawModalRectWithCustomSizedTexture(posX-32+66-33, posY-90, 92-33, 0, 33, 33, 92, 55);
-		this.drawModalRectWithCustomSizedTexture(posX-32, posY+4-33, 0, 22, 33, 33, 92, 55);
-		this.drawModalRectWithCustomSizedTexture(posX-32+66-33, posY+4-33, 92-33, 22, 33, 33, 92, 55);
-		this.drawModalRectWithCustomSizedTexture(posX-32, posY-90+33, 0, 16, 33, 28, 92, 55);
-		this.drawModalRectWithCustomSizedTexture(posX-32+33, posY-90+33, 92-33, 16, 33, 28, 92, 55);
+		drawModalRectWithCustomSizedTexture(posX-32, posY-90, 0, 0, 33, 33, 92, 55);
+		drawModalRectWithCustomSizedTexture(posX-32+66-33, posY-90, 92-33, 0, 33, 33, 92, 55);
+		drawModalRectWithCustomSizedTexture(posX-32, posY+4-33, 0, 22, 33, 33, 92, 55);
+		drawModalRectWithCustomSizedTexture(posX-32+66-33, posY+4-33, 92-33, 22, 33, 33, 92, 55);
+		drawModalRectWithCustomSizedTexture(posX-32, posY-90+33, 0, 16, 33, 28, 92, 55);
+		drawModalRectWithCustomSizedTexture(posX-32+33, posY-90+33, 92-33, 16, 33, 28, 92, 55);
 		
 		mc.getTextureManager().bindTexture(settingBorder);
-		this.drawModalRectWithCustomSizedTexture(posX-32, posY-94+4, 0,0, 66, 2, 370, 223);
-		this.drawModalRectWithCustomSizedTexture(posX-32, posY-94+4+2, 0,0, 2, 92, 370, 223);
-		this.drawModalRectWithCustomSizedTexture(posX-32+64, posY-94+4+2, 0,0, 2, 92, 370, 223);
-		this.drawModalRectWithCustomSizedTexture(posX-30, posY+2, 0,0, 62, 2, 370, 223);
+		drawModalRectWithCustomSizedTexture(posX-32, posY-94+4, 0,0, 66, 2, 370, 223);
+		drawModalRectWithCustomSizedTexture(posX-32, posY-94+4+2, 0,0, 2, 92, 370, 223);
+		drawModalRectWithCustomSizedTexture(posX-32+64, posY-94+4+2, 0,0, 2, 92, 370, 223);
+		drawModalRectWithCustomSizedTexture(posX-30, posY+2, 0,0, 62, 2, 370, 223);
 		
 		//DISCORD AND GITHUB
-		String hoveringText = "";
+		/*String hoveringText = "";
 		
 		if(mouseX >= this.width/2+210 && mouseX <= this.width/2+210+32 && mouseY >= 17+22+13 && mouseY <= 17+22+13+32) {
 			GlStateManager.color(1, 1, 1, 1); hoveringText = "discord";
 		} else { GlStateManager.color(1, 1, 1, 0.7F); }
 		mc.getTextureManager().bindTexture(discord);
-		this.drawModalRectWithCustomSizedTexture(this.width/2+210, 17+22+13, 0, 0, 32, 32, 32, 32);
+		drawModalRectWithCustomSizedTexture(this.width/2+210, 17+22+13, 0, 0, 32, 32, 32, 32);
 		
 		
 		if(mouseX >= this.width/2+210 && mouseX <= this.width/2+210+32 && mouseY >= 17+22+13+34 && mouseY <= 17+22+13+32+34) {
 			GlStateManager.color(1, 1, 1, 1); hoveringText = "github";
 		} else { GlStateManager.color(1, 1, 1, 0.7F); }
 		mc.getTextureManager().bindTexture(github);
-		this.drawModalRectWithCustomSizedTexture(this.width/2+210, 17+22+47, 0, 0, 32, 32, 32, 32);
+		drawModalRectWithCustomSizedTexture(this.width/2+210, 17+22+47, 0, 0, 32, 32, 32, 32);
 		
 		if(hoveringText.equals("discord")) {
 			ArrayList<String> discordArrayList = new ArrayList();
@@ -132,7 +133,7 @@ public class SettingGlobal extends GuiScreen {
 			githubArrayList.add(Colors.YELLOW+"https://github.com/Cobble8/SkyblockPersonalized"+Colors.WHITE);
 			this.drawHoveringText(githubArrayList, mouseX, mouseY);
 			GlStateManager.enableBlend();
-		}
+		}*/
 		
 		Utils.renderPlayer(posX, posY-5, scale, mouseX, mouseY);
 	}

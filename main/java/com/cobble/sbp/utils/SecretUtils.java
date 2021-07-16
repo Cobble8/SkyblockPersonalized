@@ -20,17 +20,19 @@ import com.google.gson.JsonParser;
 public class SecretUtils {
 	
 	public static String prettifyRoomname(String roomID) {
-		String output = "";
+		StringBuilder output = new StringBuilder();
 		String[] input = roomID.split("-");
-		for(int j=0;j<input.length;j++) { output+=input[j].substring(0, 1).toUpperCase() + input[j].substring(1)+" "; }
-		output = Utils.removeLastChars(output, 1);
+		for (String s : input) {
+			output.append(s.substring(0, 1).toUpperCase()).append(s.substring(1)).append(" ");
+		}
+		output = new StringBuilder(Utils.removeLastChars(output.toString(), 1));
 		
 		try {
 			int scrtNum = Integer.parseInt(input[input.length-1]);
-			output = Utils.removeLastChars(output, (scrtNum+"").length()+1);
-		} catch(Exception e) {}
+			output = new StringBuilder(Utils.removeLastChars(output.toString(), (scrtNum + "").length() + 1));
+		} catch(Exception ignored) {}
 		
-		return output;
+		return output.toString();
 	}
 	
 	public static ArrayList<String> getRoomNames(String roomShape, String dungeon) {
@@ -67,25 +69,26 @@ public class SecretUtils {
 				//ConfigHandler.forceDisabled.clear(); for(Object str : disableList) { ConfigHandler.forceDisabled.add(str+"".replace("[\"", "").replace("\"]", "")); ConfigHandler.newObject(str+"", false);}
 				//Utils.print(ConfigHandler.forceEnabled);
 				//Utils.print(ConfigHandler.forceDisabled);
-		} catch(Exception e) { e.printStackTrace(); return; }
+		} catch(Exception e) { e.printStackTrace();
+		}
 	}
 	
 	public static ArrayList<String> getRoomDesc(String roomShape, String roomID, String dungeon) {
 		ArrayList<String> output = new ArrayList();
 		
 		testForData(dungeon);
-
+		roomID = roomID.substring(0, roomID.lastIndexOf("-"));
 
 		try {
 			JSONObject info = (JSONObject) ((JSONObject) new JSONParser().parse(Utils.readFile("config/"+Reference.MODID+"/secrets/"+dungeon+"/SecretImageText.json"))).get(roomShape);
 			Object[] keyset = info.keySet().toArray();
-			for(int i=0;i<keyset.length;i++) {
-				if((keyset[i]+"").startsWith(roomID.toLowerCase())) {
-					JSONArray tmp2 = (JSONArray) info.get(keyset[i]);
-					for(Object str : tmp2) {
-						output.add(str+"");
+			for (Object o : keyset) {
+				String rawRoomID = (o+"").substring(0, (o+"").lastIndexOf("-"));
+				if (rawRoomID.equals(roomID.toLowerCase())) {
+					JSONArray tmp2 = (JSONArray) info.get(o);
+					for (Object str : tmp2) {
+						output.add(str + "");
 					}
-					continue;
 				}
 			}
 			
@@ -97,12 +100,11 @@ public class SecretUtils {
 	public static ArrayList<String> getRoomName(String roomShape, int secretCount, String dungeon) {
 		ArrayList<String> output = new ArrayList();
 		ArrayList<String> possibleRooms = getRoomNames(roomShape, dungeon);
-		
-		
-		
-		for(int i=0;i<possibleRooms.size();i++) {
-			if(possibleRooms.get(i).endsWith(secretCount+"")) {
-				output.add(possibleRooms.get(i));
+
+
+		for (String possibleRoom : possibleRooms) {
+			if (possibleRoom.endsWith(secretCount + "")) {
+				output.add(possibleRoom);
 			}
 		}
 		

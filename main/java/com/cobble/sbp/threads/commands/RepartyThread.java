@@ -18,7 +18,7 @@ public class RepartyThread extends Thread {
 		UpdatePartyHandler.delay = delay;
 		new UpdatePartyHandler().start();
 		
-		Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
+
 		try { Thread.sleep(delay); } catch (InterruptedException e) {e.printStackTrace();}
 		
 		

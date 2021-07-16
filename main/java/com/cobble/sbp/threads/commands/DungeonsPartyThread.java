@@ -1,6 +1,7 @@
 package com.cobble.sbp.threads.commands;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import com.cobble.sbp.commands.Dungeons;
@@ -92,8 +93,6 @@ public class DungeonsPartyThread extends Thread {
 		char berserkSymbol = '\u2741';
 		char archerSymbol = '\u2623';
 		char mageSymbol = '\u270e';
-		Charset utf8 = Charset.forName("UTF-8");
-        Charset def = Charset.defaultCharset();
 
 
         byte[] bytesH;
@@ -104,11 +103,23 @@ public class DungeonsPartyThread extends Thread {
 
 		
 		for(int i=0; i<nameList.size();i++) {
-			if(classList.get(i).equals("healer")) {classList.set(i, Colors.YELLOW+""+healerSymbol+Colors.GREEN+" Healer");}
-			else if(classList.get(i).equals("tank")) {classList.set(i, Colors.YELLOW+""+tankSymbol+Colors.GRAY+" Tank");}
-			else if(classList.get(i).equals("berserk")) {classList.set(i, Colors.YELLOW+""+berserkSymbol+Colors.RED+" Berserk");}
-			else if(classList.get(i).equals("archer")) {classList.set(i, Colors.YELLOW+""+archerSymbol+Colors.GOLD+" Archer");}
-			else if(classList.get(i).equals("mage")) {classList.set(i, Colors.YELLOW+""+mageSymbol+Colors.AQUA+" Mage");}
+			switch (classList.get(i)) {
+				case "healer":
+					classList.set(i, Colors.YELLOW + "" + healerSymbol + Colors.GREEN + " Healer");
+					break;
+				case "tank":
+					classList.set(i, Colors.YELLOW + "" + tankSymbol + Colors.GRAY + " Tank");
+					break;
+				case "berserk":
+					classList.set(i, Colors.YELLOW + "" + berserkSymbol + Colors.RED + " Berserk");
+					break;
+				case "archer":
+					classList.set(i, Colors.YELLOW + "" + archerSymbol + Colors.GOLD + " Archer");
+					break;
+				case "mage":
+					classList.set(i, Colors.YELLOW + "" + mageSymbol + Colors.AQUA + " Mage");
+					break;
+			}
 			
 			Utils.sendSpecificMessage(Colors.DARK_RED+"-----------------------------------------------------");
 			
@@ -125,7 +136,6 @@ public class DungeonsPartyThread extends Thread {
 		else {
 			Utils.sendErrMsg("Couldn't find anybody else in your party!");
 		}
-		return;
 	}
 
 }

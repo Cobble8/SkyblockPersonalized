@@ -20,10 +20,11 @@ public class KeyBindingHandler {
     	lockQuickCraft = new KeyBinding("Locks the current quick crafting slot", Keyboard.KEY_L, Reference.NAME);
     	nextSecret = new KeyBinding("Goes to the next secret from /secrets", Keyboard.KEY_N, Reference.NAME);
     	prevSecret = new KeyBinding("Goes to the previous secret from /secrets", Keyboard.KEY_B, Reference.NAME);
-    	clearSecret = new KeyBinding("Clears the current room secrets from the screen", Keyboard.KEY_M, Reference.NAME);
+		clearSecret = new KeyBinding("Clears the current room secrets from the screen", Keyboard.KEY_M, Reference.NAME);
     	ClientRegistry.registerKeyBinding(lockQuickCraft);
     	ClientRegistry.registerKeyBinding(nextSecret);
     	ClientRegistry.registerKeyBinding(prevSecret);
-    	ClientRegistry.registerKeyBinding(clearSecret);
+		ClientRegistry.registerKeyBinding(clearSecret);
+
     }
 }

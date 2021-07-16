@@ -28,7 +28,7 @@ public class DialogueThread extends Thread {
 			String name = Minecraft.getMinecraft().thePlayer.getName();
 			String nameShort = Colors.YELLOW+"[SBP] "+Colors.GOLD+name+Colors.WHITE+": ";
 			String npcShort = Colors.YELLOW+"[SBP] "+dialName+Colors.WHITE+": ";
-			Boolean doDelay = true;
+			boolean doDelay = true;
 		
 			int currMsg = currMessages;
 			
@@ -99,7 +99,7 @@ public class DialogueThread extends Thread {
 			} else if(dialID == 5) {
 				if(dialName.equals(Colors.GOLD+"Castle Guard")) {
 					d.add(nameShort+"And we're all SUPER proud of you! Right guys?");
-					d.add(Colors.YELLOW+"[SBP] "+Colors.AQUA+"RayDeeUx"+Colors.WHITE+": Yep.");
+					d.add(Colors.YELLOW+"[SBP] "+Colors.AQUA+"Erymanthus"+Colors.WHITE+": Yep.");
 					d.add(Colors.YELLOW+"[SBP] "+Colors.RED+"Minikloon"+Colors.WHITE+": Mhm.");
 					d.add(Colors.YELLOW+"[SBP] "+Colors.LIGHT_PURPLE+"Technoblade"+Colors.WHITE+": Of course.");
 					d.add(npcShort+"Aww, thanks guys!");
@@ -139,7 +139,7 @@ public class DialogueThread extends Thread {
 					Minecraft.getMinecraft().thePlayer.playSound("mob.villager.haggle", 0.5F, 1.0F);
 				}
 			}
-			return;
+
 			
 		}
 		

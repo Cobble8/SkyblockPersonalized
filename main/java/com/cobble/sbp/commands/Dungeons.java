@@ -45,8 +45,7 @@ public class Dungeons extends CommandBase {
 			if((Boolean) DataGetter.findBool("APIKeyToggle")) {
 				if(args.length == 0) {
 					Utils.sendErrMsg("Please supply a name to look up!");
-					return;
-					}
+				}
 				else if(args.length == 1 && args[0].toLowerCase().equals("party")) {
 					Thread dungeonsParty = new DungeonsPartyThread();
 					dungeonsParty.start();

@@ -92,10 +92,10 @@ public class SecretFinder extends CommandBase{
 			try {
 				SecretImage.currDungeon=args[0];
 			} catch(Exception e) {
-				String output = "";
+				StringBuilder output = new StringBuilder();
 				for(int i=0;i<DownloadSecretsHandler.dungeons.size();i++) {
-					output+=Colors.YELLOW+DownloadSecretsHandler.dungeons.get(i);
-					if(i != DownloadSecretsHandler.dungeons.size()-1) { output+=Colors.AQUA+", "; }
+					output.append(Colors.YELLOW).append(DownloadSecretsHandler.dungeons.get(i));
+					if(i != DownloadSecretsHandler.dungeons.size()-1) { output.append(Colors.AQUA).append(", "); }
 				}	
 				Utils.sendErrMsg("You must supply a valid dungeon name! Examples: "+output);
 				return;
@@ -107,16 +107,15 @@ public class SecretFinder extends CommandBase{
 				for(String str : possibleRoomShapes) {
 					if(str.toLowerCase().equals(args[0].toLowerCase())) {
 						SecretImage.roomShape=str;
-						continue;
 					}
 				}
 				
 			} catch(Exception e) {
 				
-				String output = "";
+				StringBuilder output = new StringBuilder();
 				for(int i=0;i<possibleRoomShapes.size();i++) {
-					output+=Colors.AQUA+possibleRoomShapes.get(i);
-					if(i != possibleRoomShapes.size()-1) { output+=Colors.YELLOW+", "; }
+					output.append(Colors.AQUA).append(possibleRoomShapes.get(i));
+					if(i != possibleRoomShapes.size()-1) { output.append(Colors.YELLOW).append(", "); }
 				}	
 				
 				Utils.sendErrMsg("You must provide a valid room shape! Examples: "+output);
@@ -129,7 +128,10 @@ public class SecretFinder extends CommandBase{
 				if(possibleRooms.size() == 0) {
 					throw new Exception("This literally doesn't matter I'm pretty sure");
 				} else if(possibleRooms.size() == 1) {
-					//DISPLAY IMAGE HERE 
+					SecretImage.roomSecretsID=possibleRooms.get(0);
+					SecretImage.currentSecretText = SecretUtils.getRoomDesc(SecretImage.roomShape, SecretImage.roomSecretsID, SecretImage.currDungeon);
+					Utils.sendMessage("Found room: '"+Colors.AQUA+possibleRooms.get(0)+Colors.YELLOW+"' for your provided arguments!");
+					SecretImage.reloadImage=true;
 				} else {
 					int clr = 0;
 					for(String str : possibleRooms) {
@@ -143,22 +145,19 @@ public class SecretFinder extends CommandBase{
 						Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(color+output).setChatStyle(runCommand));
 					}
 				}
-				
-				return;
+
 			} catch(Exception e) {
 				Utils.sendErrMsg("There are no rooms in the '"+args[0]+"' dungeon in room shape '"+args[1]+"' with '"+args[2]+"' secrets!");
-				return;
 			}
 		} else {
 			//Room Shape Argument
 			ArrayList<String> possibleRoomShapes = SecretUtils.getRoomShapes(SecretImage.currDungeon);
 			try {
-				Boolean passThru = false;
+				boolean passThru = false;
 				for(String str : possibleRoomShapes) {
 					if(str.toLowerCase().startsWith(args[0].toLowerCase())) {
 						SecretImage.roomShape=str;
 						passThru=true;
-						continue;
 					}
 				} if(!passThru) {
 					throw new Exception("This literally doesn't matter iirc");
@@ -166,10 +165,10 @@ public class SecretFinder extends CommandBase{
 				
 			} catch(Exception e) {
 				
-				String output = "";
+				StringBuilder output = new StringBuilder();
 				for(int i=0;i<possibleRoomShapes.size();i++) {
-					output+=Colors.AQUA+SecretUtils.prettifyRoomname(possibleRoomShapes.get(i));
-					if(i != possibleRoomShapes.size()-1) { output+=Colors.YELLOW+", "; }
+					output.append(Colors.AQUA).append(SecretUtils.prettifyRoomname(possibleRoomShapes.get(i)));
+					if(i != possibleRoomShapes.size()-1) { output.append(Colors.YELLOW).append(", "); }
 				}	
 				
 				Utils.sendErrMsg("You must provide a valid room shape! Examples: "+output);

@@ -1,0 +1,18 @@
+{
+  "ice_walker_slayer": 100,
+  "goblin_slayer": 200,
+  "_mithril": 350,
+  "mithril_miner": 500,
+  "_titanium": 10,
+  "titanium_miner": 15,
+
+  "goblin_raid": 1,
+  "goblin_raid_slayer": 20,
+  "golden_goblin_slayer": 1,
+  "powder_ghast_puncher": 5,
+  "raffle": 1,
+  "lucky_raffle": 20,
+  "star_sentry_puncher": 10,
+  "2x_mithril_powder_collector": 500,
+  "first_event": 1
+}

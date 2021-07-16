@@ -36,8 +36,7 @@ public class SecretImage extends Gui {
 	public static int imgX = DataGetter.findInt("scrtX");
 	public static int imgY = DataGetter.findInt("scrtY");
 	public static String bgColorID = DataGetter.findStr("scrtBgColor");
-	public static String arrowColor = DataGetter.findStr("scrtArrowColor");
-	public static int scrtColorID = DataGetter.findInt("scrtTextColor");
+	public static String scrtColorID = DataGetter.findStr("scrtTextColor");
 	
 	public static int currentSecret = 0;
 	public static int maxSecrets = 1;
@@ -113,7 +112,7 @@ public class SecretImage extends Gui {
 			imgWidth = 192*scale/10;
 			imgHeight = 101*scale/10;
 			String text = currentSecretText.get(currentSecret);
-			String color = Utils.getColorFromInt(scrtColorID);
+			String color = ColorUtils.textColor(scrtColorID);
 			mc.getTextureManager().bindTexture(border);
 			ColorUtils.setColor(bgColorID);
 			this.drawModalRectWithCustomSizedTexture(imgX, imgY, 0, 0, imgWidth+4, imgHeight+42, imgWidth, imgHeight);
@@ -128,7 +127,7 @@ public class SecretImage extends Gui {
 				mc.getTextureManager().bindTexture(currImage);
 			}
 			
-			this.drawModalRectWithCustomSizedTexture(imgX+2, imgY+14+16, 0, 0, imgWidth, imgHeight, imgWidth, imgHeight);
+			drawModalRectWithCustomSizedTexture(imgX+2, imgY+14+16, 0, 0, imgWidth, imgHeight, imgWidth, imgHeight);
 			if(downloadImage) {
 				String downloading = "Downloading";
 				if(AnimationHandler.mainAnim < 250) {
@@ -148,20 +147,20 @@ public class SecretImage extends Gui {
 			ColorUtils.setInvertColor(bgColorID);
 			try {
 				String tmp = currentSecretText.get(currentSecret-1);
-				this.drawModalRectWithCustomSizedTexture(imgX+2, imgY-14+16, 0, 0, 14, 11, 42, 11);
-				Utils.drawString(color+Keyboard.getKeyName(KeyBindingHandler.prevSecret.getKeyCode()), imgX+2+16, imgY-12+16);
+				drawModalRectWithCustomSizedTexture(imgX+2, imgY-14+16, 0, 0, 14, 11, 42, 11);
+				Utils.drawString(color+Keyboard.getKeyName(KeyBindingHandler.prevSecret.getKeyCode()), imgX+3+16, imgY-12+16);
 				mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MODID, "textures/gui/arrows.png"));
-			} catch(Exception e) {}
+			} catch(Exception ignored) {}
 			try {
 				ColorUtils.setInvertColor(bgColorID);
 				String tmp = currentSecretText.get(currentSecret+1);
-				this.drawModalRectWithCustomSizedTexture(imgX-2+imgWidth-12, imgY-14+16, 14, 0, 14, 11, 42, 11);
-				Utils.drawString(color+Keyboard.getKeyName(KeyBindingHandler.nextSecret.getKeyCode()), imgX-2+imgWidth-12-8, imgY-12+16);
+				drawModalRectWithCustomSizedTexture(imgX-2+imgWidth-12, imgY-14+16, 14, 0, 14, 11, 42, 11);
+				Utils.drawString(color+Keyboard.getKeyName(KeyBindingHandler.nextSecret.getKeyCode()), imgX-4+imgWidth-12-(mc.fontRendererObj.getStringWidth(Keyboard.getKeyName(KeyBindingHandler.nextSecret.getKeyCode()))), imgY-12+16);
 			} catch(Exception e) {
 				ColorUtils.resetColor();
 				mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MODID, "textures/gui/arrows.png"));
-				this.drawModalRectWithCustomSizedTexture(imgX-2+imgWidth-12, imgY-14+16, 28, 0, 14, 11, 42, 11);
-				Utils.drawString(color+Keyboard.getKeyName(KeyBindingHandler.clearSecret.getKeyCode()), imgX-2+imgWidth-12-8, imgY-12+16);
+				drawModalRectWithCustomSizedTexture(imgX-2+imgWidth-12, imgY-14+16, 28, 0, 14, 11, 42, 11);
+				Utils.drawString(color+Keyboard.getKeyName(KeyBindingHandler.clearSecret.getKeyCode()), imgX-4+imgWidth-12-(mc.fontRendererObj.getStringWidth(Keyboard.getKeyName(KeyBindingHandler.clearSecret.getKeyCode()))), imgY-12+16);
 			}
 			
 			int aO = 0;
@@ -174,7 +173,7 @@ public class SecretImage extends Gui {
 			
 			mc.getTextureManager().bindTexture(border);
 			ColorUtils.setColor(bgColorID);
-			this.drawModalRectWithCustomSizedTexture(imgX+2+aO-aO2-2, imgY+1+16, 0, 0, strWidth+4, 12, 1, 1);
+			drawModalRectWithCustomSizedTexture(imgX+2+aO-aO2-2, imgY+1+16, 0, 0, strWidth+4, 12, 1, 1);
 			ColorUtils.resetColor();
 			
 			Utils.drawString(color+text, imgX+2+aO, imgY+3+16, SettingGlobal.textStyle, true);
@@ -185,7 +184,7 @@ public class SecretImage extends Gui {
 			int credY = imgY+imgHeight+16+16;
 
 			Utils.drawConfinedString(color+"Images by DungeonSecretGuide Discord Server", credX, credY, 0, imgWidth-1);
-		} catch(Exception e) {}
+		} catch(Exception ignored) {}
 		
 		
 		GlStateManager.enableBlend();

@@ -34,16 +34,12 @@ public class Bedwars extends CommandBase {
 			String arg = args[0].toLowerCase();
 			if(arg.equals("solo") || arg.equals("solos") || arg.equals("1") || arg.equals("1v1")) {
 				Minecraft.getMinecraft().thePlayer.sendChatMessage("/play bedwars_eight_one");
-				return;
 			} else if(arg.replace("s", "").equals("double") || arg.equals("2") || arg.equals("2v2")) {
 				Minecraft.getMinecraft().thePlayer.sendChatMessage("/play bedwars_eight_two");
-				return;
 			} else if(arg.replace("s", "").equals("triple") || arg.equals("3") || arg.equals("3v3")) {
 				Minecraft.getMinecraft().thePlayer.sendChatMessage("/play bedwars_four_three");
-				return;
 			} else if(arg.replace("s", "").equals("four") || arg.equals("4") || arg.equals("4v4")) {
 				Minecraft.getMinecraft().thePlayer.sendChatMessage("/play bedwars_four_four");
-				return;
 			}
 		} else {
 			Utils.sendErrMsg(Colors.RED+"Missing arguments: '"+Colors.DARK_RED+"GAMEMODE"+Colors.RED+"'");
@@ -52,7 +48,6 @@ public class Bedwars extends CommandBase {
 			Utils.sendSpecificMessage(Colors.RED+"Doubles: '2v2', '2', 'double', 'doubles'");
 			Utils.sendSpecificMessage(Colors.RED+"Triples: '3v3', '3', 'triple', 'triples'");
 			Utils.sendSpecificMessage(Colors.RED+"Fours: '4v4', '4', 'four', 'fours'");
-			return;
 		}
 		
 		

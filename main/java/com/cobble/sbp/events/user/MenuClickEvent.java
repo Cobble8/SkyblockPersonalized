@@ -1,6 +1,7 @@
 package com.cobble.sbp.events.user;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -11,15 +12,11 @@ import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.RenderGuiEvent;
 import com.cobble.sbp.handlers.KeyBindingHandler;
 import com.cobble.sbp.threads.misc.RickRolledThread;
-import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
-import com.google.common.eventbus.Subscribe;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.event.ClickEvent;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
@@ -38,13 +35,13 @@ public class MenuClickEvent {
 		if(SBP.onSkyblock) {
 			
 			
-			if(event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {;
+			if(event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {
 				EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 				String heldItem = Utils.getSBID();
 				if(heldItem.contains("theoretical_hoe_") && DataGetter.findBool("blockHoeClicks")) {
 					new RickRolledThread().start();
 					event.setCanceled(true);
-					Minecraft.getMinecraft().thePlayer.playSound("note.bass", 1, 0.2F);
+					player.playSound("note.bass", 1, 0.2F);
 				}
 			}	
 		}
@@ -58,7 +55,6 @@ public class MenuClickEvent {
 		if(Mouse.getEventButtonState()) {
 			if(RenderGuiEvent.currMenu.equals("craft item") && DataGetter.findBool("toggleBlockedQuickCrafts")) {
 				String[] blockedCraftList = DataGetter.findStr("blockedQuickCrafts").split(";");
-				ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
 		        Minecraft mc = Minecraft.getMinecraft();
 		        try {
 		        	int w = mc.currentScreen.width;
@@ -71,10 +67,13 @@ public class MenuClickEvent {
 				   		
 				   		if(mouseX >= w/2-9+54 && mouseX <= w/2+9+54 && mouseY >= h/2-3-72+(i*18) && mouseY <= h/2+15-72+(i*18)) {
 				   			//Utils.sendMessage(currItem);
-				   			Boolean passThrough = false;
-				   			for(int j=0;j<blockedCraftList.length;j++) {
-				   				if(blockedCraftList[j].equals(currItem)) { passThrough = true; continue; }
-				   			}
+				   			boolean passThrough = false;
+							for (String s : blockedCraftList) {
+								if (s.equals(currItem)) {
+									passThrough = true;
+									break;
+								}
+							}
 				   			if(passThrough) {
 				   				Minecraft.getMinecraft().thePlayer.playSound("note.pling", 1, 0.0F);
 								if(event.isCancelable()) { event.setCanceled(true); return; }
@@ -96,15 +95,15 @@ public class MenuClickEvent {
 		if(!RenderGuiEvent.currMenu.equals("craft item") || !DataGetter.findBool("toggleBlockedQuickCrafts")) {return;}
     	if(Keyboard.isKeyDown(KeyBindingHandler.lockQuickCraft.getKeyCode())) {
     		
-    		
+
     		String oldQuickCrafts = DataGetter.findStr("blockedQuickCrafts");
     		
     		String[] blockedCraftList = oldQuickCrafts.split(";");
     		ArrayList<String> lockedCrafts = new ArrayList();
-    		for(int i=0;i<blockedCraftList.length;i++) { lockedCrafts.add(blockedCraftList[i]); }
+			Collections.addAll(lockedCrafts, blockedCraftList);
     		
     		
-			ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+
     		Minecraft mc = Minecraft.getMinecraft();
 	        try {
 	        	int guiScale = mc.gameSettings.guiScale;
@@ -125,24 +124,23 @@ public class MenuClickEvent {
 			   		
 			   		if(mouseX >= w/2-9+54 && mouseX <= w/2+9+54 && mouseY >= h/2-3-72+(i*18) && mouseY <= h/2+15-72+(i*18)) {
 			   			//Utils.sendMessage(currItem);
-			   			Boolean passThrough = false;
+			   			boolean passThrough = false;
 			   			
 			   			for(int j=0;j<lockedCrafts.size();j++) {
 			   				if(lockedCrafts.get(j).equals(currItem)) {
 			   					lockedCrafts.remove(j);
-			   					passThrough = true; 
-			   					continue; 
-			   				}
+			   					passThrough = true;
+							}
 			   			}
 			   			
 			   			if(!passThrough) {
 			   				ConfigHandler.newObject("blockedQuickCrafts", oldQuickCrafts+currItem+";");
 			   				Utils.playDingSound();
 			   			} else {
-			   				String output = "";
-			   				for(String item : lockedCrafts) { output+=item+";"; }
+			   				StringBuilder output = new StringBuilder();
+			   				for(String item : lockedCrafts) { output.append(item).append(";"); }
 			   				
-			   				ConfigHandler.newObject("blockedQuickCrafts", output);
+			   				ConfigHandler.newObject("blockedQuickCrafts", output.toString());
 			   				Minecraft.getMinecraft().thePlayer.playSound("note.pling", 1, 0.0F);
 			   			}
 

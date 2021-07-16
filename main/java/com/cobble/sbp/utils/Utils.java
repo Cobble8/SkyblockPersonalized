@@ -2,7 +2,6 @@ package com.cobble.sbp.utils;
 
 import java.awt.Color;
 import java.awt.Desktop;
-import java.awt.List;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,13 +12,15 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
+import com.cobble.sbp.gui.menu.settings.SettingMenu;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 import org.lwjgl.opengl.GL11;
 
 import com.cobble.sbp.SBP;
@@ -27,8 +28,6 @@ import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.skyblock.LobbySwapEvent;
 import com.cobble.sbp.gui.menu.settings.SettingGlobal;
-import com.ibm.icu.text.DecimalFormat;
-import com.mojang.realmsclient.gui.ChatFormatting;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -40,32 +39,22 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.event.ClickEvent;
-import net.minecraft.event.HoverEvent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import scala.actors.threadpool.Arrays;
 
 public class Utils {
 
 	public static final double TWICE_PI = Math.PI*2;	
-	private static Tessellator tessellator = Tessellator.getInstance();
-	private static WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+	private static final Tessellator tessellator = Tessellator.getInstance();
+	private static final WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 	public static ResourceLocation tooltip = new ResourceLocation(Reference.MODID, "textures/gui/tooltip.png");
 	public static ResourceLocation color = new ResourceLocation(Reference.MODID, "textures/gui/tooltip_color.png");
 	public static int chromaSpeed = 4;
-	public static void chatMsgRunCmd(String string, String command) {
-		ChatStyle runCommand = new ChatStyle();
-		runCommand.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
-		runCommand.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(ChatFormatting.AQUA+"Click to show secrets for the "+string+ChatFormatting.AQUA+" room!")));
-		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(string).setChatStyle(runCommand));
-	}
 	
 	public static void openURL(String url) {
 		try {
@@ -118,7 +107,6 @@ public class Utils {
 			//
 			File loc = new File(destinationFile);
 			loc.getParentFile().mkdirs(); loc.createNewFile();
-			Boolean exists = loc.exists();
 			FileWriter writer = new FileWriter(loc);
 			
 			writer.write(text);
@@ -134,7 +122,7 @@ public class Utils {
 	}
 	
 	public static void saveFileFromUrl(String imageUrl, String destinationFile) {
-		try { saveFile(HttpClient.readPage(imageUrl), destinationFile); } catch (Exception e) { }
+		try { saveFile(HttpClient.readPage(imageUrl), destinationFile); } catch (Exception ignored) { }
 	}
 	
 	public static String getSBID() {
@@ -153,17 +141,24 @@ public class Utils {
 	
 	public static void drawRegularPolygon(double x, double y, int radius, int sides, int percent)
 	{
-		drawRegularPolygon(x, y, radius, sides, percent, 1, 1, 1);
+		drawRegularPolygon(x, y, radius, sides, percent, 1, 1, 1, 1);
+	}
+
+	public static void drawAntiAliasPolygon(double x, double y, int radius, int sides, int percent, float r, float g, float b) {
+
+		drawRegularPolygon(x, y, radius, sides, percent, r, g, b,1);
+		drawRegularPolygon(x, y, radius+1, sides*2, percent, r, g, b,0.8F);
+		drawRegularPolygon(x, y, radius-1, sides*2, percent, r, g, b,0.8F);
 	}
 	
-	public static void drawRegularPolygon(double x, double y, int radius, int sides, int percent, float r, float g, float b) {
+	public static void drawRegularPolygon(double x, double y, int radius, int sides, int percent, float r, float g, float b, float a) {
 		try {
-		GlStateManager.disableAlpha();
-		GlStateManager.disableBlend();
+		//GlStateManager.disableAlpha();
+		//GlStateManager.disableBlend();
 		GlStateManager.color(1, 1, 1);
-		int rad2 = radius/2;
+		//int rad2 = radius/2;
 		int per = percent*sides/100;
-		GlStateManager.color(r, g, b);
+		GlStateManager.color(r, g, b, a);
 		worldRenderer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
 		for(int i=0;i<per+1;i++) {
 
@@ -178,24 +173,21 @@ public class Utils {
 		GlStateManager.enableBlend();
 		GlStateManager.enableAlpha();
 		
-		} catch(Exception e) { }
+		} catch(Exception ignored) { }
 	}
 	
 	
 	public static void renderPlayer(int x, int y, int scaled, int lookingX, int lookingY) {
-		int posX = x;
-		int posY = y;
-		int scale = scaled;
-		int mouseX2 = lookingX-posX;
-		int mouseY2 = lookingY-posY+(scale*4/3)+(scale/10);
+		int mouseX2 = lookingX- x;
+		int mouseY2 = lookingY- y +(scaled *4/3)+(scaled /10);
 		
 		EntityLivingBase ent = Minecraft.getMinecraft().thePlayer;
 		GlStateManager.enableBlend();
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.enableColorMaterial();
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float)posX, (float)posY, 50.0F);
-        GlStateManager.scale((float)(-scale), (float)scale, (float)scale);
+        GlStateManager.translate((float) x, (float) y, 50.0F);
+        GlStateManager.scale((float)(-scaled), (float) scaled, (float) scaled);
         GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
         float f = ent.renderYawOffset;
         float f1 = ent.rotationYaw;
@@ -205,10 +197,10 @@ public class Utils {
         GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
         RenderHelper.enableStandardItemLighting();
         GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(-((float)Math.atan((double)(mouseY2*-1 / 40.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
-        ent.renderYawOffset = (float)Math.atan((double)(mouseX2*-1 / 40.0F)) * 20.0F;
-        ent.rotationYaw = (float)Math.atan((double)(mouseX2*-1 / 40.0F)) * 40.0F;
-        ent.rotationPitch = -((float)Math.atan((double)(mouseY2*-1 / 40.0F))) * 20.0F;
+        GlStateManager.rotate(-((float)Math.atan((mouseY2*-1 / 40.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
+        ent.renderYawOffset = (float)Math.atan((mouseX2*-1 / 40.0F)) * 20.0F;
+        ent.rotationYaw = (float)Math.atan((mouseX2*-1 / 40.0F)) * 40.0F;
+        ent.rotationPitch = -((float)Math.atan((mouseY2*-1 / 40.0F))) * 20.0F;
         ent.rotationYawHead = ent.rotationYaw;
         ent.prevRotationYawHead = ent.rotationYaw;
         
@@ -248,14 +240,16 @@ public class Utils {
 		Minecraft mc = Minecraft.getMinecraft();
 		int finTextStyle = textStyle;
 		
-		ArrayList<String> text = new ArrayList();
+		ArrayList<String> text = new ArrayList<>();
 		for(Object curr : texts) {
 			text.add(curr+"");
 		}
 		int maxStrWidth = 0;
-		for(int i=0;i<text.size();i++) {
-			int strWidth = mc.fontRendererObj.getStringWidth(text.get(i).toString());
-			if(maxStrWidth < strWidth) { maxStrWidth = strWidth; }
+		for (String s : text) {
+			int strWidth = mc.fontRendererObj.getStringWidth(s);
+			if (maxStrWidth < strWidth) {
+				maxStrWidth = strWidth;
+			}
 		}
 		int aO = 0;
 		if(align) {
@@ -276,7 +270,7 @@ public class Utils {
 			maxStrWidth+=8;
 			GlStateManager.enableBlend();
 			GlStateManager.color(0, 0, 0, 0.6F);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-4-aO, y-4, 0, 0, maxStrWidth, 7+(11*text.size()), 5, 5);
+			Gui.drawModalRectWithCustomSizedTexture(x-4-aO, y-4, 0, 0, maxStrWidth, 7+(11*text.size()), 5, 5);
 			
 		} else if(textStyle == 4) {
 			finTextStyle = 2;
@@ -296,32 +290,38 @@ public class Utils {
 				ColorUtils.setColor("0.0;0.0;0.6;");
 			}
 			//Color
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-2-aO, y-3, 0, 0, maxStrWidth+6, 1, maxStrWidth+6, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-2-aO, y-1+strHeight, 0, 15, maxStrWidth+6, 1, maxStrWidth+6, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-2-aO, y-2, 0, 0, 1, strHeight+1, 16, strHeight+1);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x+maxStrWidth+2-aO, y-2, 15, 0, 1, strHeight+1, 16, strHeight+1);
+			Gui.drawModalRectWithCustomSizedTexture(x-2-aO, y-3, 0, 0, maxStrWidth+6, 1, maxStrWidth+6, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x-2-aO, y-1+strHeight, 0, 15, maxStrWidth+6, 1, maxStrWidth+6, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x-2-aO, y-2, 0, 0, 1, strHeight+1, 16, strHeight+1);
+			Gui.drawModalRectWithCustomSizedTexture(x+maxStrWidth+2-aO, y-2, 15, 0, 1, strHeight+1, 16, strHeight+1);
 			
-			mc.getTextureManager().bindTexture(tooltip);
-			GlStateManager.color(1, 1, 1, 0.9F);
-			
-			
-			//Corners
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-3-aO, y-4, 0, 0, 4, 4, 16, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x+maxStrWidth-aO, y-4, 12, 0, 4, 4, 16, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-3, y+strHeight-3-aO, 0, 12, 4, 4, 16, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x+maxStrWidth-aO, y+strHeight-3, 12, 12, 4, 4, 16, 16);
-			
+
+
 			//Text Background
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x+1-aO, y, 4, 4, maxStrWidth-1, strHeight-3, 1, 1);
+			mc.getTextureManager().bindTexture(SettingMenu.blank);
+			GlStateManager.color(0.05f, 0, 0, 0.9F);
+			Gui.drawModalRectWithCustomSizedTexture(x+1-aO, y, 4, 4, maxStrWidth-1, strHeight-3, 1, 1);
+
+			mc.getTextureManager().bindTexture(tooltip);
+			GlStateManager.color(1, 1, 1, 0.98F);
+
+			//Corners
+			Gui.drawModalRectWithCustomSizedTexture(x-3-aO, y-4, 0, 0, 4, 4, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x+maxStrWidth-aO, y-4, 12, 0, 4, 4, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x-3, y+strHeight-3-aO, 0, 12, 4, 4, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x+maxStrWidth-aO, y+strHeight-3, 12, 12, 4, 4, 16, 16);
+			
+
+
 			//Top and Bottom Sides
 			for(int i=0;i<maxStrWidth-1;i++) { 
-				mc.currentScreen.drawModalRectWithCustomSizedTexture(x+i+1-aO, y-4, 4, 0, 1, 4, 16, 16);
-				mc.currentScreen.drawModalRectWithCustomSizedTexture(x+i+1-aO, y+strHeight-3, 4, 12, 1, 4, 16, 16);
+				Gui.drawModalRectWithCustomSizedTexture(x+i+1-aO, y-4, 4, 0, 1, 4, 16, 16);
+				Gui.drawModalRectWithCustomSizedTexture(x+i+1-aO, y+strHeight-3, 4, 12, 1, 4, 16, 16);
 			}
 			//Left and Right Sides
 			for(int i=0;i<strHeight-3;i++) {
-				mc.currentScreen.drawModalRectWithCustomSizedTexture(x-3-aO, y+(i), 0, 4, 4, 1 , 16, 16);
-				mc.currentScreen.drawModalRectWithCustomSizedTexture(x+maxStrWidth-aO, y+(i), 12, 4, 4, 1 , 16, 16);
+				Gui.drawModalRectWithCustomSizedTexture(x-3-aO, y+(i), 0, 4, 4, 1 , 16, 16);
+				Gui.drawModalRectWithCustomSizedTexture(x+maxStrWidth-aO, y+(i), 12, 4, 4, 1 , 16, 16);
 			}
 			
 			finXOff = 1;
@@ -380,19 +380,21 @@ public class Utils {
 		
 		Boolean shadows = false;
 		if(textStyle == 0) { shadows = true; }
-		else if(textStyle == 1) { drawBoldedString(str2, x, y); }
+		else if(textStyle == 1) { drawBoldedString(str2, x-aO, y); }
 		else if(textStyle == 3) {
-			ResourceLocation bg = new ResourceLocation(Reference.MODID, "textures/gui/imageBorder_1.png");
 			GlStateManager.enableBlend();
 			GlStateManager.color(0, 0, 0, 0.6F);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-2, y-2, 0, 0, strWidth+3, 11, 1, 1);
+			Gui.drawModalRectWithCustomSizedTexture(x-2-aO, y-2, 0, 0, strWidth+3, 11, 1, 1);
 			GlStateManager.color(1, 1, 1, 1);
 		}
 		else if(textStyle == 4) {
 			
 			mc.getTextureManager().bindTexture(color);
 			GlStateManager.enableBlend();
-			if(str.startsWith(Reference.COLOR_CODE_CHAR+"")) {
+			if(str.startsWith(Colors.CHROMA)) {
+				ColorUtils.setChroma(x, y);
+			}
+			else if(str.startsWith(Reference.COLOR_CODE_CHAR+"")) {
 				ArrayList<Float> clr = ColorUtils.getRGBFromColorCode(str.substring(0, 2));
 				try {
 					GlStateManager.color(clr.get(0), clr.get(1), clr.get(2), clr.get(3));
@@ -402,26 +404,28 @@ public class Utils {
 				ColorUtils.setColor("0.0;0.0;0.6;");
 			}
             
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-2-aO, y-3, 0, 0, 1, 13, 16, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x+2+strWidth-aO, y-3, 15, 0, 1, 13, 16, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-2-aO, y-3, 0, 0, strWidth+4, 1, strWidth+4, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-2-aO, y+9, 0, 15, strWidth+4, 1, strWidth+4, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x-2-aO, y-3, 0, 0, 1, 13, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x+2+strWidth-aO, y-3, 15, 0, 1, 13, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x-2-aO, y-3, 0, 0, strWidth+4, 1, strWidth+4, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x-2-aO, y+9, 0, 15, strWidth+4, 1, strWidth+4, 16);
 			
 			mc.getTextureManager().bindTexture(tooltip);
 			GlStateManager.enableBlend();
 			GlStateManager.color(1, 1, 1, 0.9F);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-3-aO, y-4, 0, 0, 4, 11, 16, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x-3-aO, y+7, 0, 12, 4, 4, 16, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x+strWidth-aO, y-4, 12, 0, 4, 11, 16, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x+strWidth-aO, y+7, 12, 12, 4, 4, 16, 16);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x+1-aO, y, 4, 0, strWidth-1, 7, 1, 1);
-			for(int i=0;i<strWidth/2;i++) { mc.currentScreen.drawModalRectWithCustomSizedTexture(x+i*2+1-aO, y-4, 4, 0, 2, 4, 16, 16); }
-			for(int i=0;i<strWidth/2;i++) { mc.currentScreen.drawModalRectWithCustomSizedTexture(x+i*2+1-aO, y+7, 4, 12, 2, 4, 16, 16); }
+			Gui.drawModalRectWithCustomSizedTexture(x-3-aO, y-4, 0, 0, 4, 11, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x-3-aO, y+7, 0, 12, 4, 4, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x+strWidth-aO, y-4, 12, 0, 4, 11, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x+strWidth-aO, y+7, 12, 12, 4, 4, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x+1-aO, y, 4, 0, strWidth-1, 7, 1, 1);
+			for(int i=0;i<strWidth/2;i++) { Gui.drawModalRectWithCustomSizedTexture(x+i*2+1-aO, y-4, 4, 0, 2, 4, 16, 16); }
+			for(int i=0;i<strWidth/2;i++) { Gui.drawModalRectWithCustomSizedTexture(x+i*2+1-aO, y+7, 4, 12, 2, 4, 16, 16); }
 			xOffset = 1;
 			
 		}
-		String bold = "";
-		mc.fontRendererObj.drawString(str.replace(Colors.CHROMA, ""), x+xOffset-aO, y, 0, shadows);
+		if(!str.contains(Colors.CHROMA)) {
+			mc.fontRendererObj.drawString(str, x+xOffset-aO, y, 0, shadows);
+		}
+
 		
 		
 		int chromaCount = 0;
@@ -433,19 +437,19 @@ public class Utils {
 					if((charArray[i]+"").equals(Reference.COLOR_CODE_CHAR+"") && (charArray[i+1]+"").equals("z")) {
 						chromaCount++;
 					}
-				} catch(Exception e) { }
+				} catch(Exception ignored) { }
 			}
 		}
-		String outputStr = str;
+		StringBuilder outputStr = new StringBuilder(str);
 		
 		for(int j=0;j<chromaCount;j++) {
 		
-		if(outputStr.contains(Colors.CHROMA)) {
+		if(outputStr.toString().contains(Colors.CHROMA)) {
 			int beginChroma = -1;
 			int endChroma = -1;
-			charArray = outputStr.toCharArray();
+			charArray = outputStr.toString().toCharArray();
 			
-			ArrayList chArr= new ArrayList();
+			ArrayList<Character> chArr= new ArrayList<>();
 			for(char curr : charArray) {
 				chArr.add(curr);
 			}
@@ -461,21 +465,19 @@ public class Utils {
 						
 						endChroma = i;
 						if(j == chromaCount-1) { endChroma+=1; }
-						
-						continue;
+
 					}
 				}
 			}
 			try {
 				
-				outputStr+="f";
+
 				
 				String preStr = outputStr.substring(0, beginChroma);
 				String subStr = outputStr.substring(beginChroma+2, endChroma);
 				//Utils.print("String: "+outputStr+"  |  SubString: "+subStr);
 				String postStr = outputStr.substring(endChroma);
 				int preWidth = mc.fontRendererObj.getStringWidth(preStr);
-				int subWidth = mc.fontRendererObj.getStringWidth(subStr);
 				//if(str.contains(Colors.BOLD)) {
 					//subStr = "&l"+subStr;
 				//}
@@ -487,8 +489,8 @@ public class Utils {
 				if(str.contains(Colors.OBFUSCATED)) {strTypes+=Colors.OBFUSCATED;}
 				
 				drawChromaString(subStr, x+preWidth+xOffset-aO, y, shadows, strTypes, align);
-				outputStr = preStr+subStr+postStr;
-			} catch(Exception e) {
+				outputStr = new StringBuilder(preStr + subStr + postStr);
+			} catch(Exception ignored) {
 				
 			}
 			
@@ -508,21 +510,17 @@ public class Utils {
 	public static void drawConfinedString(String text, int x, int y, int textStyle, int maxWidth) {
 		Minecraft mc = Minecraft.getMinecraft();
 		int strWidth = mc.fontRendererObj.getStringWidth(text);
-		
-		int posX = x;
-		int posY = y;
-		
+
 		if(strWidth <= maxWidth) {
 			drawString(text, x, y, textStyle);
 		} else {
 			int scaledWidth = strWidth;
 			int percent = 100;
 			while(scaledWidth > maxWidth) { percent-=1; scaledWidth = strWidth*percent/100; }
-			Double scale = Double.parseDouble(percent+"")/100;
+			double scale = Double.parseDouble(percent+"")/100;
 			int heightScale = (int) (12*scale);
-			
-			
-			drawScaledString(text, posX+(scaledWidth/2), posY+(heightScale/2), 0, scale, textStyle, false);
+			int heightOffset = 8*percent/200;
+			drawScaledString(text, x +(scaledWidth/2), y +(heightScale/2)+heightOffset, 0, scale, textStyle, false);
 		}
 		
 		
@@ -542,7 +540,7 @@ public class Utils {
 			int posX = Minecraft.getMinecraft().displayWidth/(Minecraft.getMinecraft().gameSettings.guiScale);
 			int posY = Minecraft.getMinecraft().displayHeight/(Minecraft.getMinecraft().gameSettings.guiScale);
 			drawScaledString(SBP.titleString, posX/2, posY/2, 0, SBP.titleScale, 0, true);
-		} catch (Exception e) { }
+		} catch (Exception ignored) { }
 		
 		//Utils.print(SBP.width);
 		
@@ -569,31 +567,25 @@ public class Utils {
 	}
 	
 	public static void drawChromaString(String text, int x, int y, Boolean shadow, String strType, Boolean align) {
-		
-		if(!strType.equals("")) {
-			//Utils.print(text);
-		}
-		
-		
-		//Utils.print(strType+text);
+
+
+
 		Minecraft mc = Minecraft.getMinecraft();
-        int tmpX = x; 
-        String str = text;
-        char[] chArr = str.toCharArray();
-        
-        for (int j=0;j<chArr.length;j++) {
-        	char tc = chArr[j];
-        	String output = tc+"";
-        	if(tc != Reference.COLOR_CODE_CHAR) {
-        		
-        		long t = System.currentTimeMillis() - (tmpX * 10 + y * 10);
-                int i = Color.HSBtoRGB(t % (int) (chromaSpeed*500f) / (chromaSpeed*500f), 0.8f, 0.8f);
-                
-                mc.fontRendererObj.drawString(strType+output, tmpX, y, i, shadow);
-                tmpX += mc.fontRendererObj.getStringWidth(strType+output);
-                
-        	}
-        }
+        int tmpX = x;
+		char[] chArr = text.toCharArray();
+
+		for (char tc : chArr) {
+			String output = tc + "";
+			if (tc != Reference.COLOR_CODE_CHAR) {
+
+				long t = System.currentTimeMillis() - (tmpX * 10L + y * 10L);
+				int i = Color.HSBtoRGB(t % (int) (chromaSpeed * 500f) / (chromaSpeed * 500f), 0.8f, 0.8f);
+
+				mc.fontRendererObj.drawString(strType + output, tmpX, y, i, shadow);
+				tmpX += mc.fontRendererObj.getStringWidth(strType + output);
+
+			}
+		}
         mc.fontRendererObj.drawString(Colors.WHITE, x, y, tmpX);
         
     }
@@ -612,81 +604,90 @@ public class Utils {
 		if(checkNum == num) {
 			return false;
 		}
-		
-		
-		if(checkNum >= side1 && checkNum <= side2) {
-			return true;
-		} else {
-			return false;
-		}
+
+
+		return checkNum >= side1 && checkNum <= side2;
 	}
 	
 	public static void checkIfOnSkyblock() {
+		boolean wind = false;
 		if(DataGetter.findBool("onlyOnSkyblock")) {
 			String title = getBoardTitle().toLowerCase();
+
 			if(title.contains("skyblock")) {
-				if(!SBP.onSkyblock) { Utils.print("Logged onto Skyblock"); LobbySwapEvent.currLobby="";} SBP.onSkyblock=true;
+				if(!SBP.onSkyblock) { Utils.print("Logged onto Skyblock"); LobbySwapEvent.currLobby="";}
+				SBP.onSkyblock=true;
+				Scoreboard scoreboard = Minecraft.getMinecraft().theWorld.getScoreboard();
+				Collection<Score> scoreboardLines = scoreboard.getSortedScores(Minecraft.getMinecraft().theWorld.getScoreboard().getObjectiveInDisplaySlot(1));
+
+				for(int i=0;i<scoreboardLines.size();i++/*Score score : scoreboardLines*/) {
+					Score score = (Score) scoreboardLines.toArray()[i];
+					ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(score.getPlayerName());
+					String strippedLine = ScorePlayerTeam.formatPlayerName(scorePlayerTeam, score.getPlayerName());
+					char subLocChar = '\u23E3';
+					boolean loc = strippedLine.contains(subLocChar + "");
+					strippedLine = Utils.unformatAllText(strippedLine);
+					strippedLine = Pattern.compile("[^a-z A-Z:0-9/'.]").matcher(strippedLine).replaceAll("").trim();
+					if(loc) {SBP.subLocation = strippedLine.toLowerCase(); break;}
+
+
+					if(strippedLine.contains("Wind Compass")) {
+						try {
+							if(DataGetter.findBool("windCompass")) {
+								wind=true;
+								Score score2 = (Score) scoreboardLines.toArray()[i-1];
+								ScorePlayerTeam scorePlayerTeam2 = scoreboard.getPlayersTeam(score2.getPlayerName());
+								String strippedLine2 = ScorePlayerTeam.formatPlayerName(scorePlayerTeam2, score2.getPlayerName());
+								SBP.titleString=Colors.WHITE+strippedLine2;
+							}
+
+						} catch(Exception ignored) {}
+					}
+				}
+
+
 			} else { if(SBP.onSkyblock) { Utils.print("Logged off of Skyblock"); } SBP.onSkyblock=false; }
-		
+
 		} else {
 			SBP.onSkyblock=true;
 		}
+		if(wind) {SBP.titleScale=2;} else if(SBP.titleScale==2) {SBP.titleScale=4; SBP.titleString="";}
 	}
 	
 	public static String getBoardTitle() {
-		String output = "null";
+		String output;
 		try {
 			
 		ScoreObjective sidebarObjective = Minecraft.getMinecraft().theWorld.getScoreboard().getObjectiveInDisplaySlot(1);
 		
 		output = Utils.unformatAllText(sidebarObjective.getDisplayName());
+
 		} catch(Exception e) {
 			return "null";
 		}
-		//Utils.sendMessage(output);
 		return output;
 	}
 	
 	public static void setEasterEgg(int num, String input) {
 		try {
 			String[] temp = DataGetter.findStr("easterEggsFound").split(";");
-			ArrayList<String> temp2 = new ArrayList();
-			
-			for(int i=0;i<temp.length;i++) {
-				temp2.add(temp[i]);
-			}
+			ArrayList<String> temp2 = new ArrayList<>();
+
+			Collections.addAll(temp2, temp);
 			
 			temp2.set(num-1, input);
-			String output = "";
-			for(int i=0;i<temp2.size();i++) {
-				output+=temp2.get(i)+";";
+			StringBuilder output = new StringBuilder();
+			for (String s : temp2) {
+				output.append(s).append(";");
 			}
-			ConfigHandler.newObject("easterEggsFound", output);
+			ConfigHandler.newObject("easterEggsFound", output.toString());
 			
 		} catch(Exception e) {
 			ConfigHandler.newObject("easterEggsFound", ConfigHandler.getDefaultValue("easterEggsFound"));
-			return;
 		}
 	}
 	
-	public static String getEasterEgg(int num) {
-		
-		try {
-		String output = "";
-		String[] temp = DataGetter.findStr("easterEggsFound").split(";");
-		ArrayList<String> temp2 = new ArrayList();
-		
-		for(int i=0;i<temp.length;i++) {
-			temp2.add(temp[i]);
-		}
-		output = temp2.get(num);
-		
-		
-		return output;
-		} catch(Exception e) {
-			return "null";
-		}
-	}
+
 	
 	
 	public static String getColorFromInt(int colorID) {
@@ -695,7 +696,7 @@ public class Utils {
 		String output = Colors.WHITE;
 		try {
 			output = colorList[colorID];
-		} catch(Exception e) { }
+		} catch(Exception ignored) { }
 		return output;
 		
 		
@@ -728,66 +729,39 @@ public class Utils {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
     }
 	
-	public static String getSystemMinute() {
-		String output = "";
-
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("mm:ss");
-		LocalDateTime date = LocalDateTime.now();
-		output = dtf.format(date);
-		//output = dtf+"";
-		
-		return output+"";
-	}
-	
 	public static String unformatText(String string) {
-		String output = "";
+		StringBuilder output = new StringBuilder();
 		char[] chars = string.toCharArray();
-		Boolean prevChar = false;
+		boolean prevChar = false;
 		for(int i=0;i<chars.length;i++) {
-			
+
+			boolean equals = (chars[i] + "").equals(Reference.COLOR_CODE_CHAR + "");
 			try {
-				if((chars[i]+"").equals(Reference.COLOR_CODE_CHAR+"")) {
+				if(equals) {
 					if("mlnok".contains(chars[i+1]+"")) {
-						output+=chars[i];
+						output.append(chars[i]);
 						continue;
 					}
 				}
-			}catch(Exception e) {}
+			}catch(Exception ignored) {}
 			
 			
-			if(!((chars[i]+"").equals(Reference.COLOR_CODE_CHAR+""))) {
+			if(!equals) {
 				if(!prevChar) {
-					output+=chars[i];
+					output.append(chars[i]);
 				}
 				prevChar = false;
 				
-			} else if((chars[i]+"").equals(Reference.COLOR_CODE_CHAR+"")) {
+			} else if(equals) {
 				prevChar = true;
 			}
 		}
 		
-		return output;
+		return output.toString();
 	}
-	
+	private static final Pattern ANTI_COLOR_CODES = Pattern.compile("(?i)§[0-9A-FK-OR]");
 	public static String unformatAllText(String string) {
-		String output = "";
-		char[] chars = string.toCharArray();
-		Boolean prevChar = false;
-		for(int i=0;i<chars.length;i++) {
-			
-			
-			if(!((chars[i]+"").equals(Reference.COLOR_CODE_CHAR+""))) {
-				if(!prevChar) {
-					output+=chars[i];
-				}
-				prevChar = false;
-				
-			} else if((chars[i]+"").equals(Reference.COLOR_CODE_CHAR+"")) {
-				prevChar = true;
-			}
-		}
-		
-		return output;
+		return ANTI_COLOR_CODES.matcher(string).replaceAll("");
 	}
 	
 	public static String formatNums(int num) {
@@ -805,29 +779,29 @@ public class Utils {
 	}
 	
 	public static Boolean checkBlock(World world, int x, int y, int z, Block blockCheckAgainst) {
-		if(world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().equals(blockCheckAgainst.getRegistryName())) {
-			return true;
-		} else {
-			return false;
-		}
+		return world.getBlockState(new BlockPos(x, y, z)).getBlock().getRegistryName().equals(blockCheckAgainst.getRegistryName());
 	}
 	
-	public static String secondsToTime(int input) { 
-		long hours = TimeUnit.MILLISECONDS
-			    .toHours(input);
-			input -= TimeUnit.HOURS.toMillis(hours);
+	public static String secondsToTime(long input) {
+		long days = TimeUnit.MILLISECONDS.toDays(input);
+		input-=TimeUnit.DAYS.toMillis(days);
 
-			long minutes = TimeUnit.MILLISECONDS
-			    .toMinutes(input);
-			input -= TimeUnit.MINUTES.toMillis(minutes);
+		long hours = TimeUnit.MILLISECONDS .toHours(input);
+		input -= TimeUnit.HOURS.toMillis(hours);
 
-			long seconds = TimeUnit.MILLISECONDS.toSeconds(input);
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(input);
+		input -= TimeUnit.MINUTES.toMillis(minutes);
+
+		long seconds = TimeUnit.MILLISECONDS.toSeconds(input);
+
 			String secs = seconds+"";
 			if(seconds < 10) {
 				secs = "0"+seconds;
 			}
-			
-			if(hours > 0) {
+			if(days > 0) {
+				return days+"d"+hours+"h"+minutes+"m"+secs+"s";
+			}
+			else if(hours > 0) {
 				return hours+"h"+minutes+"m"+secs+"s";
 			} else {
 				return minutes+":"+secs;
@@ -836,7 +810,7 @@ public class Utils {
 	
 	public static ArrayList<Integer> sortIntArray(ArrayList<Integer> array) {
 
-		ArrayList<Integer> returnArray = new ArrayList<Integer>();
+		ArrayList<Integer> returnArray;
 		returnArray = array;
 		Collections.sort(returnArray);
 		
@@ -860,7 +834,7 @@ public class Utils {
 		System.out.println(string);
 	}
 	
-	public static void sendMessage(String string) {
+	public static void sendMessage(Object string) {
 		sendSpecificMessage(Colors.DARK_AQUA+"["+Colors.AQUA+"SBP"+Colors.DARK_AQUA+"] "+Colors.YELLOW+string+Colors.WHITE);
 	}
 	
@@ -893,10 +867,11 @@ public class Utils {
 	}
 	
 	public static Boolean checkIfArrayContains(ArrayList<String> arrayList, String stringCheck) {
-		Boolean tempBoolean = false;
-		for(int i=0;i<arrayList.size();i++) {
-			if(stringCheck.equals(arrayList.get(i))) {
+		boolean tempBoolean = false;
+		for (String s : arrayList) {
+			if (stringCheck.equals(s)) {
 				tempBoolean = true;
+				break;
 			}
 		}
 		
@@ -904,10 +879,11 @@ public class Utils {
 	}
 	
 	public static Boolean checkIfArrayContains(String[] arrayList, String stringCheck) {
-		Boolean tempBoolean = false;
-		for(int i=0;i<arrayList.length;i++) {
-			if(stringCheck.equals(arrayList[i])) {
+		boolean tempBoolean = false;
+		for (String s : arrayList) {
+			if (stringCheck.equals(s)) {
 				tempBoolean = true;
+				break;
 			}
 		}
 		
@@ -917,37 +893,15 @@ public class Utils {
 	public static Boolean checkIfCharLetter(String string) {
 
 		String charList = "abcdefghijklmnopqrstuvwxyz ?:;'<>/\\\".,0123456789!()*^%$@&-+_=[]{}~`|#";
-		Boolean output = false;
-		if(charList.contains(string.toLowerCase())) {output=true;}
-		return output;
+		return charList.contains(string.toLowerCase());
 		
-	}
-	
-	public static int stripNum(String input) {
-		int output = 0;
-		String charList = "abcdefghijklmnopqrstuvwxyz ?:;'<>/\\\".,!()*^%$@&-+_=[]{}~`|#";
-		char[] temp = input.toLowerCase().toCharArray();
-		String finalOutput = "";
-		for(int i=0;i<temp.length;i++) {
-			if(!(charList.contains(temp[i]+""))) {
-				finalOutput+=temp[i];
-			}
-		}
-		//Utils.print(finalOutput);
-		try {
-		output = Integer.parseInt(finalOutput);
-		} catch(Exception e) {
-			output = 0;
-		}
-		return output;
 	}
 	
 	public static Boolean checkIfCharInt(String string) {
 
 		String charList = "0123456789";
-		Boolean output = false;
-		if(charList.contains(string.toLowerCase())) {output=true;}
-		return output;
+		return charList.contains(string.toLowerCase());
+
 		
 	}
 	
@@ -958,22 +912,22 @@ public class Utils {
 	public static boolean fileTest(String args) {
         File f = new File(args);
         //print(f + (f.exists()? " is found " : " is missing "));
-        return f.exists()? true : false;
+        return f.exists();
     }
 	
 	public static Boolean invertBoolean(Boolean input) {
-		if(input == true) { return false; } else return true;
+		return !input;
 	}
 	
 	public static String readFile(String filePath) {
-		String output = "";
+		StringBuilder output = new StringBuilder();
 		
 		try {
 		      File myObj = new File(filePath);
 		      Scanner myReader = new Scanner(myObj);
 		      while (myReader.hasNextLine()) {
 		        String data = myReader.nextLine();
-		        output+=(data+" ");
+		        output.append(data).append(" ");
 		      }
 		      myReader.close();
 		    } catch (FileNotFoundException e) {
@@ -981,7 +935,7 @@ public class Utils {
 		      e.printStackTrace();
 		    }
 		
-		return output;
+		return output.toString();
 	}
 	
 	

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.cobble.sbp.gui.screen.dungeons.SecretImage;
 import com.cobble.sbp.threads.commands.OverrideThread;
+import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.SecretUtils;
 import com.cobble.sbp.utils.Utils;
 
@@ -41,7 +42,11 @@ public class SecretOverride extends CommandBase {
 			
 			ArrayList<String> roomList = SecretUtils.getRoomNames(SecretImage.roomShape, SecretImage.currDungeon);
 			for(String str : roomList) {
-				if(str.startsWith(args[1])) {
+				String tmpStr = str;
+				try {
+					tmpStr = str.substring(0, str.lastIndexOf("-"));
+				} catch(Exception ignored) {}
+				if(tmpStr.equals(args[1])) {
 					SecretImage.roomSecretsID = str;
 					SecretImage.currentSecretText = SecretUtils.getRoomDesc(SecretImage.roomShape, SecretImage.roomSecretsID, SecretImage.currDungeon);
 					SecretImage.maxSecrets=SecretImage.currentSecretText.size();

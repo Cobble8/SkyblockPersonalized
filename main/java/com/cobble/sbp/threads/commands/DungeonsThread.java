@@ -1,21 +1,21 @@
 package com.cobble.sbp.threads.commands;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.cobble.sbp.commands.Dungeons;
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.GetFromAPI;
-import com.cobble.sbp.utils.HttpClient;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.*;
+import net.minecraft.util.EnumChatFormatting;
 
 public class DungeonsThread extends Thread {
 	
 	public void run() {
 
 
-		
+
+
 		
 		String getuuid = "";
 		try {
@@ -27,91 +27,111 @@ public class DungeonsThread extends Thread {
 		String APIKey = (String) DataGetter.find("APIKey");
 		try {
 			achievementsInfo = HttpClient.readPage("https://api.hypixel.net/player?key="+APIKey+"&uuid="+uuid);
+			Utils.print("https://api.hypixel.net/player?key="+APIKey+"&uuid="+uuid);
 		} catch (Exception e1) {Utils.sendErrMsg("Please supply a valid name!");}
+
+
 		
 		try {
 			newInfo = HttpClient.readPage("https://api.hypixel.net/skyblock/profiles?key="+APIKey+"&uuid="+uuid);
+			Utils.print("https://api.hypixel.net/skyblock/profiles?key="+APIKey+"&uuid="+uuid);
 		} catch (Exception e1) {Utils.sendErrMsg(Dungeons.args0+" does not have their API Enabled!");}
 		
 		String profileuuid = GetFromAPI.getCurrProfile(newInfo, uuid);
-		
-	DecimalFormat df2 = new DecimalFormat("#.##");
-	
-	int classLevel = 0; 
-	try {
-		classLevel = Dungeons.checkCataLevel(GetFromAPI.getClassXP(newInfo, uuid, profileuuid));
-	} catch(NullPointerException e) {
-		Utils.sendErrMsg("Invalid API Key! Type /api new for a new one!");
-		return;
-	}
-	
-	int cataLevel = 0; cataLevel = Dungeons.checkCataLevel(GetFromAPI.getCataXP(newInfo, uuid, profileuuid));
-	String mainClass = "none";
-	
-	mainClass = GetFromAPI.getSelectedDungeonClass(newInfo, uuid, profileuuid);
-	
-	int secretsFound = GetFromAPI.getAchiements(achievementsInfo, "skyblock_treasure_hunter");
-	int F0 = 0;
-	int F1 = 0;
-	int F2 = 0;
-	int F3 = 0;
-	int F4 = 0;
-	int F5 = 0;
-	int F6 = 0;
-	int F7 = 0;
-	int highestCompleted = GetFromAPI.getHighestFloor(newInfo, uuid, profileuuid);
-	//Utils.print("Highest Floor Completed: "+highestCompleted);
-	if(highestCompleted >= 0) {F0 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "0" );}
-	if(highestCompleted >= 1) {F1 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "1" );}
-	if(highestCompleted >= 2) {F2 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "2" );}
-	if(highestCompleted >= 3) {F3 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "3" );}
-	if(highestCompleted >= 4) {F4 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "4" );}
-	if(highestCompleted >= 5) {F5 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "5" );}
-	if(highestCompleted >= 6) {F6 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "6" );}
-	if(highestCompleted >= 7) {F7 = GetFromAPI.getFloorRuns(newInfo, uuid, profileuuid, "7" );}
-	
-	int FloorList[] = {F0, F1, F2, F3, F4, F5, F6, F7};
-	Arrays.sort(FloorList);
-	int mostPlayedFloorNum = FloorList[FloorList.length-1];
-	int floorNum = 0;
-	String highestFloor = "0";
-	String hFNum = "";
-	if(F0 == 0) highestFloor = "None";
-	if(F0 > 0) {highestFloor = "0"; hFNum = F0+"";}
-	if(F1 > 0) {highestFloor = "1"; hFNum = F1+"";}
-	if(F2 > 0) {highestFloor = "2"; hFNum = F2+"";}
-	if(F3 > 0) {highestFloor = "3"; hFNum = F3+"";}
-	if(F4 > 0) {highestFloor = "4"; hFNum = F4+"";}
-	if(F5 > 0) {highestFloor = "5"; hFNum = F5+"";}
-	if(F6 > 0) {highestFloor = "6"; hFNum = F6+"";}
-	if(F7 > 0) {highestFloor = "7"; hFNum = F7+"";}
-	String hFNumFin = "";
-	if(hFNum != "") hFNumFin = Colors.BLUE+"("+Colors.AQUA+hFNum+Colors.BLUE+")";
-	if(mostPlayedFloorNum == F0) floorNum = 0;
-	else if(mostPlayedFloorNum == F1){ floorNum = 1;}
-	else if(mostPlayedFloorNum == F2){ floorNum = 2;}
-	else if(mostPlayedFloorNum == F3){ floorNum = 3;}
-	else if(mostPlayedFloorNum == F4){ floorNum = 4;}
-	else if(mostPlayedFloorNum == F5){ floorNum = 5;}
-	else if(mostPlayedFloorNum == F6){ floorNum = 6;}
-	else if(mostPlayedFloorNum == F7){ floorNum = 7;}
-	int totalRuns = F0+F1+F2+F3+F4+F5+F6+F7;
-	double secretsPerRun = (double) secretsFound / (double) totalRuns;
-	
-	Utils.sendSpecificMessage(Colors.DARK_RED+"-----------------------------------------------------");
-	Utils.sendMessage(Colors.RED+"Dungeon stats for: "+Colors.AQUA+Dungeons.args0);
-	Utils.sendSpecificMessage(Colors.AQUA+"Catacombs Level: "+Colors.GOLD+cataLevel);
-	Utils.sendSpecificMessage(Colors.AQUA+"Main Class: "+Colors.GOLD+mainClass.substring(0, 1).toUpperCase() + mainClass.substring(1)+Colors.BLUE+" ("+Colors.AQUA+classLevel+Colors.BLUE+")");
-	Utils.sendSpecificMessage(Colors.AQUA+"Total Dungeon Runs: "+Colors.GOLD+totalRuns);
-	Utils.sendSpecificMessage(Colors.AQUA+"Most Played Floor: "+Colors.GOLD+"Floor "+floorNum+Colors.BLUE+" ("+Colors.AQUA+mostPlayedFloorNum+Colors.BLUE+")");
-	Utils.sendSpecificMessage(Colors.AQUA+"Highest Floor: "+Colors.GOLD+"Floor "+highestFloor+" "+hFNumFin);
-	Utils.sendSpecificMessage(Colors.AQUA+"Total Secrets: "+Colors.GOLD+secretsFound);
-	Utils.sendSpecificMessage(Colors.AQUA+"Average Secrets Per Run: "+Colors.GOLD+df2.format(secretsPerRun));
-	if(secretsFound > 10000) secretsFound = 10000;
-	if(totalRuns > 1000) totalRuns = 1000;
-	int overallScore = ((cataLevel*2)+(secretsFound/100)+(totalRuns/10)+(classLevel*2))/4;
-	if(overallScore > 100) overallScore = 100;
-	Utils.sendSpecificMessage(Colors.AQUA+"Overall Score: "+Colors.GOLD+overallScore+Colors.GREEN+"%");
+
+
+		String linkBase = "profiles.profile_id|"+profileuuid+";members."+uuid+".";
+
+		DecimalFormat df2 = new DecimalFormat("#.##");
+
+		ArrayList<Integer> floorCompletions = new ArrayList<>();
+		for(int i=0;i<=7;i++) {
+			try {
+				Double currFloor = Double.parseDouble(DataGetter.lazyFind(linkBase+"dungeons.dungeon_types.catacombs.tier_completions."+i+".", newInfo)+"");
+				floorCompletions.add(Integer.parseInt((currFloor+"").substring(0, (currFloor+"").indexOf("."))));
+			} catch(Exception e) { floorCompletions.add(0); }
+		}
+			for(int i=1;i<=7;i++) {
+				try {
+					Double currFloor = Double.parseDouble(DataGetter.lazyFind(linkBase+"dungeons.dungeon_types.master_catacombs.tier_completions."+i+".", newInfo)+"");
+					floorCompletions.add(Integer.parseInt((currFloor+"").substring(0, (currFloor+"").indexOf("."))));
+				} catch(Exception e) { floorCompletions.add(0); }
+			}
+
+		int mostPlayed = getHighestSpot(floorCompletions);
+		int highestPlayed = getHighestFloor(floorCompletions);
+		int totalRuns=0; for (Integer floorCompletion : floorCompletions) { totalRuns += floorCompletion; }
+		int cataLevel = Dungeons.checkCataLevel((int) Double.parseDouble(DataGetter.lazyFind(linkBase+"dungeons.dungeon_types.catacombs.experience.", newInfo)+""));
+		int classLevel = Dungeons.checkCataLevel((int) Double.parseDouble(DataGetter.lazyFind(linkBase+"dungeons.player_classes.healer.experience.", newInfo)+""));
+		int secretsFound = GetFromAPI.getAchiements(achievementsInfo, "skyblock_treasure_hunter");
+		double secretsPerRun = (double) secretsFound / (double) totalRuns;
+		String mainClass = DataGetter.lazyFind(linkBase+"dungeons.selected_dungeon_class.", newInfo)+"";
+		String[] floorNames = {"Entrance", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "M1", "M2", "M3", "M4", "M5", "M6", "M7"};
+		String playerName = DataGetter.lazyFind("player.displayname.", achievementsInfo)+"";
+		String rank = DataGetter.lazyFind("player.newPackageRank.", achievementsInfo)+"";
+		String rankColor = "";
+		String plusColor = "";
+		try {
+			plusColor=DataGetter.lazyFind("player.rankPlusColor.", achievementsInfo)+"";
+			String ifSuperstar = DataGetter.lazyFind("player.monthlyPackageRank.", achievementsInfo)+"";
+			if(!ifSuperstar.equals("NONE")) { rank=ifSuperstar; }
+			try { rank=DataGetter.lazyFind("player.rank.", achievementsInfo)+""; } catch(Exception ignored) {}
+			rankColor=DataGetter.lazyFind("player.monthlyRankColor.", achievementsInfo)+"";
+		} catch(Exception ignored) {}
+		playerName=getRankFromRankID(rank, ColorUtils.getFromColorName(plusColor), ColorUtils.getFromColorName(rankColor))+" "+playerName;
+
+
+		Utils.sendSpecificMessage(Colors.DARK_RED+"-----------------------------------------------------");
+		Utils.sendMessage(Colors.RED+"Dungeon stats for: "+Colors.AQUA+playerName);
+		Utils.sendSpecificMessage(Colors.AQUA+"Main Class: "+Colors.GOLD+mainClass.substring(0, 1).toUpperCase() + mainClass.substring(1)+Colors.BLUE+" ("+Colors.AQUA+classLevel+Colors.BLUE+")");
+
+		Utils.sendSpecificMessage(Colors.AQUA+"Catacombs Level: "+Colors.GOLD+cataLevel);
+		Utils.sendSpecificMessage(Colors.AQUA+"Total Dungeon Runs: "+Colors.GOLD+totalRuns);
+		Utils.sendSpecificMessage(Colors.AQUA+"Most Played Floor: "+Colors.GOLD+floorNames[mostPlayed]+Colors.BLUE+" ("+Colors.AQUA+floorCompletions.get(mostPlayed)+Colors.BLUE+")");
+		Utils.sendSpecificMessage(Colors.AQUA+"Highest Floor: "+Colors.GOLD+floorNames[highestPlayed]+Colors.BLUE+" ("+Colors.AQUA+floorCompletions.get(highestPlayed)+Colors.BLUE+")");
+		Utils.sendSpecificMessage(Colors.AQUA+"Total Secrets: "+Colors.GOLD+secretsFound);
+		Utils.sendSpecificMessage(Colors.AQUA+"Average Secrets Per Run: "+Colors.GOLD+df2.format(secretsPerRun));
+		if(secretsFound > 10000) secretsFound = 10000;
+		if(totalRuns > 1000) totalRuns = 1000;
+		int overallScore = (((cataLevel*2)+(secretsFound/100)+(totalRuns/10)+(classLevel*2))/4);
+		if(overallScore > 100) overallScore = 100;
+		Utils.sendSpecificMessage(Colors.AQUA+"Overall Score: "+Colors.GOLD+overallScore+Colors.GREEN+"%");
 	}
 
+	public static int getHighestSpot(ArrayList<Integer> array) {
+		int lastHighest = 0;
+		int lastSpot = 0;
+
+		for(int i=0;i<array.size();i++) {
+			if(array.get(i) > lastHighest) {
+				lastHighest = array.get(i);
+				lastSpot = i;
+			}
+		}
+
+		return lastSpot;
+	}
+
+	public static int getHighestFloor(ArrayList<Integer> array) {
+		for(int i=0;i<array.size();i++) {
+			if(i > 0 && array.get(i) == 0) {
+				return i-1;
+			}
+		}
+		return 14;
+	}
+
+	public static String getRankFromRankID(String rankID, String plusColor, String superstarColor) {
+		String output = "";
+		switch(rankID) {
+			case("VIP"): output=Colors.GREEN+"[VIP]";break;
+			case("VIP_PLUS"): output=Colors.GREEN+"[VIP"+Colors.GOLD+"+"+Colors.GREEN+"]";break;
+			case("MVP"): output=Colors.AQUA+"[MVP]";break;
+			case("MVP_PLUS"): output=Colors.AQUA+"[MVP"+plusColor+"+"+Colors.AQUA+"]";break;
+			case("SUPERSTAR"): output=superstarColor+"[MVP"+plusColor+"++"+superstarColor+"]";break;
+			case("YOUTUBER"): output=Colors.RED+"["+Colors.WHITE+"YOUTUBE"+Colors.RED+"]";break;
+			case("ADMIN"): output=Colors.RED+"[ADMIN]";break;
+		}
+		return ColorUtils.getFromColorName(superstarColor)+output;
+	}
 }

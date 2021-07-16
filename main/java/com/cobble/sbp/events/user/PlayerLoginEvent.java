@@ -2,6 +2,7 @@ package com.cobble.sbp.events.user;
 
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.DataGetter;
+import com.cobble.sbp.events.skyblock.LobbySwapEvent;
 import com.cobble.sbp.threads.misc.LaunchThread;
 import com.cobble.sbp.threads.misc.LoginThread;
 import com.cobble.sbp.utils.Colors;
@@ -22,7 +23,7 @@ public class PlayerLoginEvent {
 	public void onPlayerLoggedIn(FMLNetworkEvent.ClientConnectedToServerEvent event) {
 		
 
-		
+		new LobbySwapEvent();
 		Thread playerLogin = new LoginThread();
 		playerLogin.start();
 	}
@@ -30,7 +31,6 @@ public class PlayerLoginEvent {
 	public static void setApiKey() {
 		
 		if(!SBP.onSkyblock) {return;}
-		if(DataGetter.findBool("APIWarning")) {return;}
 		ChatStyle runCommand = new ChatStyle();
 		runCommand.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/api new"));
 		runCommand.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(Colors.YELLOW+"Click to run "+Colors.AQUA+"/api new")));

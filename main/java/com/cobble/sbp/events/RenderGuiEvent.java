@@ -1,67 +1,56 @@
 package com.cobble.sbp.events;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import com.cobble.sbp.events.user.ChatRecieveEvent;
+import com.cobble.sbp.gui.menu.GameOfLife;
+import com.cobble.sbp.gui.menu.GameThing;
+import com.cobble.sbp.gui.menu.settings.*;
+import com.cobble.sbp.gui.screen.dwarven.CrystalHollowsMap;
+import com.cobble.sbp.gui.screen.misc.JerryTimer;
+import com.cobble.sbp.handlers.*;
+import com.cobble.sbp.utils.*;
+import net.minecraft.client.gui.Gui;
+
 
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.events.skyblock.LobbySwapEvent;
 import com.cobble.sbp.events.user.MenuClickEvent;
-import com.cobble.sbp.events.user.PressKeyEvent;
-import com.cobble.sbp.gui.menu.settings.SettingMenu;
-import com.cobble.sbp.gui.menu.settings.SettingMove;
-import com.cobble.sbp.gui.menu.settings.SettingMoveAll;
-import com.cobble.sbp.gui.menu.settings.SettingOptions;
 import com.cobble.sbp.gui.screen.dungeons.SecretImage;
-import com.cobble.sbp.gui.screen.dwarven.DwarvenCompletedCommissions;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenPickaxeTimer;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTimer;
 import com.cobble.sbp.gui.screen.misc.AbilityMessages;
 import com.cobble.sbp.gui.screen.misc.ComboMessages;
-import com.cobble.sbp.handlers.AnimationHandler;
-import com.cobble.sbp.handlers.DownloadSecretsHandler;
-import com.cobble.sbp.handlers.GuiChestHandler;
-import com.cobble.sbp.handlers.KeyBindingHandler;
-import com.cobble.sbp.handlers.TabListHandler;
-import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.Reference;
-import com.cobble.sbp.utils.Utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiChest;
+
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
+
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.util.vector.Vector3f;
+import scala.Int;
 
 public class RenderGuiEvent {
 	public static Boolean helpMenu = false;
 	public static String currSettingMenu = "main";
-	public static String imageID = "NONE";
-	private final int puzzleUpdate = 250;
 	public static int puzzleScale = DataGetter.findInt("puzzleScale")/10*126;
 
 	int m=0;
-	public static Boolean msgThing = false;
-	public static String msgType = "";
-	public static Boolean egg2 = true;
-	public static Boolean settingsOpen = false;
 	public static String currMenu = "";
 	
 	
@@ -70,7 +59,6 @@ public class RenderGuiEvent {
 	public static int puzzlerZ = 135;
 	public static String actionBar = "";
 	public static ArrayList<NetworkPlayerInfo> tabNames = new ArrayList();
-	int tmp = 0;
 	//public static long currMillis = System.currentTimeMillis()/1000;
 	
 	public static Boolean menuClickAvailable = false;
@@ -87,27 +75,26 @@ public class RenderGuiEvent {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.thePlayer;
 		World world = mc.theWorld;
-		
-		
-		
+
+
 		new AnimationHandler();
 		m++;
-		
-		
+
+
 		//Gets width/height of the screen while in a menu
-		try { SBP.width = mc.currentScreen.width; SBP.height = mc.currentScreen.height; } catch(Exception e) { }
-		int w=SBP.width;
-		int h=SBP.height;
+		try { SBP.width = mc.currentScreen.width; SBP.height = mc.currentScreen.height; } catch(Exception ignored) { }
 		
 		//Allows for /sbp GUI to show up on servers by adding 1 frame delay
 		if(helpMenu) {
 			helpMenu=false;
 			if(!currSettingMenu.equals("main")) {
-				
+
 				switch(currSettingMenu) {
 					case "moveall": mc.displayGuiScreen(new SettingMoveAll()); break;
 					case "move": mc.displayGuiScreen(new SettingMove()); break;
 					case "suboptions": mc.displayGuiScreen(new SettingOptions()); break;
+					case "game": mc.displayGuiScreen(new GameThing()); break;
+					case "life": mc.displayGuiScreen(new GameOfLife()); break;
 				}
 				currSettingMenu = "main";
 			} else {
@@ -126,8 +113,8 @@ public class RenderGuiEvent {
 				try {
 					player.closeScreen();
 					helpMenu=true;
-				} catch(Exception e) {}
-			} else { }
+				} catch(Exception ignored) {}
+			}
 		} else {
 			if(oldGuiScale != -1) {
 				mc.gameSettings.guiScale = oldGuiScale;
@@ -144,51 +131,90 @@ public class RenderGuiEvent {
 					DownloadSecretsHandler.timeElapsed = Integer.parseInt(timePassed+"");
 				}
 				
-			} catch(Exception e) {}
+			} catch(Exception ignored) {}
 		}
-		
+
 		new SecretImage();
+
+		//if(m==1) { if(SBP.onSkyblock) { MusicUtils.manageSong(); } else { MusicUtils.stopSong(); } }
+
 		if(!mc.isSingleplayer()) {
 			if(SBP.onSkyblock) {
 				if(!(SBP.titleString.equals(""))) { Utils.drawTitle(); }
 				
 				
-				String heldItem = ""; try {  heldItem = player.getHeldItem().getDisplayName().toLowerCase(); } catch(Exception e) { }
-				
-				GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
+				//String heldItem = ""; try {  heldItem = player.getHeldItem().getDisplayName().toLowerCase(); } catch(Exception ignored) { }
+
+				//CrystalHollowsMap.renderWayPoint("Text", new Vector3f(0, 100, 0).translate(0.5f, 2.488f, 0.5f), event.partialTicks);
+
 				new GuiChestHandler();
+
 
 		        //Called once every 1/2 a second
 				if(m==1) {
 					new TabListHandler();
 				}
-				
+
+
 				//GUI ELEMENTS
-				
-				if(SBP.sbLocation.equals("dwarvenmines")) {
+				if(ChatRecieveEvent.inMines() && DwarvenPickaxeTimer.pickTimerToggle) {
+					boolean passThrough = false;
+					if(!DwarvenPickaxeTimer.onlyWhenHolding) {
+						passThrough = true;
+					} else {
+						try {
+							String pickID = Utils.getSBID();
+							if(pickID.contains("pickaxe") || pickID.contains("drill")) {
+								passThrough = true;
+							}
+						} catch(Exception ignored) {}
+
+					}
+
+					if(passThrough) {
+						new DwarvenPickaxeTimer();
+					}
+				}
+
+
+				if(SBP.sbLocation.equals("dwarvenmines") || SBP.sbLocation.equals("crystalhollows")) {
 					new DwarvenGui(DwarvenGui.posX, DwarvenGui.posY);
 					if(DwarvenTimer.dwarvenTimerToggle) { new DwarvenTimer(DwarvenTimer.posX, DwarvenTimer.posY); }
 					if(puzzlerParticles) { Random rand = new Random(); double motionY = rand.nextGaussian() * 0.02D; world.spawnParticle(EnumParticleTypes.SPELL, puzzlerX+0.5, 196, puzzlerZ+0.5, 0, motionY, 0); }
 					
-					if(DwarvenPickaxeTimer.pickTimerToggle) {
-						Boolean passThrough = false;
-						if(!DwarvenPickaxeTimer.onlyWhenHolding) {
-							passThrough = true;
-						} else {
-							try {
-								String pickID = player.getHeldItem().getDisplayName().toLowerCase();//Utils.getSBID();
-								if(pickID.contains("pickaxe") || pickID.contains("drill")) {
-									passThrough = true;
-								}	
-							} catch(Exception e) {}
-							
-						}
-						
-						if(passThrough) {
-							new DwarvenPickaxeTimer(DwarvenPickaxeTimer.pickTimerX, DwarvenPickaxeTimer.pickTimerY);
-						}
-					}
+
 				}
+				if(SBP.sbLocation.equals("crystalhollows")) {
+					new CrystalHollowsMap();
+					new ChatOpenGui();
+				}
+				/* else if(SBP.sbLocation.equals("privateworld")) {
+					try {
+						if(Utils.getSBID().equals("pumpkin_dicer")) {
+							float cameraYaw = player.rotationYawHead;
+							if(cameraYaw < 0) {cameraYaw *= -1;}
+							while(cameraYaw > 90) { cameraYaw-=90; }
+
+							StringBuilder outputYaw = new StringBuilder(new DecimalFormat("#.##").format(cameraYaw));
+							while(outputYaw.substring(outputYaw.indexOf(".")).length() < 3) {
+								outputYaw.append("0");
+							}
+							Utils.drawString(Colors.CHROMA+"Yaw: "+outputYaw+"°", 10, 22);
+							String adjustArrow = "->";
+							int finalPos = SBP.width/2-(mc.fontRendererObj.getStringWidth("-")/2)+12;
+							if(AnimationHandler.playerSpeed > 9.5 && AnimationHandler.playerSpeed < 10.1) {
+								adjustArrow="";
+							} else if( AnimationHandler.playerSpeed > 9.7 ) {
+								adjustArrow = "<-";
+								finalPos-=(mc.fontRendererObj.getStringWidth("<"));
+							}
+
+							//Utils.drawString(Colors.AQUA+adjustArrow, finalPos, SBP.height/2-10);
+							Utils.drawScaledString(Colors.AQUA+adjustArrow, finalPos, SBP.height/2-10, 0x000000, 3, SettingGlobal.textStyle, true);
+						}
+					} catch(Exception ignored) {}
+
+				}*/
 				
 				
 				
@@ -198,29 +224,40 @@ public class RenderGuiEvent {
 				if(ComboMessages.abilityMsgToggle) {
 					new ComboMessages(ComboMessages.x, ComboMessages.y);
 				}
-				
+
+				if(JerryTimer.jerryToggle) {
+					new JerryTimer();
+				}
 				
 			}
 		
 		}
-		
-		
-
-		
-		
 
 
-		if(m >= (Minecraft.getDebugFPS()/2)) {
+
+
+
+
 			Utils.checkIfOnSkyblock();
-			if(SettingMenu.settingsMenuOpen) { String c = SettingMenu.currOptionName; ConfigHandler.updateConfig(c); }
+		if(m >= (Minecraft.getDebugFPS()/4)) {
+
+			if(SettingMenu.settingsMenuOpen) {
+				try {
+					String c = SettingMenu.settingIDs.get(SettingMenu.clickedSubOption);
+					ConfigHandler.updateConfig(c);
+				} catch(Exception ignored) {
+					ConfigHandler.updateConfig("");
+				}
+
+			}
 			m=0;
 		}
-		
+		GlStateManager.enableBlend();
 		}
 	}
 	
-	private static ArrayList<ArrayList<Float>> highlightSlots = new ArrayList();
-	private static ArrayList<Boolean> inFrontOfItem = new ArrayList();
+	private static final ArrayList<ArrayList<Float>> highlightSlots = new ArrayList();
+	private static final ArrayList<Boolean> inFrontOfItem = new ArrayList();
 	
 	public static void addHighlightSlot(float x, float y, float r, float g, float b, float a, Boolean infrontOfItem) {
 		ArrayList<Float> coords = new ArrayList();
@@ -240,18 +277,113 @@ public class RenderGuiEvent {
 	public void renderChestMenu(GuiScreenEvent.DrawScreenEvent.Pre event) {
 		MenuClickEvent.mouseX = event.mouseX;
 		MenuClickEvent.mouseY = event.mouseY;
+		SBP.width = event.gui.width;
+		SBP.height = event.gui.height;
 	}
 	
-	
+	private static boolean mouseDown = false;
+	private static String wantsToMove = "";
+	private static boolean volumePling = false;
 	@SubscribeEvent
 	public void renderChestMenu(GuiScreenEvent.DrawScreenEvent.Post event) {
+		if(!SBP.onSkyblock) {return;}
 		Minecraft mc = Minecraft.getMinecraft();
+
+		GlStateManager.pushMatrix();
+		/*try {
+			String songName;
+			try {
+				songName = new File(MusicUtils.getSong()).getName();
+				songName = songName.substring(0, songName.lastIndexOf("."));
+			} catch(Exception e) { songName = "None!"; }
+
+			int songNameWidth = mc.fontRendererObj.getStringWidth("Now Playing: "+songName)/2;
+			int mouseX = MenuClickEvent.mouseX;
+			int mouseY = MenuClickEvent.mouseY;
+
+
+			String menuLoc = "";
+			if(mc.currentScreen instanceof GuiInventory) {
+				menuLoc="musicInv";
+			} else if(mc.currentScreen instanceof GuiIngameMenu) {
+				menuLoc="musicEsc";
+			} else { throw new Exception("Doesn't matter lol"); }
+			int musicX = DataGetter.findInt(menuLoc+"X")+100;
+			int musicY = DataGetter.findInt(menuLoc+"Y");
+
+
+
+			boolean b1 = mouseX >= musicX && mouseX < musicX + 16 && mouseY >= musicY + 30 && mouseY <= musicY + 30 + 16;
+			boolean b = mouseX >= musicX - 16 && mouseX < musicX && mouseY >= musicY + 30 && mouseY <= musicY + 30 + 16;
+			if(Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+
+				if(mouseX >= musicX-songNameWidth && mouseX < musicX+songNameWidth && mouseY >= musicY-4 && mouseY < musicY+14 && wantsToMove.equals("move")) {
+					ConfigHandler.newObject(menuLoc+"X", mouseX-100);
+					ConfigHandler.newObject(menuLoc+"Y", mouseY-4);
+				} else if(mouseX >= musicX-70 && mouseX < musicX+70 && mouseY >= musicY+12 && mouseY < musicY+30 && wantsToMove.equals("volume")) {
+					int xOff = mouseX-(musicX-59);
+					float volPerc = ((float) xOff)/118;
+					if(volPerc < 0) {volPerc=0;}
+					else if(volPerc > 1) {volPerc=1;}
+					MusicUtils.setVolume(volPerc);
+
+				}
+
+				if(!mouseDown) {
+					//CLICK EVENT
+					wantsToMove= "";
+					if(mouseX >= musicX - songNameWidth && mouseX < musicX + songNameWidth && mouseY >= musicY - 4 && mouseY < musicY + 14) {
+						wantsToMove="move";
+
+					} else if(mouseX >= musicX-70 && mouseX < musicX+70 && mouseY >= musicY+12 && mouseY < musicY+30) {
+						wantsToMove="volume";
+						volumePling=true;
+					}
+					if(b) {
+						if(MusicUtils.songState.equals("playing")) {
+							MusicUtils.pauseSong();
+							Utils.playClickSound();
+						} else if(MusicUtils.songState.equals("paused")) {
+							MusicUtils.playSong();
+						} else {
+							MusicUtils.stopSong();
+						}
+					} else if(b1) {
+						MusicUtils.stopSong();
+						Utils.playClickSound();
+					}
+					mouseDown=true;
+				}
+			} else {
+				if(volumePling && !MusicUtils.songState.equals("playing")) {
+					Minecraft.getMinecraft().thePlayer.playSound("note.pling", (float) MusicUtils.getVolume(), 1.0F);
+					volumePling=false;
+				}
+				mouseDown=false; }
+
+			GlStateManager.translate(0, 0, 10);
+			ResourceLocation musicButtons = new ResourceLocation(Reference.MODID, "textures/0/menu/musicbuttons.png");
+			int pauseOffset = 0;
+			if(MusicUtils.songState.equals("playing")) { pauseOffset = 16; }
+			ColorUtils.resetColor();
+			mc.getTextureManager().bindTexture(musicButtons);
+			Gui.drawModalRectWithCustomSizedTexture(musicX-64, musicY+12, 0, 16, 128, 16, 128, 32);
+			int sliderPos =  (int) (MusicUtils.getVolume()*118);
+
+			Gui.drawModalRectWithCustomSizedTexture(musicX-67+sliderPos, musicY+12, 48, 0, 16, 16, 128, 32);
+			Gui.drawModalRectWithCustomSizedTexture(musicX-16, musicY +30, pauseOffset, 0, 16, 16, 128, 32);
+			Gui.drawModalRectWithCustomSizedTexture(musicX, musicY +30, 32, 0, 16, 16, 128, 32);
+			Utils.drawString(Colors.GOLD+"Now Playing: "+Colors.AQUA+songName, musicX -songNameWidth, musicY, 4);
+			//Utils.drawString(Colors.YELLOW+"Client Music", musicX-21-(mc.fontRendererObj.getStringWidth("Client Music")), musicY +35);
+			//Utils.drawString(Colors.YELLOW+"By SBP", musicX+21, musicY +35);
+
+		} catch(Exception e) {
+			//e.printStackTrace();
+		}*/
+		GlStateManager.popMatrix();
+
 		
-		//Utils.drawString(Colors.WHITE, 0, 0);
-		
-		
-		
-		
+		//HIGHLIGHT SLOTS
 		for(int i=0;i<highlightSlots.size();i++) {
 			GlStateManager.pushMatrix();
 			GlStateManager.enableBlend();
@@ -270,7 +402,7 @@ public class RenderGuiEvent {
 			
 			GlStateManager.color(r, g, b, a);
 			GlStateManager.translate(0, 0, transInt);
-			mc.currentScreen.drawModalRectWithCustomSizedTexture(x, y, 0, 0, 16, 16, 16, 16);
+			Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, 16, 16, 16, 16);
 			GlStateManager.popMatrix();
 		}
 		

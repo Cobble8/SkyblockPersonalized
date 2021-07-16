@@ -26,7 +26,6 @@ public class GarryTeleportThread extends Thread {
 		}
 		Minecraft.getMinecraft().thePlayer.sendChatMessage("/garry");
 		SBP.titleString="";
-		return;
 	}
 	
 }

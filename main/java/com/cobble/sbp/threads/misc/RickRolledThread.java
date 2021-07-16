@@ -6,9 +6,6 @@ import com.cobble.sbp.SBP;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Utils;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
-
 public class RickRolledThread extends Thread {
 
 	private static Boolean cancelLyrics = false;
@@ -102,14 +99,13 @@ public class RickRolledThread extends Thread {
 					return;
 				}
 				
-			} catch (Exception e) {  }
+			} catch (Exception ignored) {  }
 			try { Thread.sleep(3000); } catch (Exception e) { e.printStackTrace(); }
 		} 
 		SBP.titleString = "";
 		SBP.titleScale = 4;
 		l.clear();
 		cancelLyrics = false;
-		return;
 	}
 	
 	

@@ -212,7 +212,7 @@ public class GetFromAPI {
 		int profileID = 0;
 		
 		for(int i=0;i<profileUUIDs.length;i++) {
-			if(profileUUIDs[i] == profileuuid) {
+			if(profileUUIDs[i].equals(profileuuid)) {
 				profileID = i;
 			}
 		}
@@ -230,7 +230,7 @@ public class GetFromAPI {
 		int profileID = 0;
 		
 		for(int i=0;i<profileUUIDs.length;i++) {
-			if(profileUUIDs[i] == profileuuid) {
+			if(profileUUIDs[i].equals(profileuuid)) {
 				profileID = i;
 			}
 		}
@@ -244,7 +244,7 @@ public class GetFromAPI {
 		int profileID = 0;
 		
 		for(int i=0;i<profileUUIDs.length;i++) {
-			if(profileUUIDs[i] == profileuuid) {
+			if(profileUUIDs[i].equals(profileuuid)) {
 				profileID = i;
 			}
 		}
@@ -258,7 +258,7 @@ public class GetFromAPI {
 		int profileID = 0;
 		
 		for(int i=0;i<profileUUIDs.length;i++) {
-			if(profileUUIDs[i] == profileuuid) {
+			if(profileUUIDs[i].equals(profileuuid)) {
 				profileID = i;
 			}
 		}
@@ -275,13 +275,12 @@ public class GetFromAPI {
 		int profileID = 0;
 		
 		for(int i=0;i<profileUUIDs.length;i++) {
-			if(profileUUIDs[i] == profileuuid) {
+			if(profileUUIDs[i].equals(profileuuid)) {
 				profileID = i;
 			}
 		}
-		
-		int temp = dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("highest_tier_completed").getAsInt();
-		return temp;
+
+		return dungeonClass.getAsJsonObject().get("profiles").getAsJsonArray().get(profileID).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("highest_tier_completed").getAsInt();
 	}
 	public static String getCurrProfile(String file, String uuid) {
 		String profileID = "";
@@ -297,13 +296,10 @@ public class GetFromAPI {
                     for(int i=0; i<profileList.size();i++) {
                     	profileRecents[i] = profileList.get(i).getAsJsonObject().get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("last_save").getAsLong();
                     	profileUUIDs[i] = profileList.get(i).getAsJsonObject().get("profile_id").getAsString();
-                    	
                     }
                     //copies it into a new array so the order will be preserved
-                    for(int i=0;i<profileRecents.length;i++) {
-                    	//its abstract because sometimes the turn out negative for some reason
-                    	profileNums[i] = profileRecents[i];
-                    }
+					//its abstract because sometimes the turn out negative for some reason
+					System.arraycopy(profileRecents, 0, profileNums, 0, profileRecents.length);
                     //gets highest value of all the last_save values
                     Arrays.sort(profileNums);
                     long highestProfile = profileNums[profileNums.length-1];

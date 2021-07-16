@@ -35,7 +35,7 @@ public class GuiChestHandler {
 	        if(guiScreen instanceof GuiChest) {
 	            IInventory cc = ((ContainerChest) ((GuiChest) guiScreen).inventorySlots).getLowerChestInventory();
 	            RenderGuiEvent.currMenu = cc.getDisplayName().getUnformattedText().trim().toLowerCase();
-	            if(RenderGuiEvent.currMenu.equals("craft item")) { 
+	            if(RenderGuiEvent.currMenu.equals("craft item") && DataGetter.findBool("toggleBlockedQuickCrafts")) {
         			MenuClickEvent.itemList.clear();
         			for(int r=0;r<cc.getSizeInventory();r++) {
             			try { MenuClickEvent.itemList.add(cc.getStackInSlot(r).getDisplayName()); } catch(Exception e) { MenuClickEvent.itemList.add("");}
@@ -50,21 +50,23 @@ public class GuiChestHandler {
             			String currItem = cc.getStackInSlot(currSlot).getDisplayName().toLowerCase().replace(" ", "_");
 	            		currItem = Utils.unformatAllText(currItem);
 	            		
-	            		Boolean locked = false;
+	            		boolean locked = false;
 	            		
 	            		for(String item : blockedList) {
-	            			if(item.equals(currItem)) { locked = true; 
-	            			continue; }
+							if (item.equals(currItem)) {
+								locked = true;
+								break;
+							}
 	            		}
 	            		
 	            		if(locked) { RenderGuiEvent.addHighlightSlot(w/2-8+54, h/2-3+(k*18)-(72), 1, 1, 1, 0.7F, true); }
-            		} catch(Exception e2) { }
+            		} catch(Exception ignored) { }
             	}
             } else {PressKeyEvent.inCraftMenu=false; MenuClickEvent.itemList.clear();}
 	            
     			
 	            
-	            if(SBP.sbLocation.equals("dwarvenmines")) { if(RenderGuiEvent.currMenu.equals("commissions")) { new DwarvenCompletedCommissions(); } }
+	            if(SBP.sbLocation.equals("dwarvenmines")||SBP.sbLocation.equals("crystalhollows")) { if(RenderGuiEvent.currMenu.equals("commissions")) { new DwarvenCompletedCommissions(); } }
 	            
 	            
 	            if(Mouse.isButtonDown(0) || Mouse.isButtonDown(1) || Keyboard.isKeyDown(KeyBindingHandler.lockQuickCraft.getKeyCode())) {
@@ -73,13 +75,9 @@ public class GuiChestHandler {
 	            
 	        } else { RenderGuiEvent.currMenu = ""; }
 			
-			try {
-				
-			} catch(Exception e) {return;}
-			
 	        if(guiScreen instanceof GuiChest) {
 	            IInventory cc = ((ContainerChest) ((GuiChest) guiScreen).inventorySlots).getLowerChestInventory();			            
-	            if(SBP.sbLocation.equals("dwarvenmines")) {
+	            if(SBP.sbLocation.equals("dwarvenmines") || SBP.sbLocation.equals("crystalhollows")) {
 	            	if(RenderGuiEvent.currMenu.equals("heart of the mountain")) {
 	            	
 	            	if(Utils.unformatAllText(cc.getStackInSlot(10).getDisplayName()).equals("Sky Mall")) {
@@ -89,8 +87,7 @@ public class GuiChestHandler {
 	            		
 	            		if(Utils.unformatAllText(desc.get(skyUnlocked)).equals("UNLOCKED")) {
 	            			String isActive = Utils.unformatAllText(desc.get(skyUnlocked-2));
-	            			if(isActive.contains("20%")) { DwarvenPickaxeTimer.isSkymall = true;
-	            			} else { DwarvenPickaxeTimer.isSkymall=false; }
+							DwarvenPickaxeTimer.isSkymall = isActive.contains("20%");
 	            		} else { DwarvenPickaxeTimer.isSkymall=false; }
 	            		
 	            		
@@ -117,7 +114,7 @@ public class GuiChestHandler {
 	            			if(Utils.unformatAllText(cc.getStackInSlot(currSlot).getDisplayName()).contains("Commission")) {
 	            				ItemStack comm = cc.getStackInSlot(currSlot);
 	            				List<String> desc = comm.getTooltip(player, false);
-	            				
+
 	            				if(Utils.unformatAllText(desc.get(desc.size()-1)).contains("Click to claim rewards!")) {
 	            					DwarvenCompletedCommissions.completedSlots.add(currSlot+"");
 	            				}
