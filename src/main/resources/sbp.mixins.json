@@ -1,0 +1,9 @@
+{
+  "package": "com.cobble.sbp.mixins",
+  "refmap": "sbp.mixins.refmap.json",
+  "minVersion": "0.7.11",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "ParticleMixin"
+  ]
+}
