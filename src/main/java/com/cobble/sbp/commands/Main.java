@@ -47,8 +47,8 @@ public class Main extends CommandBase {
 		if(args.length > 0) {
 			String args0 = args[0].toLowerCase();
 			switch (args0) {
-				case "dev":
-					System.out.println(ConfigHandler.config.toString());
+				case "help":
+
 
 					return;
 				case "reloadconfig":

@@ -60,6 +60,17 @@ jar {
     )
 }
 
+sourceSets {
+    main {
+        ext.refMap = "sbp.mixins.refmap.json"
+    }
+}
+
+mixin {
+    add sourceSets.main, "sbp.mixins.refmap.json"
+
+}
+
 processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version

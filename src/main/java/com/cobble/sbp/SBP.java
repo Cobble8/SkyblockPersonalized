@@ -41,8 +41,9 @@ public class SBP
     {
 
 		modFile = event.getSourceFile();
-		new LaunchThread().start();
 		ConfigHandler.registerConfig();
+		new LaunchThread().start();
+
 		KeyBindingHandler.register();
 		MinecraftForge.EVENT_BUS.register(new PressKeyEvent());
 

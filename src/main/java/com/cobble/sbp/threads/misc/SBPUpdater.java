@@ -18,6 +18,7 @@ public class SBPUpdater extends Thread {
             new AutoUpdater(updateUrl);
 
             Utils.sendMessage("Finished Downloading! "+Colors.GOLD+"Restart Minecraft for the update to take effect!");
+            Utils.sendErrMsg("WARNING: You may crash after doing this but it will be resolved after another launch!");
             Utils.playDingSound();
         }
 }

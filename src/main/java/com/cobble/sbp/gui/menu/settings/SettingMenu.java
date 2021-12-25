@@ -30,15 +30,15 @@ import java.util.HashMap;
 public class SettingMenu extends GuiScreen {
 
 	//SETTING ARRAYS
-	public static ArrayList<String> settingNames = new ArrayList();
-	public static ArrayList<String> settingIDs = new ArrayList();
-	public static ArrayList<Boolean> settingToggles = new ArrayList();
-	public static ArrayList<String> settingDesc = new ArrayList();
-	public static ArrayList<Boolean> settingOptions = new ArrayList();
-	public static ArrayList<String> settingVersions = new ArrayList();
-	private static final ArrayList<String> searchPresets = new ArrayList();
-	private static final ArrayList<String> actualPresets = new ArrayList();
-	public static ArrayList<String> themeNames = new ArrayList();
+	public static ArrayList<String> settingNames = new ArrayList<>();
+	public static ArrayList<String> settingIDs = new ArrayList<>();
+	public static ArrayList<Boolean> settingToggles = new ArrayList<>();
+	public static ArrayList<String> settingDesc = new ArrayList<>();
+	public static ArrayList<Boolean> settingOptions = new ArrayList<>();
+	public static ArrayList<String> settingVersions = new ArrayList<>();
+	private static final ArrayList<String> searchPresets = new ArrayList<>();
+	private static final ArrayList<String> actualPresets = new ArrayList<>();
+	public static ArrayList<String> themeNames = new ArrayList<>();
 
 	//SUBOPTIONS VARIABLES
 	public static int clickedSubOption = -1;

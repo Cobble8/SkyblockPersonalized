@@ -1,4 +1,4 @@
-package com.cobble.sbp.handlers;
+package com.cobble.sbp.gui.screen.dwarven;
 
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.events.user.MenuClickEvent;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class ChatOpenGui extends Gui {
 
     private static boolean mouseDown = false;
-
+    private static boolean sKeyDown = false;
 
     public ChatOpenGui() {
         if(!SBP.sbLocation.equals("crystalhollows")) {return;}
@@ -107,6 +107,14 @@ public class ChatOpenGui extends Gui {
 
                                 if(wpYPos != -1) { coords+="X: "+wpXPos+", Y: "+wpYPos+", Z: "+wpZPos; } else { coords+="X: "+wpXPos+", Z: "+wpZPos; }
                                 Utils.drawString(new String[]{name, coords}, mouseX-offset, (int) ((wpY+6)*scale), 4);
+
+                                if(!sKeyDown) {
+
+                                    if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
+                                        sKeyDown = true;
+                                        Minecraft.getMinecraft().thePlayer.sendChatMessage(Utils.unformatAllText(name+": "+coords));
+                                    }
+                                } else { sKeyDown = Keyboard.isKeyDown(Keyboard.KEY_S); }
                                 GlStateManager.popMatrix();
                                 markerHover=true;
                                 break;
