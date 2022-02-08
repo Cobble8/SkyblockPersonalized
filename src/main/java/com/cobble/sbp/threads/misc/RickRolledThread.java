@@ -24,66 +24,66 @@ public class RickRolledThread extends Thread {
 		
 		ArrayList<String> l = new ArrayList();
 		
-		l.add("We're no strangers to love");
-		l.add("You know the rules and so do I");
-		l.add("A full commitment's what I'm thinking of");
-		l.add("You wouldn't get this from any other guy");
-		l.add("I just wanna tell you how I'm feeling");
-		l.add("Gotta make you understand");
-		l.add("Never gonna give you up");
-		l.add("Never gonna let you down");
-		l.add("Never gonna run around and desert you");
-		l.add("Never gonna make you cry");
-		l.add("Never gonna say goodbye");
-		l.add("Never gonna tell a lie and hurt you");
-		l.add("We've known each other for so long");
-		l.add("Your heart's been aching, but you're too shy to say it");
-		l.add("Inside, we both know what's been going on");
-		l.add("We know the game, and we're gonna play it");
-		l.add("And if you ask me how I'm feeling");
-		l.add("Don't tell me you're too blind to see");
-		l.add("Never gonna give you up");
-		l.add("Never gonna let you down");
-		l.add("Never gonna run around and desert you");
-		l.add("Never gonna make you cry");
-		l.add("Never gonna say goodbye");
-		l.add("Never gonna tell a lie and hurt you");
-		l.add("Never gonna give you up");
-		l.add("Never gonna let you down");
-		l.add("Never gonna run around and desert you");
-		l.add("Never gonna make you cry");
-		l.add("Never gonna say goodbye");
-		l.add("Never gonna tell a lie and hurt you");
-		l.add("Ooh (Give you up)");
-		l.add("Ooh-ooh");
-		l.add("Never gonna give, never gonna give (Give you up)");
-		l.add("Ooh-ooh");
-		l.add("Never gonna give, never gonna give (Give you up)");
-		l.add("We've known each other for so long");
-		l.add("Your heart's been aching, but you're too shy to say it");
-		l.add("Inside, we both know what's been going on");
-		l.add("We know the game, and we're gonna play it");
-		l.add("I just wanna tell you how I'm feeling");
-		l.add("Gotta make you understand");
-		l.add("Never gonna give you up");
-		l.add("Never gonna let you down");
-		l.add("Never gonna run around and desert you");
-		l.add("Never gonna make you cry");
-		l.add("Never gonna say goodbye");
-		l.add("Never gonna tell a lie and hurt you");
-		l.add("Never gonna give you up");
-		l.add("Never gonna let you down");
-		l.add("Never gonna run around and desert you");
-		l.add("Never gonna make you cry");
-		l.add("Never gonna say goodbye");
-		l.add("Never gonna tell a lie and hurt you");
-		l.add("Never gonna give you up");
-		l.add("Never gonna let you down");
-		l.add("Never gonna run around and desert you");
-		l.add("Never gonna make you cry");
-		l.add("Never gonna say goodbye");
-		l.add("Never gonna tell a lie and hurt you");
-		l.add("Thank you and good night!");
+		l.add('[SBP] Turn off "Block Hoe Right Clicks" to view the crafting recipe of this farming hoe.');
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		for(int i=0;i<l.size();i++) {
 			
