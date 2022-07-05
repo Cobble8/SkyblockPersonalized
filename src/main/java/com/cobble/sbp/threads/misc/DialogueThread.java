@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.TextUtils;
 
 import net.minecraft.client.Minecraft;
 
@@ -128,14 +128,14 @@ public class DialogueThread extends Thread {
 		
 			for(int i=0;i<d.size();i++) {
 				if(doDelay) {
-					try { Thread.sleep(1400); } catch (InterruptedException e) { Utils.sendErrMsg("Dialogue Failed"); }
+					try { Thread.sleep(1400); } catch (InterruptedException e) { TextUtils.sendErrMsg("Dialogue Failed"); }
 				} else {
 					if(i != 0) {
-						try { Thread.sleep(1400); } catch (InterruptedException e) { Utils.sendErrMsg("Dialogue Failed"); }
+						try { Thread.sleep(1400); } catch (InterruptedException e) { TextUtils.sendErrMsg("Dialogue Failed"); }
 					}
 				}
 				if(currMsg == currMessages) {
-					Utils.sendSpecificMessage(d.get(i));
+					TextUtils.sendSpecificMessage(d.get(i));
 					Minecraft.getMinecraft().thePlayer.playSound("mob.villager.haggle", 0.5F, 1.0F);
 				}
 			}

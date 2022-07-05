@@ -2,6 +2,7 @@ package com.cobble.sbp.gui.menu.settings;
 
 import java.io.IOException;
 
+import com.cobble.sbp.utils.Resources;
 import org.lwjgl.input.Keyboard;
 
 import com.cobble.sbp.core.config.ConfigHandler;
@@ -41,7 +42,7 @@ public class SettingMove extends GuiScreen {
 		GlStateManager.enableBlend();
 		mc.fontRendererObj.drawString(Colors.WHITE+"Press ESCAPE to cancel", this.width/2-(fontRendererObj.getStringWidth("Press ESCAPE to cancel")/2), this.height/4, 0x10, true);
 		
-		ResourceLocation settingBorder = SettingMenu.blank;
+		ResourceLocation settingBorder = Resources.blank;
 		mc.getTextureManager().bindTexture(settingBorder);
 		
 		int oldX = DataGetter.findInt(id+".x");

@@ -2,25 +2,27 @@ package com.cobble.sbp.threads.misc;
 
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.handlers.DownloadSecretsHandler;
 import com.cobble.sbp.handlers.UpdateCheckHandler;
 import com.cobble.sbp.utils.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import net.minecraftforge.fml.common.Loader;
 
 public class LaunchThread extends Thread {
 	
-	public static Boolean invalidVersion = false;
+	public static boolean invalidVersion = false;
 	public static int dgnImgVersLatest = 0;
 	public static int dgnImgVersCurr = DataGetter.findInt("dungeon.secretImage.vers");
 	
 	public void run() {
+		if(!Loader.isModLoaded("skyblockclientupdater")) {
+			UpdateCheckHandler.check();
+		}
 
-		UpdateCheckHandler.check();
 		
 		String file = "";
-		try { file = HttpClient.readPage("https://raw.githubusercontent.com/Cobble8/SkyblockPersonalized/main/versioncheck.json");
+		try { file = WebUtils.readPage("https://raw.githubusercontent.com/Cobble8/SkyblockPersonalized/main/versioncheck.json");
 		} catch (Exception e) { return; }
 		JsonElement info = new JsonParser().parse(file);
 		dgnImgVersLatest = info.getAsJsonObject().get("dgnImgVer").getAsInt();
@@ -43,19 +45,6 @@ public class LaunchThread extends Thread {
 			Utils.print("This version of "+Reference.NAME+" is allowed! Current Version: "+Reference.VERSION+", Disabled Versions: "+tmp3);
 		} else {
 			Utils.print("This version of "+Reference.NAME+" is invalid! WARNING: Will crash on login!");
-		}
-		
-		SecretUtils.updateDungeonList();
-		
-		if(DataGetter.findBool("dungeon.secretImage.autoDownload")) {
-			if(LaunchThread.dgnImgVersCurr != LaunchThread.dgnImgVersLatest) {
-				if(LaunchThread.dgnImgVersCurr != 0) {
-					new DownloadSecretsHandler().start();
-					ConfigHandler.newObject("dungeon.secretImage.vers", LaunchThread.dgnImgVersLatest);
-					LaunchThread.dgnImgVersCurr=LaunchThread.dgnImgVersLatest;
-
-				}
-			}
 		}
 		
 	}

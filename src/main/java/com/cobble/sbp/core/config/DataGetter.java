@@ -13,7 +13,7 @@ public class DataGetter
 	/** Returns a boolean at the specified config value
 	 * Returns false if fails
 	 */
-	public static Boolean findBool(String boolName) {
+	public static boolean findBool(String boolName) {
 		Object value;
 		try { value = ConfigHandler.config.get(boolName);
 		} catch(Exception e) { value = ConfigHandler.getDefaultValue(boolName); }
@@ -162,7 +162,10 @@ public class DataGetter
 			}
 			currSearch = parser.parse(currSearch).getAsString().replace("\"","");
 			return currSearch;
-		} catch(Exception e) { return "N/A";}
+		} catch(Exception e) {
+
+			e.printStackTrace();
+			return "N/A";}
 	}
 
 	

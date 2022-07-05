@@ -1,10 +1,7 @@
 package com.cobble.sbp.commands;
 
 import com.cobble.sbp.SBP;
-import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.Reference;
-import com.cobble.sbp.utils.Utils;
-import com.cobble.sbp.utils.WaypointUtils;
+import com.cobble.sbp.utils.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
@@ -18,7 +15,7 @@ public class CrystalWaypoint extends CommandBase {
     ArrayList<String> aliases;
 
     public CrystalWaypoint() {
-        aliases = new ArrayList<String>();
+        aliases = new ArrayList<>();
         aliases.add("sbpcw"); //SBP Crystal Waypoint
         aliases.add("chwp"); //Crystal Hollows Waypoint
         aliases.add("sbpwp"); //SBP Waypoint
@@ -38,7 +35,7 @@ public class CrystalWaypoint extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-        if(!SBP.sbLocation.equals("crystalhollows")) { Utils.sendErrMsg("You must be in the "+ Colors.LIGHT_PURPLE+"Crystal Hollows"+Colors.YELLOW+" to use this command!"); return; }
+        if(!SBP.sbLocation.equals("crystalhollows")) { TextUtils.sendErrMsg("You must be in the "+ Colors.LIGHT_PURPLE+"Crystal Hollows"+Colors.YELLOW+" to use this command!"); return; }
         EntityPlayerSP plyr = Minecraft.getMinecraft().thePlayer;
         StringBuilder name = new StringBuilder("loc");
         int x = (int) plyr.posX;
@@ -85,11 +82,16 @@ public class CrystalWaypoint extends CommandBase {
         }
         if(!name.toString().contains("&")) { name.insert(0, Colors.WHITE);}
         name = new StringBuilder(name.toString().replace("&", Reference.COLOR_CODE_CHAR + ""));
-        if(x < 202 || x > 823) {Utils.sendErrMsg("Invalid x coordinate, setting to your current x coordinate."); x = (int) plyr.posX; }
-        if(x < 30 || y > 190) {Utils.sendErrMsg("Invalid y coordinate, setting to your current y coordinate."); y = (int) plyr.posY; }
-        if(z < 202 || z > 823) {Utils.sendErrMsg("Invalid z coordinate, setting to your current z coordinate."); z = (int) plyr.posZ;}
+        if(x < 202 || x > 823) {
+            TextUtils.sendErrMsg("Invalid or no provided x coordinate, setting to your current x coordinate."); x = (int) plyr.posX; }
+        if(y < 30 || y > 190) {
+            TextUtils.sendErrMsg("Invalid y or no provided coordinate, setting to your current y coordinate."); y = (int) plyr.posY; }
+        if(z < 202 || z > 823) {
+            TextUtils.sendErrMsg("Invalid z or no provided coordinate, setting to your current z coordinate."); z = (int) plyr.posZ; }
 
-        WaypointUtils.addCrystalWaypoint(name.toString(), x, y, z);
+        WorldUtils.addCrystalWaypoint(name.toString(), x, y, z);
+        String tmp = name.toString(); if(tmp.length() == 0) { tmp = "Blank"; }
+        TextUtils.sendMessage("Successfully created a waypoint at "+Colors.AQUA+x+Colors.YELLOW+", "+Colors.AQUA+y+Colors.YELLOW+", "+Colors.AQUA+z+Colors.YELLOW+" named '"+tmp+Colors.YELLOW+"'");
     }
 
     @Override

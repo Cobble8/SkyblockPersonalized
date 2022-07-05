@@ -1,9 +1,9 @@
 package com.cobble.sbp.handlers;
 
 import com.cobble.sbp.threads.misc.LoginThread;
-import com.cobble.sbp.utils.HttpClient;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.WebUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -17,7 +17,7 @@ public class UpdateCheckHandler {
 		
 		try {
 			
-			String siteContent = HttpClient.readPage("https://raw.githubusercontent.com/Cobble8/SkyblockPersonalized/main/versioncheck.json");
+			String siteContent = WebUtils.readPage("https://raw.githubusercontent.com/Cobble8/SkyblockPersonalized/main/versioncheck.json");
 			
 			JsonParser parser = new JsonParser();
 			JsonElement update = parser.parse(siteContent.toString());

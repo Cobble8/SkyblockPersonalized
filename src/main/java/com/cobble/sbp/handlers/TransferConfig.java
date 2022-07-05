@@ -3,8 +3,8 @@ package com.cobble.sbp.handlers;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.simplejson.JSONObject;
 import com.cobble.sbp.simplejson.parser.JSONParser;
+import com.cobble.sbp.utils.FileUtils;
 import com.cobble.sbp.utils.Reference;
-import com.cobble.sbp.utils.Utils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public class TransferConfig {
     public TransferConfig() {
 
         try {
-            String oldConfigStr = Utils.readFile("config/"+ Reference.MODID+"/main.cfg");
+            String oldConfigStr = FileUtils.readFile("config/"+ Reference.MODID+"/main.cfg");
             JSONObject oldConfigJson = (JSONObject) new JSONParser().parse(oldConfigStr);
             Set<String> keyList = oldConfigJson.keySet();
             transferKeys();

@@ -4,7 +4,7 @@ import com.cobble.sbp.SBP;
 import com.cobble.sbp.events.skyblock.LobbySwapEvent;
 import com.cobble.sbp.threads.misc.LoginThread;
 import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.TextUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.event.ClickEvent;
@@ -31,12 +31,12 @@ public class PlayerLoginEvent {
 		ChatStyle runCommand = new ChatStyle();
 		runCommand.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/api new"));
 		runCommand.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(Colors.YELLOW+"Click to run "+Colors.AQUA+"/api new")));
-		Utils.sendSpecificMessage(Colors.DARK_RED+"-----------------------------------------------------");
-		Utils.sendMessage(Colors.YELLOW+"Your Hypixel API Key is not setup properly!");
+		TextUtils.sendSpecificMessage(Colors.DARK_RED+"-----------------------------------------------------");
+		TextUtils.sendMessage(Colors.YELLOW+"Your Hypixel API Key is not setup properly!");
 		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(Colors.YELLOW+"Type "+Colors.AQUA+"/api new "+Colors.YELLOW+"to set your API key!").setChatStyle(runCommand));
-		Utils.sendSpecificMessage(Colors.DARK_RED+"-----------------------------------------------------");
+		TextUtils.sendSpecificMessage(Colors.DARK_RED+"-----------------------------------------------------");
 		if(SBP.firstLaunch) {
-			Utils.sendMessage("Hey! It seems like this is your first launch with SkyblockPersonalized! Use "+Colors.AQUA+"/sbp"+Colors.YELLOW+" to get started!");
+			TextUtils.sendMessage("Hey! It seems like this is your first launch with SkyblockPersonalized! Use "+Colors.AQUA+"/sbp"+Colors.YELLOW+" to get started!");
 		}
 	
 	}

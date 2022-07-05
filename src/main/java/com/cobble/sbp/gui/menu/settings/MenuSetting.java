@@ -22,11 +22,25 @@ public class MenuSetting {
         this.version = version;
     }
 
-    public MenuSetting subsetting(String subName, String id, String type) {
+    private MenuSetting subsetting(String subName, String id, String type) {
         subsettingTypes.add(type);
         subsettingNames.add(subName);
         subsettingIDs.add(id);
         return this;
+    }
+
+    public MenuSetting Int(String subName, String id, int min, int max) { return subsetting(subName, id, "int:"+min+","+max); }
+    public MenuSetting Bool(String subName, String id) { return subsetting(subName, id, "boolean"); }
+    public MenuSetting TextColor(String subName, String id) { return subsetting(subName, id, "textColor"); }
+    public MenuSetting MoveGui(String id, int width, int height) { return subsetting("Move Location", id, "moveGUI: "+width+";"+height); }
+    public MenuSetting Str(String subName, String id) {
+        return subsetting(subName, id, "string");
+    }
+    public MenuSetting Color(String subName, String id) {
+        return subsetting(subName, id, "color");
+    }
+    public MenuSetting Size(String subName, String id) {
+        return subsetting(subName, id, "size");
     }
 
 

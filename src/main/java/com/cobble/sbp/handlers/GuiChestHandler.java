@@ -3,18 +3,16 @@ package com.cobble.sbp.handlers;
 import java.util.List;
 
 import com.cobble.sbp.gui.screen.misc.LockedSlots;
-import com.cobble.sbp.utils.Colors;
+import com.cobble.sbp.utils.TextUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.user.MenuClickEvent;
 import com.cobble.sbp.events.user.PressKeyEvent;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenCompletedCommissions;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenPickaxeTimer;
-import com.cobble.sbp.utils.Utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -56,27 +54,34 @@ public class GuiChestHandler {
 				if(Mouse.isButtonDown(0) || Mouse.isButtonDown(1) || Keyboard.isKeyDown(KeyBindingHandler.lockQuickCraft.getKeyCode())) { if(MenuClickEvent.menuClickAvailable) { MenuClickEvent.menuClickAvailable = false; }} else { MenuClickEvent.menuClickAvailable = true; }
 
 					switch(menuName) {
+						case "calendar_and_events":
+
+
+
+							return;
+
+
 						case "heart_of_the_mountain":
-							if(Utils.unformatAllText(cc.getStackInSlot(10).getDisplayName()).equals("Sky Mall")) {
+							if(TextUtils.unformatAllText(cc.getStackInSlot(10).getDisplayName()).equals("Sky Mall")) {
 								ItemStack skymall = cc.getStackInSlot(10);
 								List<String> desc  = skymall.getTooltip(player, false);
 								int skyUnlocked = desc.size()-1;
 
-								if(Utils.unformatAllText(desc.get(skyUnlocked)).equals("UNLOCKED")) {
-									String isActive = Utils.unformatAllText(desc.get(skyUnlocked-2));
+								if(TextUtils.unformatAllText(desc.get(skyUnlocked)).equals("UNLOCKED")) {
+									String isActive = TextUtils.unformatAllText(desc.get(skyUnlocked-2));
 									DwarvenPickaxeTimer.isSkymall = isActive.contains("20%");
 								} else { DwarvenPickaxeTimer.isSkymall=false; }
 							}
 
-							if(Utils.unformatAllText(cc.getStackInSlot(0).getDisplayName()).trim().replace(" ", "").contains("Tier5")) {
+							if(TextUtils.unformatAllText(cc.getStackInSlot(0).getDisplayName()).trim().replace(" ", "").contains("Tier5")) {
 								ItemStack tier5 = cc.getStackInSlot(0);
 								List<String> desc = tier5.getTooltip(player, false);
 								int isTier5 = desc.size()-1;
 
-								if(Utils.unformatAllText(desc.get(isTier5)).equals("UNLOCKED")) {
+								if(TextUtils.unformatAllText(desc.get(isTier5)).equals("UNLOCKED")) {
 									if(!(DataGetter.findInt("dwarven.user.hotmLevel") == 5)) {
 										ConfigHandler.newObject("dwarven.user.hotmLevel", 5);
-										DwarvenPickaxeTimer.HotMLevel = 5;
+										DwarvenPickaxeTimer.hotmLevel = 5;
 									}
 								}
 							}
@@ -88,11 +93,11 @@ public class GuiChestHandler {
 							for(int i=0;i<9;i++) {
 								int currSlot = i+9;
 								//DwarvenCompletedCommissions.slots.clear();
-								if(Utils.unformatAllText(cc.getStackInSlot(currSlot).getDisplayName()).contains("Commission")) {
+								if(TextUtils.unformatAllText(cc.getStackInSlot(currSlot).getDisplayName()).contains("Commission")) {
 									ItemStack comm = cc.getStackInSlot(currSlot);
 									List<String> desc = comm.getTooltip(player, false);
 
-									if(Utils.unformatAllText(desc.get(desc.size()-1)).contains("Click to claim rewards!")) {
+									if(TextUtils.unformatAllText(desc.get(desc.size()-1)).contains("Click to claim rewards!")) {
 										DwarvenCompletedCommissions.slots.put(i, true);
 									} else {
 										DwarvenCompletedCommissions.slots.put(i, false);
@@ -117,7 +122,7 @@ public class GuiChestHandler {
 
 										List<String> lore = cc.getStackInSlot(i).getTooltip(Minecraft.getMinecraft().thePlayer, false);
 										for (String s : lore) {
-											String curr = Utils.unformatAllText(s); //get rid of formatting
+											String curr = TextUtils.unformatAllText(s); //get rid of formatting
 
 											if (curr.startsWith("Time Remaining: ")) { //make sure it's the right line
 
@@ -142,7 +147,7 @@ public class GuiChestHandler {
 
 
 												long currSlot = DataGetter.findLong("dwarven.forgeReminder."+forgeSlot);
-												if(currSlot == -1) {
+												if(currSlot == -1 || currSlot < System.currentTimeMillis()) {
 													long inp = output+System.currentTimeMillis();
 													ConfigHandler.newObject("dwarven.forgeReminder."+forgeSlot, inp);
 												}
@@ -166,7 +171,7 @@ public class GuiChestHandler {
 								int currSlot = 16+(k*9);
 								try {
 									String currItem = cc.getStackInSlot(currSlot).getDisplayName().toLowerCase().replace(" ", "_");
-									currItem = Utils.unformatAllText(currItem);
+									currItem = TextUtils.unformatAllText(currItem);
 
 									boolean locked = false;
 

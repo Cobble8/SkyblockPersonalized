@@ -2,15 +2,15 @@ package com.cobble.sbp.gui.screen.dwarven;
 
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.gui.menu.settings.SettingMenu;
+import com.cobble.sbp.events.user.MenuClickEvent;
 import com.cobble.sbp.utils.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLSync;
 
 import java.util.ArrayList;
 
@@ -18,18 +18,15 @@ import java.util.ArrayList;
 public class CrystalHollowsMap extends Gui {
 
 
-    public static final ResourceLocation map = new ResourceLocation(Reference.MODID, "textures/gui/crystal_map.png");
-    public static final ResourceLocation icons = new ResourceLocation("minecraft:textures/map/map_icons.png");
-    public static final ResourceLocation marker = new ResourceLocation(Reference.MODID, "textures/gui/map_markers.png");
-    public static final ResourceLocation colors = new ResourceLocation(Reference.MODID, "textures/gui/crystal_map_colors.png");
+
     public static int[][] locs;
 
     public static int mapX = DataGetter.findInt("dwarven.crystalMap.x");
     public static int mapY = DataGetter.findInt("dwarven.crystalMap.y");
-    public static Boolean mapToggle = DataGetter.findBool("dwarven.crystalMap.toggle");
+    public static boolean mapToggle = DataGetter.findBool("dwarven.crystalMap.toggle");
     public static float scale = DataGetter.findInt("dwarven.crystalMap.size")/10f;
-    public static Boolean showHead = DataGetter.findBool("dwarven.crystalMap.headToggle");
-    public static Boolean coords = DataGetter.findBool("dwarven.crystalMap.coordsToggle");
+    public static boolean showHead = DataGetter.findBool("dwarven.crystalMap.headToggle");
+    public static boolean coords = DataGetter.findBool("dwarven.crystalMap.coordsToggle");
     public static boolean hovering = false;
     public static int xOff = 202;
     public static int zOff = 202;
@@ -38,25 +35,37 @@ public class CrystalHollowsMap extends Gui {
     //public static ArrayList<ArrayList<Object>> markers = new ArrayList<>();
     public static ArrayList<ArrayList<Object>> waypoints = new ArrayList<>();
     public static ResourceLocation head = null;
+    public static boolean foundSkin = false;
     public static String textColor = DataGetter.findStr("dwarven.crystalMap.textColor");
 
 
     public CrystalHollowsMap() {
-
-        String clr = ColorUtils.textColor(textColor);
-
-
+        mapToggle = DataGetter.findBool("dwarven.crystalMap.toggle");
         if(!mapToggle) {return;}
-        int x = mapX;
-        int y = mapY;
+        textColor = DataGetter.findStr("dwarven.crystalMap.textColor");
+        mapX = DataGetter.findInt("dwarven.crystalMap.x");
+        mapY = DataGetter.findInt("dwarven.crystalMap.y");
+        showHead = DataGetter.findBool("dwarven.crystalMap.headToggle");
+        coords = DataGetter.findBool("dwarven.crystalMap.coordsToggle");
+        scale = DataGetter.findInt("dwarven.crystalMap.size")/10f;
+
+
+
+
+        String clr = Colors.textColor(textColor);
+
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayerSP player = mc.thePlayer;
         if(showHead) {
             try {
-                if(player.hasSkin()) {
-                    head = mc.getNetHandler().getPlayerInfo(player.getUniqueID()).getLocationSkin();
-                } else {
-                    head = new ResourceLocation("minecraft:textures/entity/steve.png");
+                if(!foundSkin) {
+                    if(player.hasSkin()) {
+                        head = mc.getNetHandler().getPlayerInfo(player.getUniqueID()).getLocationSkin();
+                        foundSkin = true;
+                    } else {
+                        head = new ResourceLocation("minecraft:textures/entity/steve.png");
+                    }
+
                 }
             } catch(Exception ignored) {}
         }
@@ -68,37 +77,38 @@ public class CrystalHollowsMap extends Gui {
 
         GlStateManager.pushMatrix();
         GL11.glScalef(scale, scale, scale);
-        mc.getTextureManager().bindTexture(map);
-        x = Math.round(x/scale);
-        y = Math.round(y/scale);
-        int finX = (int) Math.round(plyrX)+x;
-        int finZ = (int) Math.round(plyrZ)+y;
+        mc.getTextureManager().bindTexture(Resources.map);
+        mapX = Math.round(mapX/scale);
+        mapY = Math.round(mapY/scale);
+        int finX = (int) Math.round(plyrX)+mapX;
+        int finZ = (int) Math.round(plyrZ)+mapY;
 
-        ColorUtils.resetColor();
+        Colors.resetColor();
 
-        drawModalRectWithCustomSizedTexture(x, y, 0, 0, 100, 100, 100, 200);
+        drawModalRectWithCustomSizedTexture(mapX, mapY, 0, 0, 100, 100, 100, 200);
 
         manageLoc();
         if(locs.length == 0) { resetLocs(); }
-        mc.getTextureManager().bindTexture(SettingMenu.blank);
+        mc.getTextureManager().bindTexture(Resources.blank);
 
         for(int i=0;i<50;i++) {
             for(int j=0;j<50;j++) {
-                locColor(locs[i][j], x+(2*i), y+(2*j));
+                locColor(locs[i][j], mapX+(2*i), mapY+(2*j));
             }
         }
-        ColorUtils.resetColor();
+        Colors.resetColor();
 
         GlStateManager.pushMatrix();
-        mc.getTextureManager().bindTexture(map);
-        GlStateManager.translate(0, 0, 1);
-        drawModalRectWithCustomSizedTexture(x, y, 0, 100, 100, 100, 100, 200);
+        mc.getTextureManager().bindTexture(Resources.map);
+        GlStateManager.translate(0, 0, 0.01);
+        drawModalRectWithCustomSizedTexture(mapX, mapY, 0, 100, 100, 100, 100, 200);
 
         for(ArrayList<Object> wp : waypoints) {
             try {
                 String name = (String) wp.get(0);
-                int wpX = (int) wp.get(1)+x;
-                int wpY = (int) wp.get(2)+y;
+                name = TextUtils.unformatAllText(name);
+                int wpX = (int) wp.get(1)+(mapX);
+                int wpY = (int) wp.get(2)+(mapY);
                 int locX = ((int) wp.get(1))/2;
                 int locY = ((int) wp.get(2))/2;
                 if(locX > 49) {locX = 49;} if(locY > 49) {locY = 49;} if(locX < 0) {locX = 0;} if(locY < 0) {locY = 0;}
@@ -109,12 +119,27 @@ public class CrystalHollowsMap extends Gui {
 
                 if(locID == -1) { if(locX > 21 && locX < 29 && locY > 21 && locY < 29) { locID = 0; } else if(locX < 25 && locY < 25 ) { locID = 3; } else if(locX > 24 && locY <= 25) { locID = 5; } else if(locX <= 24) { locID = 1; } else { locID = 6; }}
 
-                mc.getTextureManager().bindTexture(marker);
-                ColorUtils.resetColor();
+                mc.getTextureManager().bindTexture(Resources.marker);
+                Colors.resetColor();
                 drawModalRectWithCustomSizedTexture(wpX-7, wpY-14, 16*locID, 0, 16, 16, 192, 16);
+                if(mc.currentScreen instanceof GuiChat) {
+
+                    int mX = (int) (MenuClickEvent.mouseX/scale);
+                    int mY = (int) (MenuClickEvent.mouseY/scale);
+                    if(mX > wpX-7+2 && mX < wpX-7+16-2 && mY > wpY-14 && mY < wpY-14+16) {
+                        //TextUtils.sendMessage(Colors.GREEN+mX+", "+mY);
+                        GlStateManager.color(0,0,0,1);
+                        drawModalRectWithCustomSizedTexture(wpX-7, wpY-14, 16*locID, 0, 16, 16, 192, 16);
+                        Colors.resetColor();
+                        drawModalRectWithCustomSizedTexture(wpX-7, wpY-15, 16*locID, 0, 16, 16, 192, 16);
+                    } else {
+                        //TextUtils.sendMessage(Colors.RED+mX+", "+mY);
+                    }
+                    //TextUtils.sendMessage(wpX+", "+wpY);
+                }
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(0,0,1.2);
-                Utils.drawBoldScaledString(name, wpX+3, wpY-6,0.5d, 2);
+                GuiUtils.drawBoldScaledString(name, wpX+3, wpY-6,0.5d, 2);
                 GlStateManager.popMatrix();
             } catch(Exception ignored) {}
         }
@@ -133,11 +158,11 @@ public class CrystalHollowsMap extends Gui {
                 GlStateManager.translate(finX-1, finZ-1, 0);
                 GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.translate(-finX+1, -finZ+1, 0);
-                GlStateManager.translate(0, 0, 10);
+                GlStateManager.translate(0, 0, 0.03);
                 GlStateManager.color(0,0,0,1);
-                mc.getTextureManager().bindTexture(SettingMenu.blank);
+                mc.getTextureManager().bindTexture(Resources.blank);
                 drawModalRectWithCustomSizedTexture(finX-6, finZ-6, 0, 0, 10, 10, 1, 1);
-                ColorUtils.resetColor();
+                Colors.resetColor();
                 mc.getTextureManager().bindTexture(head);
                 drawModalRectWithCustomSizedTexture(finX-5, finZ-5, 8, 8, 8, 8, 64, 64);
             }
@@ -145,32 +170,34 @@ public class CrystalHollowsMap extends Gui {
                 GlStateManager.translate(finX+1, finZ+1, 0);
                 GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.translate(-finX-1, -finZ-1, 0);
-                GlStateManager.translate(0, 0, 10);
-                mc.getTextureManager().bindTexture(icons);
-                drawModalRectWithCustomSizedTexture(finX-6, finZ-6, 24, 0, 12, 12, 48, 48);
+                GlStateManager.translate(0, 0, 0.03);
+                mc.getTextureManager().bindTexture(Resources.icons);
+                //System.out.println(icons.getResourcePath());
+                Colors.setColor(DataGetter.findStr("dwarven.crystalMap.arrowColor"));
+                drawModalRectWithCustomSizedTexture(finX-6, finZ-6, 0, 0, 12, 12, 48, 48);
             }
         } catch(Exception ignored) {}
 
-        GlStateManager.translate(0, 0, -10);
         GlStateManager.popMatrix();
 
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0, 2);
-        drawEpicCenteredString("N", clr, x+50, y-4);
-        drawEpicCenteredString("E", clr, x+101, y-3+50);
-        drawEpicCenteredString("S", clr, x+50, y-3+100);
-        drawEpicCenteredString("W", clr, x, y-3+50);
+        GlStateManager.translate(0, 0, 0.02);
+        drawEpicCenteredString("N", clr, mapX+50, mapY-4);
+        drawEpicCenteredString("E", clr, mapX+101, mapY-3+50);
+        drawEpicCenteredString("S", clr, mapX+50, mapY-3+100);
+        drawEpicCenteredString("W", clr, mapX, mapY-3+50);
 
         GlStateManager.popMatrix();
 
-        GlStateManager.popMatrix();
+
         if(!hovering && coords) {
             int xCoord = (int) Math.floor(mc.thePlayer.posX);
             int yCoord = (int) Math.floor(mc.thePlayer.posY);
             int zCoord = (int) Math.floor(mc.thePlayer.posZ);
-            CrystalHollowsMap.drawEpicCenteredString(xCoord+" "+yCoord+" "+zCoord, clr, (int) (CrystalHollowsMap.mapX+(50*scale)), (int) (CrystalHollowsMap.mapY+(106*scale)));
+            CrystalHollowsMap.drawEpicCenteredString(xCoord+" "+yCoord+" "+zCoord, clr, (int) ((CrystalHollowsMap.mapX+(50f))), (int) ((CrystalHollowsMap.mapY+(108f))));
         }
+        GlStateManager.popMatrix();
     }
 
     public static void drawEpicCenteredString(String string, String color, int x, int y) {
@@ -178,7 +205,7 @@ public class CrystalHollowsMap extends Gui {
 
             int scndClr=0;
             Minecraft mc = Minecraft.getMinecraft();
-            String bIU = Utils.unformatText(color);
+            String bIU = TextUtils.unformatText(color);
             int offset = mc.fontRendererObj.getStringWidth(string)/2;
             mc.fontRendererObj.drawString(bIU+string, x-1-offset, y-1, scndClr, false);
             mc.fontRendererObj.drawString(bIU+string, x-1-offset, y+1, scndClr, false);
@@ -203,9 +230,9 @@ public class CrystalHollowsMap extends Gui {
     }
 
     public static void locColor(int id, int x, int y) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(colors);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(Resources.colors);
         if(id < 0) {return;}
-        ColorUtils.resetColor();
+        Colors.resetColor();
         drawModalRectWithCustomSizedTexture(x, y, id*2, 0, 2, 2, 24, 2);
     }
 
@@ -266,8 +293,8 @@ public class CrystalHollowsMap extends Gui {
 
     public static String[] getLocName(int mouseX, int mouseY) {
         try {
-            int xPos = (int) ((mouseX-mapX)/2/scale);
-            int yPos = (int) ((mouseY-mapY)/2/scale);
+            int xPos = (int) ((mouseX-(mapX*scale))/2/scale);
+            int yPos = (int) ((mouseY-(mapY*scale))/2/scale);
             int id = locs[xPos][yPos];
             return locName(id, xPos, yPos);
         } catch(Exception e) {
@@ -313,8 +340,7 @@ public class CrystalHollowsMap extends Gui {
     public static void setSpot(int x, int y, int id) {
         try {
             int old = locs[x][y];
-            if(old == 9) {}
-            else if(old == -1 || old == 11) {
+            if(old == -1 || old == 11) {
                 locs[x][y] = id;
             }
         } catch(Exception e) {

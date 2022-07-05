@@ -3,10 +3,7 @@ package com.cobble.sbp.threads.misc;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.skyblock.LobbySwapEvent;
 import com.cobble.sbp.events.user.PlayerLoginEvent;
-import com.cobble.sbp.utils.CheckAPIKey;
-import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.Reference;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.*;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.event.ClickEvent;
@@ -22,19 +19,19 @@ public class LoginThread extends Thread {
 		
 		
 		
-		try { CheckAPIKey.checkValidAPIKey(); } catch (Exception e1) { Utils.print("Invalid API Key"); }
+		try { WebUtils.checkValidAPIKey(); } catch (Exception e1) { Utils.print("Invalid API Key"); }
 
 		LobbySwapEvent.currLobby = "";
 		try {Thread.sleep(5000);} catch (InterruptedException e) {e.printStackTrace();}
 		try {
 		
-		if(!CheckAPIKey.validAPIKey && !Minecraft.getMinecraft().isSingleplayer()) { PlayerLoginEvent.setApiKey(); }
+		if(!WebUtils.validAPIKey && !Minecraft.getMinecraft().isSingleplayer()) { PlayerLoginEvent.setApiKey(); }
 		
 		if(!(updateType.equals(""))) {
 			Utils.print("There is a new update for "+Reference.NAME+"!");
 			if(!DataGetter.findBool("misc.updateNotifs.toggle")) {return;}
-			Utils.sendMessage(Colors.YELLOW+"There is a new update for "+Reference.NAME+"!");
-			Utils.sendSpecificMessage(Colors.YELLOW+"Release type: "+Colors.AQUA+updateType);
+			TextUtils.sendMessage(Colors.YELLOW+"There is a new update for "+Reference.NAME+"!");
+			TextUtils.sendSpecificMessage(Colors.YELLOW+"Release type: "+Colors.AQUA+updateType);
 			
 
 			ChatStyle runCommand = new ChatStyle();

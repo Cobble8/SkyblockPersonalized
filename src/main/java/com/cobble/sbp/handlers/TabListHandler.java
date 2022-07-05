@@ -9,8 +9,9 @@ import com.cobble.sbp.events.RenderGuiEvent;
 import com.cobble.sbp.events.skyblock.LobbySwapEvent;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenTimer;
-import com.cobble.sbp.utils.ColorUtils;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.Colors;
+import com.cobble.sbp.utils.SBUtils;
+import com.cobble.sbp.utils.TextUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -26,7 +27,7 @@ public class TabListHandler {
 	 	DwarvenGui.currString="";
 	 	DwarvenGui.currCommissions = "";
 	 	if(!DataGetter.findBool("dwarven.gui.commissionHideWord")) {
-			if(DwarvenGui.commTrackToggle) { DwarvenGui.currString+=ColorUtils.textColor(DwarvenGui.commissionID)+"Commissions;"; }
+			if(DwarvenGui.commTrackToggle) { DwarvenGui.currString+= Colors.textColor(DwarvenGui.commissionID)+"Commissions;"; }
 		}
 
 	 	
@@ -38,7 +39,7 @@ public class TabListHandler {
 	 		String name;
 	 		try { name = RenderGuiEvent.tabNames.get(i).getDisplayName().getUnformattedText(); } catch(Exception e) { continue; }
 				if(!foundPlace) {
-					String rawName = Utils.unformatText(RenderGuiEvent.tabNames.get(i).getDisplayName().getUnformattedText()).replace(" ", "").toLowerCase();
+					String rawName = TextUtils.unformatText(RenderGuiEvent.tabNames.get(i).getDisplayName().getUnformattedText()).replace(" ", "").toLowerCase();
 					if(name.toLowerCase().startsWith("area:")) {
 						
 						String loc = rawName.replace("area:", ""); foundPlace = true;
@@ -79,7 +80,7 @@ public class TabListHandler {
 	 		//if(DwarvenGui.commTrackToggle) {DwarvenGui.currString+=";";}
 	 		DwarvenGui.currString+=mithrilPowder+";";
 	 		DwarvenGui.currString+=gemPowder+";";
-			if(DwarvenGui.fuelToggle && Utils.getSBID().contains("drill")) { DwarvenGui.manageDrillFuel(); }
+			if(DwarvenGui.fuelToggle && SBUtils.getSBID().contains("drill")) { DwarvenGui.manageDrillFuel(); }
 	 		if(DwarvenTimer.dwarvenTimerToggle) { DwarvenGui.currString+=eventOffset;}
 	 		
 	 		if(DwarvenTimer.dwarvenTimerToggle) { new DwarvenTimer(DwarvenTimer.posX, DwarvenTimer.posY); }

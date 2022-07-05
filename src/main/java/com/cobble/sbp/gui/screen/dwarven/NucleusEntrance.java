@@ -3,11 +3,10 @@ package com.cobble.sbp.gui.screen.dwarven;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.simplejson.JSONObject;
 import com.cobble.sbp.simplejson.parser.JSONParser;
-import com.cobble.sbp.utils.Reference;
+import com.cobble.sbp.utils.Resources;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.util.ResourceLocation;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -16,7 +15,7 @@ import java.util.HashMap;
 
 public class NucleusEntrance extends Gui {
 
-    public static ResourceLocation locs = new ResourceLocation(Reference.MODID,"data/nucleus_entrances.json");
+
     public static int x = -1;
     public static int y = -1;
     public static int z = -1;
@@ -27,7 +26,7 @@ public class NucleusEntrance extends Gui {
         try {
             String closest = "";
             if(entrances.size() == 0) {
-                InputStream in = Minecraft.getMinecraft().getResourceManager().getResource(locs).getInputStream();
+                InputStream in = Minecraft.getMinecraft().getResourceManager().getResource(Resources.nucleusLocations).getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 StringBuilder info = new StringBuilder();
                 String currLine = reader.readLine();

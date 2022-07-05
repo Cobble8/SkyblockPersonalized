@@ -2,7 +2,7 @@ package com.cobble.sbp.gui.screen.misc;
 
 import com.cobble.sbp.SBP;
 
-import com.cobble.sbp.utils.ColorUtils;
+import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Reference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -33,7 +33,7 @@ public class LockedSlots extends Gui {
             }
         }
         GlStateManager.popMatrix();
-        ColorUtils.resetColor();
+        Colors.resetColor();
     }
 
 }

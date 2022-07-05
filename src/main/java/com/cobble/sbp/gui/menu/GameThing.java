@@ -2,10 +2,7 @@ package com.cobble.sbp.gui.menu;
 
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.gui.menu.settings.SettingMenu;
-import com.cobble.sbp.utils.ColorUtils;
-import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.*;
 import net.minecraft.client.gui.GuiScreen;
 import com.cobble.sbp.SBP;
 import org.lwjgl.input.Keyboard;
@@ -128,22 +125,22 @@ public class GameThing extends GuiScreen {
                 finalRecord = "Record: "+(Double.parseDouble(record.substring(1))/1000d)+" "+recordType;
             } catch(Exception ignored) {}
         }
-        String time = Utils.secondsToTime((int) (System.currentTimeMillis()-startTime));
-        Utils.drawString(Colors.LIGHT_PURPLE+"Score: "+foundDots, SBP.width/2-(mc.fontRendererObj.getStringWidth("Score: "+foundDots)/2), SBP.height/2+102, 1);
-        Utils.drawString(Colors.GREEN+"Time: "+time, SBP.width/2-(mc.fontRendererObj.getStringWidth("Time: "+time)/2), SBP.height/2+114, 1);
-        Utils.drawString(Colors.AQUA+finalRecord, SBP.width/2-(mc.fontRendererObj.getStringWidth(finalRecord)/2), SBP.height/2+126, 1);
-        Utils.drawString(Colors.GOLD+"Deaths: "+deaths, SBP.width/2-(mc.fontRendererObj.getStringWidth("Deaths: "+deaths)/2), SBP.height/2+138, 1);
+        String time = TextUtils.secondsToTime((int) (System.currentTimeMillis()-startTime));
+        GuiUtils.drawString(Colors.LIGHT_PURPLE+"Score: "+foundDots, SBP.width/2-(mc.fontRendererObj.getStringWidth("Score: "+foundDots)/2), SBP.height/2+102, 1);
+        GuiUtils.drawString(Colors.GREEN+"Time: "+time, SBP.width/2-(mc.fontRendererObj.getStringWidth("Time: "+time)/2), SBP.height/2+114, 1);
+        GuiUtils.drawString(Colors.AQUA+finalRecord, SBP.width/2-(mc.fontRendererObj.getStringWidth(finalRecord)/2), SBP.height/2+126, 1);
+        GuiUtils.drawString(Colors.GOLD+"Deaths: "+deaths, SBP.width/2-(mc.fontRendererObj.getStringWidth("Deaths: "+deaths)/2), SBP.height/2+138, 1);
 
 
         String pause = Colors.YELLOW+"Click to pause the game!";
         if(paused) {pause = Colors.YELLOW+"Click to unpause the game!";}
-        Utils.drawString(pause, SBP.width/2-(mc.fontRendererObj.getStringWidth(pause)/2), SBP.height/2+150, 1);
+        GuiUtils.drawString(pause, SBP.width/2-(mc.fontRendererObj.getStringWidth(pause)/2), SBP.height/2+150, 1);
         if(paused) {
-            Utils.drawString(Colors.RED+Colors.BOLD+"Paused!", SBP.width/2-(mc.fontRendererObj.getStringWidth(Colors.BOLD+"Paused!")/2), SBP.height/2+162, 1);
+            GuiUtils.drawString(Colors.RED+Colors.BOLD+"Paused!", SBP.width/2-(mc.fontRendererObj.getStringWidth(Colors.BOLD+"Paused!")/2), SBP.height/2+162, 1);
         }
 
-        mc.getTextureManager().bindTexture(SettingMenu.blank);
-        ColorUtils.setColor("0;0;0;1");
+        mc.getTextureManager().bindTexture(Resources.blank);
+        Colors.setColor("0;0;0;1");
         drawModalRectWithCustomSizedTexture(SBP.width/2-100, SBP.height/2-100, 0, 0, 200, 200, 1, 1);
 
 
@@ -158,18 +155,18 @@ public class GameThing extends GuiScreen {
                 }
 
 
-                ColorUtils.setChroma(SBP.width/2-96+(x*10), SBP.height/2-96+(y*10));
+                Colors.setChroma(SBP.width/2-96+(x*10), SBP.height/2-96+(y*10));
                 double r = ((Math.abs(x-posX)+(Math.abs(y-posY)))/8d); r = 1-r; if(r<0){r=0;}
                 double g = ((Math.abs(x-ePosX)+(Math.abs(y-ePosY)))/8d); g= 1-g; if(g<0){g=0;}
 
 
-                ColorUtils.setColor(g+";"+r+";0.4;1");
+                Colors.setColor(g+";"+r+";0.4;1");
                 drawModalRectWithCustomSizedTexture(SBP.width/2-96+(x*10), SBP.height/2-96+(y*10), 0, 0, 2, 2, 1, 1);
             }
         }
-        ColorUtils.setColor(mColor);
+        Colors.setColor(mColor);
         drawModalRectWithCustomSizedTexture(SBP.width/2-98+(posX *10), SBP.height/2-98+(posY *10), 0, 0, 6, 6, 1, 1);
-        ColorUtils.setColor("1;0.6;0.6;1");
+        Colors.setColor("1;0.6;0.6;1");
         drawModalRectWithCustomSizedTexture(SBP.width/2-98+(ePosX*10), SBP.height/2-98+(ePosY*10), 0, 0, 6, 6, 1, 1);
 
     }

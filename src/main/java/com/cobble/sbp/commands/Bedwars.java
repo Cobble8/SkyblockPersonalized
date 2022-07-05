@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.TextUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
@@ -29,7 +29,7 @@ public class Bedwars extends CommandBase {
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+	public void processCommand(ICommandSender sender, String[] args) {
 		if(args.length >= 1) {
 			String arg = args[0].toLowerCase();
 			if(arg.equals("solo") || arg.equals("solos") || arg.equals("1") || arg.equals("1v1")) {
@@ -42,12 +42,12 @@ public class Bedwars extends CommandBase {
 				Minecraft.getMinecraft().thePlayer.sendChatMessage("/play bedwars_four_four");
 			}
 		} else {
-			Utils.sendErrMsg(Colors.RED+"Missing arguments: '"+Colors.DARK_RED+"GAMEMODE"+Colors.RED+"'");
-			Utils.sendSpecificMessage(Colors.RED+"Gamemodes:");
-			Utils.sendSpecificMessage(Colors.RED+"Solos: '1v1', '1', 'solo', 'solos'");
-			Utils.sendSpecificMessage(Colors.RED+"Doubles: '2v2', '2', 'double', 'doubles'");
-			Utils.sendSpecificMessage(Colors.RED+"Triples: '3v3', '3', 'triple', 'triples'");
-			Utils.sendSpecificMessage(Colors.RED+"Fours: '4v4', '4', 'four', 'fours'");
+			TextUtils.sendErrMsg(Colors.RED+"Missing arguments: '"+Colors.DARK_RED+"GAMEMODE"+Colors.RED+"'");
+			TextUtils.sendSpecificMessage(Colors.RED+"Gamemodes:");
+			TextUtils.sendSpecificMessage(Colors.RED+"Solos: '1v1', '1', 'solo', 'solos'");
+			TextUtils.sendSpecificMessage(Colors.RED+"Doubles: '2v2', '2', 'double', 'doubles'");
+			TextUtils.sendSpecificMessage(Colors.RED+"Triples: '3v3', '3', 'triple', 'triples'");
+			TextUtils.sendSpecificMessage(Colors.RED+"Fours: '4v4', '4', 'four', 'fours'");
 		}
 		
 		

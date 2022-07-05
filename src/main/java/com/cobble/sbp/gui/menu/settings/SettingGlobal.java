@@ -3,6 +3,7 @@ package com.cobble.sbp.gui.menu.settings;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.utils.Colors;
+import com.cobble.sbp.utils.GuiUtils;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
 import net.minecraft.client.gui.GuiScreen;
@@ -42,7 +43,7 @@ public class SettingGlobal extends GuiScreen {
 
 
 
-			Utils.drawString(Colors.YELLOW+"Font Style:", this.width/2-200+4, 143, 0);
+			GuiUtils.drawString(Colors.YELLOW+"Font Style:", this.width/2-200+4, 143, 0);
 			mc.getTextureManager().bindTexture(plusMinus);
 			GlStateManager.color(1, 1, 1, 0.8F);
 			if(mouseX >= this.width/2-200 && mouseX <= this.width/2-200+20 && mouseY >= 142+12 && mouseY <= 142+20+12) { GlStateManager.color(1, 1, 1, 1); }
@@ -66,7 +67,7 @@ public class SettingGlobal extends GuiScreen {
 			String currTextStyle = textStyleNames.get(textStyle);
 
 
-			Utils.drawString(Colors.CHROMA+currTextStyle, this.width/2-150-(mc.fontRendererObj.getStringWidth(currTextStyle)/2), 148+12);
+			GuiUtils.drawString(Colors.CHROMA+currTextStyle, this.width/2-150-(mc.fontRendererObj.getStringWidth(currTextStyle)/2), 148+12);
 
 			int posX = this.width/2-250;
 			int posY = 138-4;
@@ -88,7 +89,7 @@ public class SettingGlobal extends GuiScreen {
 			drawModalRectWithCustomSizedTexture(posX-32+64, posY-94+4+2, 0,0, 2, 92, 370, 223);
 			drawModalRectWithCustomSizedTexture(posX-30, posY+2, 0,0, 62, 2, 370, 223);
 
-			Utils.renderPlayer(posX, posY-5, scale, mouseX, mouseY);
+			GuiUtils.renderPlayer(posX, posY-5, scale, mouseX, mouseY);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -129,7 +130,6 @@ public class SettingGlobal extends GuiScreen {
 	protected void keyTyped(char par1, int par2) throws IOException {
 		if(par2 == Keyboard.KEY_ESCAPE) {
 			SettingMenu.settingsMenuOpen = false;
-			//mc.thePlayer.closeScreen();
 			mc.displayGuiScreen(new SettingMenu());
 		} else {
 			super.keyTyped(par1, par2);

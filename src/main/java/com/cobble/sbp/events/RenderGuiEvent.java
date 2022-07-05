@@ -5,14 +5,18 @@ import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.user.ChatRecieveEvent;
 import com.cobble.sbp.events.user.MenuClickEvent;
+import com.cobble.sbp.events.user.PressKeyEvent;
 import com.cobble.sbp.gui.menu.GameThing;
 import com.cobble.sbp.gui.menu.settings.SettingMenu;
 import com.cobble.sbp.gui.menu.settings.SettingMove;
 import com.cobble.sbp.gui.menu.settings.SettingMoveAll;
-import com.cobble.sbp.gui.screen.dungeons.SecretImage;
 import com.cobble.sbp.gui.screen.dwarven.*;
+import com.cobble.sbp.gui.screen.misc.BulwarkHelper;
 import com.cobble.sbp.gui.screen.misc.JerryTimer;
 import com.cobble.sbp.gui.screen.misc.LockedSlots;
+import com.cobble.sbp.gui.screen.misc.ThreeDimensionalRendering;
+import com.cobble.sbp.gui.screen.nether.KuudraReadyWarning;
+import com.cobble.sbp.gui.screen.nether.KuudraShopPrices;
 import com.cobble.sbp.handlers.*;
 import com.cobble.sbp.simplejson.JSONObject;
 import com.cobble.sbp.simplejson.parser.JSONParser;
@@ -20,6 +24,7 @@ import com.cobble.sbp.simplejson.parser.ParseException;
 import com.cobble.sbp.utils.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -45,12 +50,11 @@ import java.util.Objects;
 import java.util.Random;
 
 public class RenderGuiEvent {
-	public static Boolean helpMenu = false;
+	public static boolean helpMenu = false;
 
 	long lastUpdate = System.currentTimeMillis();
 
-
-	public static Boolean puzzlerParticles = false;
+	public static boolean puzzlerParticles = false;
 	public static int puzzlerX = 181;
 	public static int puzzlerZ = 135;
 	public static String actionBar = "";
@@ -65,8 +69,6 @@ public class RenderGuiEvent {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.thePlayer;
 		World world = mc.theWorld;
-
-
 
 
 
@@ -112,26 +114,12 @@ public class RenderGuiEvent {
 			}
 		}
 
-		
-		
-		if(DownloadSecretsHandler.running) {
-			long timePassed = System.currentTimeMillis()-DownloadSecretsHandler.startTime;
-			try {
-				if(DownloadSecretsHandler.progress != DownloadSecretsHandler.total) {
-					DownloadSecretsHandler.timeElapsed = Integer.parseInt(timePassed+"");
-				}
-				
-			} catch(Exception ignored) {}
-		}
-
-		new SecretImage();
-
 		if(!mc.isSingleplayer()) {
 			if(SBP.onSkyblock) {
-				if(!(SBP.titleString.equals(""))) { Utils.drawTitle(); }
+				if(!(SBP.titleString.equals(""))) { GuiUtils.drawTitle(); }
 
 				new CrystalLobbyDay();
-
+				BulwarkHelper.run();
 				//GUI ELEMENTS
 				if(ChatRecieveEvent.inMines() && DwarvenPickaxeTimer.pickTimerToggle) {
 					boolean passThrough = false;
@@ -139,7 +127,7 @@ public class RenderGuiEvent {
 						passThrough = true;
 					} else {
 						try {
-							String pickID = Utils.getSBID();
+							String pickID = SBUtils.getSBID();
 							if(pickID.contains("pickaxe") || pickID.contains("drill") || pickID.contains("gauntlet")) { passThrough = true; }
 						} catch(Exception ignored) {}
 
@@ -152,7 +140,7 @@ public class RenderGuiEvent {
 
 
 				if(SBP.sbLocation.equals("dwarvenmines") || SBP.sbLocation.equals("crystalhollows")) {
-					new DwarvenGui(DwarvenGui.posX, DwarvenGui.posY);
+					new DwarvenGui();
 					if(DwarvenTimer.dwarvenTimerToggle) { new DwarvenTimer(DwarvenTimer.posX, DwarvenTimer.posY); }
 					if(puzzlerParticles) { Random rand = new Random(); double motionY = rand.nextGaussian() * 0.02D; world.spawnParticle(EnumParticleTypes.SPELL, puzzlerX+0.5, 196, puzzlerZ+0.5, 0, motionY, 0); }
 					
@@ -171,16 +159,15 @@ public class RenderGuiEvent {
 		}
 
 
+			KuudraShopPrices.draw();
+			KuudraReadyWarning.draw();
 
-
-
-
-			Utils.checkIfOnSkyblock();
+			SBUtils.checkIfOnSkyblock();
 
 			if(System.currentTimeMillis() > lastUpdate+250) {
 				lastUpdate+=250;
 
-				try { if(Utils.getSBID().equals("coco_chopper")) { for(String ench : Objects.requireNonNull(Utils.getEnchants(player.getHeldItem())).getKeySet()) { if(ench.equals("replenish")) { if(!DataGetter.findBool("core.easterEgg.coco")) { ChatStyle achievement = new ChatStyle().setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§aFormer Glory\n§rRestore the Coco Chopper to\nits former glory\n\n§7Reward:\n§8+ §3[§bSBP§3] §bEaster Egg!"))); player.addChatMessage(new ChatComponentText("§e§ka§a>>   §aAchievement Unlocked: §6§6Former Glory§a   <<§e§ka").setChatStyle(achievement)); ConfigHandler.newObject("core.easterEgg.coco", true); } } } } } catch(Exception ignored) {}
+				try { if(SBUtils.getSBID().equals("coco_chopper")) { for(String ench : Objects.requireNonNull(SBUtils.getEnchants(player.getHeldItem())).getKeySet()) { if(ench.equals("replenish")) { if(!DataGetter.findBool("core.easterEgg.coco")) { ChatStyle achievement = new ChatStyle().setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§aFormer Glory\n§rRestore the Coco Chopper to\nits former glory\n\n§7Reward:\n§8+ §3[§bSBP§3] §bEaster Egg!"))); player.addChatMessage(new ChatComponentText("§e§ka§a>>   §aAchievement Unlocked: §6§6Former Glory§a   <<§e§ka").setChatStyle(achievement)); ConfigHandler.newObject("core.easterEgg.coco", true); } } } } } catch(Exception ignored) {}
 
 				if(SettingMenu.settingsMenuOpen) {
 					try {
@@ -195,7 +182,15 @@ public class RenderGuiEvent {
 					new GuiChestHandler();
 				}
 			}
-		GlStateManager.enableBlend();
+			GlStateManager.enableBlend();
+
+
+			//ThreeDimensionalRendering.draw(5,5);
+
+
+
+
+
 		}
 	}
 	
@@ -213,15 +208,15 @@ public class RenderGuiEvent {
 		if(!SBP.onSkyblock) {return;}
 		Minecraft mc = Minecraft.getMinecraft();
 		if(mc.currentScreen instanceof GuiChest) {
+
 			switch(GuiChestHandler.menuName) {
 				case "commissions":
-
 					new DwarvenCompletedCommissions(); return;
 				case "craft_item":
 					new LockedSlots(); return;
 				case "heart_of_the_mountain":
-					//new HOTMOverlay();
 					return;
+
 
 			}
 
@@ -232,12 +227,12 @@ public class RenderGuiEvent {
 			if(guiScreen instanceof GuiChest) {
 				IInventory cc = ((ContainerChest) ((GuiChest) guiScreen).inventorySlots).getLowerChestInventory();
 				if(GuiChestHandler.menuName.equals("trick_or_treat_bag")) {
-					ColorUtils.resetColor();
+					Colors.resetColor();
 					int green = 0;
 					int purple = 0;
 					for(int i=0;i<cc.getSizeInventory();i++) {
 						try {
-							String currID = Utils.getSBID(cc.getStackInSlot(i));
+							String currID = SBUtils.getSBID(cc.getStackInSlot(i));
 							if(currID.equals("green_candy")) {
 								green+=cc.getStackInSlot(i).stackSize;
 							} else if(currID.equals("purple_candy")) {
@@ -249,7 +244,7 @@ public class RenderGuiEvent {
 					GlStateManager.translate(0, 0, 100);
 					String[] str = new String[]{Colors.GOLD+"  "+Colors.GOLD+Colors.UNDERLINE+"Candy:", Colors.GREEN+"Green: "+Colors.AQUA+green, Colors.DARK_PURPLE+"Purple: "+Colors.AQUA+purple};
 					GlStateManager.disableLighting();
-					Utils.drawString(str, SBP.width/2+90, SBP.height/2-80, 4);
+					GuiUtils.drawString(str, SBP.width/2+90, SBP.height/2-80, 4);
 					GlStateManager.popMatrix();
 
 				}
@@ -298,6 +293,7 @@ public class RenderGuiEvent {
 	public void onWorldRender(RenderWorldLastEvent event) throws IOException, ParseException {
 
 		if(!SBP.onSkyblock) {return;}
+		//PressKeyEvent.path.draw(event);
 		GlStateManager.disableDepth();
 		GlStateManager.disableCull();
 		GlStateManager.enableLighting();
@@ -345,12 +341,12 @@ public class RenderGuiEvent {
 					double wpY = (int) wp.get(4);
 					double wpZ = (int) wp.get(5);
 					if(wpY == -1) {wpY = Minecraft.getMinecraft().thePlayer.posY;}
-					WaypointUtils.renderWaypoint(name, wpX, wpY, wpZ, wpColors.get(locID), event);
+					WorldUtils.renderWaypoint(name, wpX, wpY, wpZ, wpColors.get(locID), event);
 				} catch(Exception e) { e.printStackTrace(); }
 			}
 
 			if(NucleusEntrance.x != -1) {
-				String textColor = ColorUtils.textColor(DataGetter.findStr("dwarven.nucleusEntrance.textColor"));
+				String textColor = Colors.textColor(DataGetter.findStr("dwarven.nucleusEntrance.textColor"));
 
 
 
@@ -378,9 +374,9 @@ public class RenderGuiEvent {
 							wpColors.put(clrID, new Color(r, g, b, 255));
 						}
 					}
-					WaypointUtils.renderWaypoint(textColor+"Closest Nucleus Entrance", NucleusEntrance.x, NucleusEntrance.y, NucleusEntrance.z, wpColors.get(0), event);
+					WorldUtils.renderWaypoint(textColor+"Closest Nucleus Entrance", NucleusEntrance.x, NucleusEntrance.y, NucleusEntrance.z, wpColors.get(0), event);
 				} else {
-					WaypointUtils.renderWaypointText(textColor+"Closest Nucleus Entrance", new BlockPos(NucleusEntrance.x, NucleusEntrance.y, NucleusEntrance.z), event.partialTicks);
+					WorldUtils.renderWaypointText(textColor+"Closest Nucleus Entrance", new BlockPos(NucleusEntrance.x, NucleusEntrance.y, NucleusEntrance.z), event.partialTicks);
 				}
 			}
 

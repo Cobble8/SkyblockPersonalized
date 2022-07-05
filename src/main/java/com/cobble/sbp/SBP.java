@@ -4,17 +4,15 @@ import com.cobble.sbp.commands.*;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.RenderGuiEvent;
-import com.cobble.sbp.events.user.ChatRecieveEvent;
-import com.cobble.sbp.events.user.MenuClickEvent;
-import com.cobble.sbp.events.user.PlayerLoginEvent;
-import com.cobble.sbp.events.user.PressKeyEvent;
+import com.cobble.sbp.events.user.*;
 import com.cobble.sbp.handlers.KeyBindingHandler;
 import com.cobble.sbp.threads.misc.LaunchThread;
-import com.cobble.sbp.utils.CheckAPIKey;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.WebUtils;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -26,8 +24,9 @@ import java.io.File;
 @Mod(modid = Reference.MODID, version = Reference.VERSION, name = Reference.NAME, clientSideOnly = Reference.CLIENT_SIDE_ONLY)
 public class SBP
 {
-	public static Boolean firstLaunch = false;
-	public static Boolean onSkyblock = false;
+	public static boolean firstLaunch = false;
+	public static boolean onSkyblock = false;
+	public static boolean dev = false;
 	public static String sbLocation = "N/A";
 	public static String subLocation = "N/A";
 	public static String titleString = "";
@@ -42,17 +41,14 @@ public class SBP
 
 		modFile = event.getSourceFile();
 		ConfigHandler.registerConfig();
+
 		new LaunchThread().start();
 
 		KeyBindingHandler.register();
 		MinecraftForge.EVENT_BUS.register(new PressKeyEvent());
-
 		ClientCommandHandler.instance.registerCommand(new Main());
 		ClientCommandHandler.instance.registerCommand(new Bedwars());
-		//ClientCommandHandler.instance.registerCommand(new SendMap());
 		ClientCommandHandler.instance.registerCommand(new CrystalWaypoint());
-		if(DataGetter.findBool("command.dungeons.toggle")) { ClientCommandHandler.instance.registerCommand(new Dungeons()); }
-		if(DataGetter.findBool("dungeon.secretImage.toggle")) { ClientCommandHandler.instance.registerCommand(new SecretFinder()); ClientCommandHandler.instance.registerCommand(new SecretOverride()); }
 
 
 		Utils.print(Reference.NAME+" Pre-Initialized");
@@ -71,7 +67,7 @@ public class SBP
     @EventHandler
     public void init(FMLInitializationEvent event) throws Exception
 	{
-		CheckAPIKey.checkValidAPIKey();
+		WebUtils.checkValidAPIKey();
 		ConfigHandler.newObject("core.launchCounter.count", DataGetter.findInt("core.launchCounter.count")+1);
 		Utils.print(Reference.NAME+" Initialized");
 
@@ -90,6 +86,7 @@ public class SBP
     	MinecraftForge.EVENT_BUS.register(new ChatRecieveEvent());
     	MinecraftForge.EVENT_BUS.register(new PlayerLoginEvent());
     	MinecraftForge.EVENT_BUS.register(new MenuClickEvent());
+		MinecraftForge.EVENT_BUS.register(new TooltipEvent());
     	Utils.print(Reference.NAME+" Post-Initialized");
 
         

@@ -1,8 +1,8 @@
 package com.cobble.sbp.gui.screen.dwarven;
 
 import com.cobble.sbp.core.config.DataGetter;
-import com.cobble.sbp.utils.ColorUtils;
-import com.cobble.sbp.utils.WaypointUtils;
+import com.cobble.sbp.utils.Colors;
+import com.cobble.sbp.utils.WorldUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -12,8 +12,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-
-import java.awt.*;
 
 public class ChestHelper extends Gui {
 
@@ -52,7 +50,7 @@ public class ChestHelper extends Gui {
         }
 
         if(x != -1 && y != -1 && z != -1) {
-            WaypointUtils.drawCube(x, y, z, 0.2, xOff, yOff, zOff, ColorUtils.configToColor(DataGetter.findStr("dwarven.chestHelper.color")), event);
+            WorldUtils.drawCube(x, y, z, 0.2, xOff, yOff, zOff, Colors.configToColor(DataGetter.findStr("dwarven.chestHelper.color")), event);
         }
 
 

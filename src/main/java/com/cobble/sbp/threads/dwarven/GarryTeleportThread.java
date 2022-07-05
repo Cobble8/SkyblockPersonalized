@@ -3,6 +3,7 @@ package com.cobble.sbp.threads.dwarven;
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.utils.Colors;
+import com.cobble.sbp.utils.TextUtils;
 import com.cobble.sbp.utils.Utils;
 
 import net.minecraft.client.Minecraft;
@@ -21,7 +22,7 @@ public class GarryTeleportThread extends Thread {
 				Utils.playDingSound();
 			}
 			try { GarryTeleportThread.sleep(1000);
-			} catch (InterruptedException e) { Utils.sendErrMsg("Failed to use teleport delay. Teleporting now."); Minecraft.getMinecraft().thePlayer.sendChatMessage("/garry"); SBP.titleString = ""; continue;}
+			} catch (InterruptedException e) { TextUtils.sendErrMsg("Failed to use teleport delay. Teleporting now."); Minecraft.getMinecraft().thePlayer.sendChatMessage("/garry"); SBP.titleString = ""; continue;}
 		}
 		Minecraft.getMinecraft().thePlayer.sendChatMessage("/garry");
 		SBP.titleString="";

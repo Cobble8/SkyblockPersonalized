@@ -23,7 +23,7 @@ public class AutoUpdater {
         try {
             tmpSaveLoc.getParentFile().delete();
         } catch(Exception ignored) { }
-        Utils.saveImage(updateUrl, tmpSaveLoc.getPath());
+        WebUtils.saveImage(updateUrl, tmpSaveLoc.getPath());
 
         Utils.print("Mod File Name: "+SBP.modFile);
         Utils.print(new File(tmpSaveLoc.getParentFile()+"/"+SBP.modFile.getName()).getAbsolutePath());

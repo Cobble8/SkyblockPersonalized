@@ -3,14 +3,13 @@ package com.cobble.sbp.core.config;
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.ConfigList;
 import com.cobble.sbp.gui.menu.settings.SettingMenu;
-import com.cobble.sbp.gui.screen.dungeons.SecretImage;
 import com.cobble.sbp.gui.screen.dwarven.*;
 import com.cobble.sbp.gui.screen.misc.JerryTimer;
 import com.cobble.sbp.handlers.TransferConfig;
 import com.cobble.sbp.simplejson.JSONObject;
+import com.cobble.sbp.utils.FileUtils;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
-import com.cobble.sbp.utils.WaypointUtils;
 import com.google.gson.*;
 
 import java.io.File;
@@ -36,11 +35,11 @@ public class ConfigHandler {
 	public static ArrayList<String> forceEnabled = new ArrayList<>();
 	
 	public static void registerConfig() throws Exception {
-		boolean firstLaunch = !Utils.fileTest("config/"+Reference.MODID+"/sbp.cfg");
+		boolean firstLaunch = !FileUtils.fileTest("config/"+Reference.MODID+"/sbp.cfg");
 		if(firstLaunch) { firstLaunch(); }
 
 
-		boolean transferConfig = Utils.fileTest("config/"+Reference.MODID+"/main.cfg");
+		boolean transferConfig = FileUtils.fileTest("config/"+Reference.MODID+"/main.cfg");
 		if(transferConfig) {
 			System.out.println("Transferring Config...");
 			new TransferConfig();
@@ -187,15 +186,7 @@ public class ConfigHandler {
 			JerryTimer.jerryToggle = DataGetter.findBool("misc.jerryTimer.toggle");
 			CrystalLobbyDay.showDays = DataGetter.findBool("dwarven.crystalDay.toggle");
 
-		if(c.equals("dungeon.secretImage.toggle")) {
-			SecretImage.imgX = DataGetter.findInt("dungeon.secretImage.x");
-			SecretImage.imgY = DataGetter.findInt("dungeon.secretImage.y");
-			SecretImage.bgColorID = DataGetter.findStr("dungeon.secretImage.bgColor");
-			SecretImage.secretSize = DataGetter.findInt("dungeon.secretImage.size");
-			SecretImage.scrtColorID = DataGetter.findStr("dungeon.secretImage.textColor");
-		}
-
-		else if(c.equals("dwarven.crystalMap.toggle")) {
+		if(c.equals("dwarven.crystalMap.toggle")) {
 			CrystalHollowsMap.mapX = DataGetter.findInt("dwarven.crystalMap.x");
 			CrystalHollowsMap.mapY = DataGetter.findInt("dwarven.crystalMap.y");
 			CrystalHollowsMap.scale = DataGetter.findInt("dwarven.crystalMap.size")/10f;
@@ -267,7 +258,7 @@ public class ConfigHandler {
 		}
 		
 		else if(DwarvenPickaxeTimer.pickTimerToggle && c.equals("dwarven.abilityTimer.toggle")) {
-			DwarvenPickaxeTimer.HotMLevel = DataGetter.findInt("dwarven.user.hotmLevel");
+			DwarvenPickaxeTimer.hotmLevel = DataGetter.findInt("dwarven.user.hotmLevel");
 			DwarvenPickaxeTimer.onlyWhenHolding = DataGetter.findBool("dwarven.abilityTimer.holdingToggle");
 			DwarvenPickaxeTimer.circleRadius = DataGetter.findInt("dwarven.abilityTimer.radius");
 			DwarvenPickaxeTimer.circleAccuracy = DataGetter.findInt("dwarven.abilityTimer.accuracy");

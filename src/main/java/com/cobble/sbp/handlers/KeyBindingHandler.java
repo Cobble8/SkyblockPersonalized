@@ -12,19 +12,17 @@ public class KeyBindingHandler {
 
 
 	public static KeyBinding lockQuickCraft;
-	public static KeyBinding nextSecret;
-	public static KeyBinding prevSecret;
-	public static KeyBinding clearSecret;
+	public static KeyBinding addMiningPoint;
+	public static KeyBinding undoMiningPoint;
     public static void register()
     {	
     	lockQuickCraft = new KeyBinding("Locks the current quick crafting slot", Keyboard.KEY_L, Reference.NAME);
-    	nextSecret = new KeyBinding("Goes to the next secret from /secrets", Keyboard.KEY_N, Reference.NAME);
-    	prevSecret = new KeyBinding("Goes to the previous secret from /secrets", Keyboard.KEY_B, Reference.NAME);
-		clearSecret = new KeyBinding("Clears the current room secrets from the screen", Keyboard.KEY_M, Reference.NAME);
     	ClientRegistry.registerKeyBinding(lockQuickCraft);
-    	ClientRegistry.registerKeyBinding(nextSecret);
-    	ClientRegistry.registerKeyBinding(prevSecret);
-		ClientRegistry.registerKeyBinding(clearSecret);
+		/*addMiningPoint = new KeyBinding("Adds a point to the current Mining Path", Keyboard.KEY_P, Reference.NAME);
+		ClientRegistry.registerKeyBinding(addMiningPoint);
+		undoMiningPoint = new KeyBinding("Removes the most recent point in your Mining Path", Keyboard.KEY_O, Reference.NAME);
+		ClientRegistry.registerKeyBinding(undoMiningPoint);*/
+
 
     }
 }

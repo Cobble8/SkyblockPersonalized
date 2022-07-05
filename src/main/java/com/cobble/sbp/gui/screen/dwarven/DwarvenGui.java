@@ -11,10 +11,7 @@ import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.gui.menu.settings.SettingGlobal;
 import com.cobble.sbp.simplejson.JSONObject;
 import com.cobble.sbp.simplejson.parser.JSONParser;
-import com.cobble.sbp.utils.ColorUtils;
-import com.cobble.sbp.utils.Colors;
-import com.cobble.sbp.utils.Reference;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.*;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -33,23 +30,23 @@ public class DwarvenGui extends Gui{
 	public static double scale = DataGetter.findInt("dwarven.gui.size")/10d;
 
 	//Commissions
-	public static Boolean commTrackToggle = DataGetter.findBool("dwarven.gui.commissionToggle");
-	public static Boolean commTrackBarToggle = DataGetter.findBool("dwarven.gui.commissionBarToggle");
-	public static Boolean commNums = DataGetter.findBool("dwarven.gui.commissionNumToggle");
+	public static boolean commTrackToggle = DataGetter.findBool("dwarven.gui.commissionToggle");
+	public static boolean commTrackBarToggle = DataGetter.findBool("dwarven.gui.commissionBarToggle");
+	public static boolean commNums = DataGetter.findBool("dwarven.gui.commissionNumToggle");
 	public static String commBorderColorID = DataGetter.findStr("dwarven.gui.commissionBorderColor");
 	public static String commYesColorID = DataGetter.findStr("dwarven.gui.commissionYesColor");
 	public static String commNoColorID = DataGetter.findStr("dwarven.gui.commissionNoColor");
 	public static String commNameID = DataGetter.findStr("dwarven.gui.commissionQuestNameColor");
 	public static String commissionID = DataGetter.findStr("dwarven.gui.commissionWordColor");
-	public static Boolean hideCommTitle = DataGetter.findBool("dwarven.gui.commissionHideWord");
+	public static boolean hideCommTitle = DataGetter.findBool("dwarven.gui.commissionHideWord");
 
-	public static Boolean sentryToggle = DataGetter.findBool("dwarven.starSentryHelper.toggle");
+	public static boolean sentryToggle = DataGetter.findBool("dwarven.starSentryHelper.toggle");
 	public static int sentryX = DataGetter.findInt("dwarven.starSentryHelper.x");
 	public static int sentryY = DataGetter.findInt("dwarven.starSentryHelper.y");
 	public static String sentryLast = "Unknown";
 	//Drill Fuel
 
-	public static Boolean fuelToggle =  DataGetter.findBool("dwarven.fuel.toggle");
+	public static boolean fuelToggle =  DataGetter.findBool("dwarven.fuel.toggle");
 	public static String fuelGuiDrillFuel = DataGetter.findStr("dwarven.fuel.drillColor");
 	public static String fuelGuiPrimaryFull = DataGetter.findStr("dwarven.fuel.guiPrimeTenColor");
 	public static String fuelGuiSecondaryFull = DataGetter.findStr("dwarven.fuel.guiSecondTenColor");
@@ -59,7 +56,7 @@ public class DwarvenGui extends Gui{
 	public static String fuelGuiSecondaryTen = DataGetter.findStr("dwarven.fuel.guiSecondFullColor");
 	
 	//Mithril Powder
-	public static Boolean mithrilToggle = DataGetter.findBool("dwarven.gui.powderToggle");
+	public static boolean mithrilToggle = DataGetter.findBool("dwarven.gui.powderToggle");
 	public static String mithrilTextColor = DataGetter.findStr("dwarven.gui.mithrilTextColor");
 	public static String mithrilCountColor = DataGetter.findStr("dwarven.gui.mithrilCountColor");
 	public static String gemTextColor = DataGetter.findStr("dwarven.gui.gemstoneTextColor");
@@ -70,16 +67,60 @@ public class DwarvenGui extends Gui{
 	private static final ResourceLocation dwarvenComms = new ResourceLocation(Reference.MODID, "data/dwarven_mining_commissions.json");
 	private static final ResourceLocation crystalComms = new ResourceLocation(Reference.MODID, "data/crystal_mining_commissions.json");
 
-	public DwarvenGui(int x, int y) {
+	public DwarvenGui() {
+
+		posX = DataGetter.findInt("dwarven.gui.x");
+		posY = DataGetter.findInt("dwarven.gui.y");
+		scale = DataGetter.findInt("dwarven.gui.size")/10d;
+
+		commTrackToggle = DataGetter.findBool("dwarven.gui.commissionToggle");
+		if(commTrackToggle) {
+			commTrackBarToggle = DataGetter.findBool("dwarven.gui.commissionBarToggle");
+			commNums = DataGetter.findBool("dwarven.gui.commissionNumToggle");
+			commBorderColorID = DataGetter.findStr("dwarven.gui.commissionBorderColor");
+			commYesColorID = DataGetter.findStr("dwarven.gui.commissionYesColor");
+			commNoColorID = DataGetter.findStr("dwarven.gui.commissionNoColor");
+			commNameID = DataGetter.findStr("dwarven.gui.commissionQuestNameColor");
+			commissionID = DataGetter.findStr("dwarven.gui.commissionWordColor");
+			hideCommTitle = DataGetter.findBool("dwarven.gui.commissionHideWord");
+		}
+
+		sentryToggle = DataGetter.findBool("dwarven.starSentryHelper.toggle");
+		if(sentryToggle) {
+			sentryX = DataGetter.findInt("dwarven.starSentryHelper.x");
+			sentryY = DataGetter.findInt("dwarven.starSentryHelper.y");
+		}
+
+
+		fuelToggle =  DataGetter.findBool("dwarven.fuel.toggle");
+		if(fuelToggle) {
+			fuelGuiDrillFuel = DataGetter.findStr("dwarven.fuel.drillColor");
+			fuelGuiPrimaryFull = DataGetter.findStr("dwarven.fuel.guiPrimeTenColor");
+			fuelGuiSecondaryFull = DataGetter.findStr("dwarven.fuel.guiSecondTenColor");
+			fuelGuiPrimaryHalf = DataGetter.findStr("dwarven.fuel.guiPrimeHalfColor");
+			fuelGuiSecondaryHalf = DataGetter.findStr("dwarven.fuel.guiSecondHalfColor");
+			fuelGuiPrimaryTen = DataGetter.findStr("dwarven.fuel.guiPrimeFullColor");
+			fuelGuiSecondaryTen = DataGetter.findStr("dwarven.fuel.guiSecondFullColor");
+		}
+
+
+		mithrilToggle = DataGetter.findBool("dwarven.gui.powderToggle");
+		if(mithrilToggle) {
+			mithrilTextColor = DataGetter.findStr("dwarven.gui.mithrilTextColor");
+			mithrilCountColor = DataGetter.findStr("dwarven.gui.mithrilCountColor");
+			gemTextColor = DataGetter.findStr("dwarven.gui.gemstoneTextColor");
+			gemCountColor = DataGetter.findStr("dwarven.gui.gemstoneCountColor");
+		}
+
 
 		GlStateManager.pushMatrix();
 		GlStateManager.scale(scale, scale, scale);
 		String[] stringArray = currString.split(";");
 		int aO = 0;
-		if(x > SBP.width/2) {
+		if(posX > SBP.width/2) {
 			aO=108;
 		}
-		Utils.drawString(stringArray, (int) Math.round((posX+aO)/scale), (int) (Math.round(posY/scale)), SettingGlobal.textStyle, true);
+		GuiUtils.drawString(stringArray, (int) Math.round((posX+aO)/scale), (int) (Math.round(posY/scale)), SettingGlobal.textStyle, true);
 
 		GlStateManager.popMatrix();
 
@@ -87,10 +128,10 @@ public class DwarvenGui extends Gui{
 
 			if(DataGetter.findBool("dwarven.starSentryHelper.commOnly")) {
 				if(currCommissions.contains("Star Sentry")) {
-					Utils.drawString(Colors.LIGHT_PURPLE+"Last Star Sentries: "+Colors.AQUA+sentryLast, sentryX, sentryY);
+					GuiUtils.drawString(Colors.LIGHT_PURPLE+"Last Star Sentries: "+Colors.AQUA+sentryLast, sentryX, sentryY);
 				}
 			} else {
-				Utils.drawString(Colors.LIGHT_PURPLE+"Last Star Sentries: "+Colors.AQUA+sentryLast, sentryX, sentryY);
+				GuiUtils.drawString(Colors.LIGHT_PURPLE+"Last Star Sentries: "+Colors.AQUA+sentryLast, sentryX, sentryY);
 			}
 
 
@@ -107,14 +148,14 @@ public class DwarvenGui extends Gui{
 			String fuelFuelColor;
 			List<String> lore = player.getHeldItem().getTooltip(player, false);
 			for(int u=0;u<lore.size();u++) { 
-				String cLore = Utils.unformatAllText(lore.get(u)).toLowerCase();
+				String cLore = TextUtils.unformatAllText(lore.get(u)).toLowerCase();
 				if(cLore.startsWith("fuel:")) { DwarvenGui.searchForItem=u; }
 			}
 			
 			
 			if(DwarvenGui.searchForItem != 0) {
 				
-				String curr = Utils.unformatAllText(lore.get(DwarvenGui.searchForItem));
+				String curr = TextUtils.unformatAllText(lore.get(DwarvenGui.searchForItem));
 				lore.clear(); curr = curr.replace(",", "").replace("k", "000").replace("Fuel: ", "");
 				double fuelPercent; double currFuel; double totalFuel; DecimalFormat df = new DecimalFormat("#.##");
 				try {
@@ -128,8 +169,8 @@ public class DwarvenGui extends Gui{
 				int finalCurrFuel = (int) Math.round(currFuel); int finalTotalFuel = (int) Math.round(totalFuel); String finalFuelPercent = df.format((Math.round(fuelPercent))); int barProgress = Integer.parseInt(finalFuelPercent);
 				if(barProgress <= 10) { fuelFuelColor = fuelGuiPrimaryTen; fuelBorderColor = fuelGuiSecondaryTen; } else if(barProgress > 50) { fuelFuelColor = fuelGuiPrimaryFull; fuelBorderColor = fuelGuiSecondaryFull; } else { fuelFuelColor = fuelGuiPrimaryHalf; fuelBorderColor = fuelGuiSecondaryHalf; }
 
-				String color1 = ColorUtils.textColor(fuelBorderColor);
-				String color2 = ColorUtils.textColor(fuelFuelColor);
+				String color1 = Colors.textColor(fuelBorderColor);
+				String color2 = Colors.textColor(fuelFuelColor);
 				StringBuilder barString = new StringBuilder(color1 + "[" + color2);
 				
 				
@@ -142,7 +183,7 @@ public class DwarvenGui extends Gui{
 					}
 					barString.append("|");
 				} barString.append(color1).append("]");
-				String drillFuelStringColor = ColorUtils.textColor(fuelGuiDrillFuel);
+				String drillFuelStringColor = Colors.textColor(fuelGuiDrillFuel);
 				DwarvenGui.currString+=drillFuelStringColor+"Drill Fuel: "+color2+barProgress+"% "+color1+"("+color2+finalCurrFuel+color1+"/"+color2+finalTotalFuel+color1+");";
 				DwarvenGui.currString+=barString+Colors.WHITE+";";
 
@@ -182,7 +223,7 @@ public class DwarvenGui extends Gui{
 					percent = 100;
 					newPercent=percent;
 				}
-				String nameColor = ColorUtils.textColor(DwarvenGui.commNameID);
+				String nameColor = Colors.textColor(DwarvenGui.commNameID);
 				text+=nameColor+temp3[0]+":";
 
 
@@ -200,7 +241,7 @@ public class DwarvenGui extends Gui{
 				try {
 
 					commID = " "+text.toLowerCase().replace(" ", "_");
-					commID = Utils.unformatAllText(commID);
+					commID = TextUtils.unformatAllText(commID);
 					commID = commID.substring(2, commID.lastIndexOf(":"));
 
 				} catch(Exception e) {
@@ -304,9 +345,9 @@ public class DwarvenGui extends Gui{
 				if(DwarvenGui.commTrackBarToggle && DwarvenGui.commTrackToggle) {
 					percent = Math.round(percent);
 
-					String borderColor = ColorUtils.textColor(DwarvenGui.commBorderColorID);
-					String yesColor = ColorUtils.textColor(DwarvenGui.commYesColorID);
-					String noColor = ColorUtils.textColor(DwarvenGui.commNoColorID);
+					String borderColor = Colors.textColor(DwarvenGui.commBorderColorID);
+					String yesColor = Colors.textColor(DwarvenGui.commYesColorID);
+					String noColor = Colors.textColor(DwarvenGui.commNoColorID);
 
 
 
@@ -342,14 +383,14 @@ public class DwarvenGui extends Gui{
 	}
 	
 	public static String manageMithril(String name) {
-			String color1 = ColorUtils.textColor(mithrilTextColor);
-			String color2 = ColorUtils.textColor(mithrilCountColor);
+			String color1 = Colors.textColor(mithrilTextColor);
+			String color2 = Colors.textColor(mithrilCountColor);
 			String num = name.replace(" Mithril Powder: ", "");
 			return color1+"Mithril Powder: "+color2+num+Colors.WHITE;
 	}
 	public static String manageGemstone(String name) {
-		String color1 = ColorUtils.textColor(gemTextColor);
-		String color2 = ColorUtils.textColor(gemCountColor);
+		String color1 = Colors.textColor(gemTextColor);
+		String color2 = Colors.textColor(gemCountColor);
 		String num = name.replace(" Gemstone Powder: ", "");
 		return color1+"Gemstone Powder: "+color2+num+Colors.WHITE;
 	}

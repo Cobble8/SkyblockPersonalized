@@ -2,9 +2,11 @@ package com.cobble.sbp.core;
 
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.ConfigHandler;
+import com.cobble.sbp.gui.screen.nether.KuudraShopPrices;
 import com.cobble.sbp.simplejson.JSONObject;
 import com.cobble.sbp.simplejson.parser.JSONParser;
 import com.cobble.sbp.simplejson.parser.ParseException;
+import com.cobble.sbp.utils.FileUtils;
 import com.cobble.sbp.utils.Reference;
 import com.cobble.sbp.utils.Utils;
 
@@ -12,8 +14,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ConfigList {
-	public static ArrayList<String> c = new ArrayList();
-	public static ArrayList<Object> d = new ArrayList();
+	public static ArrayList<String> c = new ArrayList<>();
+	public static ArrayList<Object> d = new ArrayList<>();
 
 	public static void l(String key, Object defaultValue) {
 		c.add(key);
@@ -26,15 +28,12 @@ public class ConfigList {
 /*
 		checkForMissingValues();*/
 
-		
-		l("command.reparty.delay", "pingDelay");
-		l("command.dungeons.toggle", true);
 
 		l("core.api.toggle", true);
 		l("core.api.key", "NOT_SET");
 		l("core.launchCounter.toggle", true);
 		l("core.launchCounter.count", 0);
-		l("core.menu.theme", 0);
+		//l("core.menu.theme", 0);
 		l("core.skyblock.only", true);
 		l("core.menu.gridLocking", true);
 		l("core.menu.gridLockingPx", 3);
@@ -42,29 +41,25 @@ public class ConfigList {
 		l("core.mod.chromaSpeed", 4);
 		l("core.easterEgg.coco", false);
 
-
-
 		l("game.score.record", "d0");
 
-
-		l("music.inv.x", SBP.width/2-100);
-		l("music.inv.y", 10);
-		l("music.esc.x", SBP.width/2-100);
-		l("music.esc.y", 10);
-		l("music.all.volume", 0.5);
-		l("music.all.toggle", true);
-
-		l("dungeon.secretImage.vers", 0);
-		l("dungeon.secretImage.x", 0);
-		l("dungeon.secretImage.y", 0);
-		l("dungeon.secretImage.size", 10);
-		l("dungeon.secretImage.bgColor", "0.0;0.0;0.0");
-		l("dungeon.secretImage.textColor", "&f");
-		l("dungeon.secretImage.toggle", true);
-		l("dungeon.secretImage.autoDownload", false);
-		l("dungeon.secretImage.autoRemove", true);
+		Utils.printDev("Loading KuudraShopPrices class: "+(!KuudraShopPrices.inKuudraFight));
+		for(String s : KuudraShopPrices.upgradeNames) { l("nether.kuudraShopPrices.count_"+s, 0); }
+		l("nether.kuudraShopPrices.toggle", true);
+		l("nether.kuudraShopPrices.titleToggle", true);
+		l("nether.kuudraShopPrices.titleTextColor", "&b");
+		l("nether.kuudraShopPrices.yesTextColor", "&a");
+		l("nether.kuudraShopPrices.noTextColor", "&c");
+		l("nether.kuudraShopPrices.maxTextColor", "&6");
+		l("nether.kuudraShopPrices.x", 50);
+		l("nether.kuudraShopPrices.y", 100);
+		l("nether.kuudraShopPrices.tokenToggle", true);
+		l("nether.kuudraShopPrices.tokenColor", "&5&l");
+		l("nether.kuudraShopPrices.tokenNumColor", "&d");
 
 
+		l("nether.kuudraReadyWarning.toggle", true);
+		l("nether.kuudraReadyWarning.textColor", "&c&l");
 
 
 		l("dwarven.user.hotmLevel", 0);
@@ -105,7 +100,7 @@ public class ConfigList {
 		l("dwarven.nucleusEntrance.textColor", "&d");
 		l("dwarven.nucleusEntrance.beaconToggle", false);
 
-		l("dwarven.sendMap.toggle", false);
+		//l("dwarven.sendMap.toggle", false);
 
 		l("dwarven.chestHelper.toggle", true);
 		l("dwarven.chestHelper.color", "0.19607843;0.9764706;0.9490196;0.9764706");
@@ -127,6 +122,7 @@ public class ConfigList {
 		l("dwarven.crystalMap.x", 0);
 		l("dwarven.crystalMap.y", 0);
 		l("dwarven.crystalMap.size", 10);
+		l("dwarven.crystalMap.arrowColor", "1;0;0;1");
 		l("dwarven.crystalMap.coordsToggle", true);
 		l("dwarven.crystalMap.headToggle", true);
 		l("dwarven.crystalMap.textColor", "&b");
@@ -164,10 +160,18 @@ public class ConfigList {
 		l("dwarven.doneCommBg.color", "1.0;0.0;0.0;1.0");
 
 		l("qol.blockHoeClicks.toggle", true);
+		l("qol.blockHoeClicks.warning", true);
 
-		l("qol.lockQuickCrafts.items", ";;;");
+		l("qol.lockQuickCrafts.items", ";");
 		l("qol.lockQuickCrafts.toggle", true);
 
+		l("qol.enrageDisplay.toggle", false);
+		l("qol.enrageDisplay.textToggle", false);
+		l("qol.enrageDisplay.textColor", "&a");
+		l("qol.enrageDisplay.availableTextColor", "&c");
+		l("qol.enrageDisplay.tintToggle", true);
+		l("qol.enrageDisplay.x", SBP.width/2);
+		l("qol.enrageDisplay.y", SBP.height/2);
 
 		l("misc.jerryTimer.toggle", true);
 		l("misc.jerryTimer.x", 0);
@@ -176,7 +180,8 @@ public class ConfigList {
 		l("misc.npcDialogue.toggle", true);
 		l("misc.updateNotifs.toggle", true);
 
-
+		l("misc.eventTimes.toggle", true);
+		l("misc.eventTimes.military", false);
 
 		loadValues();
 	}
@@ -185,13 +190,13 @@ public class ConfigList {
 
 		JSONObject oldConfig;
 		try {
-			oldConfig = (JSONObject) new JSONParser().parse(Utils.readFile("config/"+ Reference.MODID+"/sbp.cfg"));
+			oldConfig = (JSONObject) new JSONParser().parse(FileUtils.readFile("config/"+ Reference.MODID+"/sbp.cfg"));
 		} catch(Exception e) {
 			oldConfig = (JSONObject) new JSONParser().parse("{}");
 		}
 
 
-		int i=0;
+		int i=-1;
 		for(String key : c) {
 			i++;
 			try {
@@ -200,16 +205,16 @@ public class ConfigList {
 				JSONObject loadCat = (JSONObject) oldConfig.get(split[0]);
 				JSONObject loadSet = (JSONObject) loadCat.get(split[1]);
 				Object loadVal = loadSet.get(split[2]);
-				if(loadVal == null) {throw new NullPointerException();}
+				if(loadVal == null) {/*Utils.print("NULL!");*/ throw new NullPointerException();  }
 
 				ConfigHandler.config.put(key, loadVal);
 				//System.out.println("Setting '"+key+"' to '"+loadVal+"'");
 			} catch(Exception e) {
-				//System.out.println(e.getMessage());
+				//e.printStackTrace();
 				try {
 					ConfigHandler.config.put(c.get(i), d.get(i));
 					Utils.print("Failed to find config variable: '"+c.get(i)+"', resetting to default: '"+d.get(i)+"'");
-				} catch(Exception e2) {/*e2.printStackTrace();*/}
+				} catch(Exception e2) {e2.printStackTrace();}
 
 			}
 		}

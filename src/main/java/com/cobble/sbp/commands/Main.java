@@ -7,7 +7,8 @@ import com.cobble.sbp.gui.menu.settings.SettingMenu;
 import com.cobble.sbp.threads.misc.SBPUpdater;
 import com.cobble.sbp.utils.Colors;
 import com.cobble.sbp.utils.Reference;
-import com.cobble.sbp.utils.Utils;
+import com.cobble.sbp.utils.TextUtils;
+import com.cobble.sbp.SBP;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -22,13 +23,28 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Main extends CommandBase {
+
+	private static final ArrayList<String> cmdList = new ArrayList<>();
+
+	public static void addCmd(String name, String desc) {
+		cmdList.add(Colors.YELLOW+"/sbp "+Colors.AQUA+Colors.BOLD+name+Colors.YELLOW+" ➜ "+Colors.AQUA+desc);
+	}
+
 	ArrayList<String> aliases;
 	public Main() {
 		aliases = new ArrayList<>();
 		aliases.add("skyblockpersonalized");
+
+		addCmd("help", "Shows this menu");
+		addCmd("dev", "Toggles dev logging (WIP)");
+		addCmd("reloadconfig", "Reloads the config file from file");
+		addCmd("update", "Attempts to update the mod to the latest version automatically");
+		addCmd("getconfig", "Allows you to get config values directly from the config");
+		addCmd("setconfig", "Allows you to set config values directly to the config");
+		addCmd("game", "Easter egg game within the mod because I was bored");
 	}
 
-	public static ArrayList<ArrayList<Double>> boxes = new ArrayList<>();
+
 
 	
 	@Override
@@ -47,12 +63,25 @@ public class Main extends CommandBase {
 		if(args.length > 0) {
 			String args0 = args[0].toLowerCase();
 			switch (args0) {
-				case "help":
 
+
+				case "dev":
+
+					SBP.dev = !SBP.dev;
+					String enable = Colors.GREEN+"enabled";
+					if(!SBP.dev) { enable = Colors.RED+"disabled"; }
+					TextUtils.sendMessage("Dev mode has been "+enable+Colors.YELLOW+"!");
+					return;
+
+				case "help":
+					TextUtils.sendMessage(" Help Menu:");
+					for(String cmd : cmdList) {
+						TextUtils.sendSpecificMessage(cmd);
+					}
 
 					return;
 				case "reloadconfig":
-					Utils.sendMessage("Reloaded Config!");
+					TextUtils.sendMessage("Reloaded Config!");
 					ConfigHandler.updateConfig("main");
 					try {
 						ConfigHandler.rewriteConfig();
@@ -64,10 +93,6 @@ public class Main extends CommandBase {
 					SettingMenu.currSettingMenu="game";
 					RenderGuiEvent.helpMenu=true;
 					return;
-				case "life":
-					SettingMenu.currSettingMenu="life";
-					RenderGuiEvent.helpMenu=true;
-					return;
 				case "update":
 
 					new SBPUpdater().start();
@@ -77,7 +102,7 @@ public class Main extends CommandBase {
 					try {
 						setConfig(args[1], args[2], args[3]);
 					} catch (Exception e) {
-						Utils.sendErrMsg("Failed to set the config variable! Usage: /" + Reference.MODID + " setconfig newValueType configVariable newValue");
+						TextUtils.sendErrMsg("Failed to set the config variable! Usage: /" + Reference.MODID + " setconfig newValueType configVariable newValue");
 					}
 					return;
 				case "getconfig":
@@ -99,7 +124,7 @@ public class Main extends CommandBase {
 
 					} catch (Exception e) {
 						e.printStackTrace();
-						Utils.sendErrMsg("Failed to get the config variable! Usage: /" + Reference.MODID + " getconfig configVariable");
+						TextUtils.sendErrMsg("Failed to get the config variable! Usage: /" + Reference.MODID + " getconfig configVariable");
 					}
 					return;
 				case "lagcheck":
@@ -107,11 +132,23 @@ public class Main extends CommandBase {
 					if(!sender.getDisplayName().getUnformattedText().equals("Cobble8")) {return;}
 
 					if(!Minecraft.getMinecraft().isSingleplayer()) {
-						Utils.sendMessage("Note: Updates on login");
-						Utils.sendMessage("Total Player Count: "+Minecraft.getMinecraft().getCurrentServerData().populationInfo);
-						Utils.sendMessage("Your Ping: "+Minecraft.getMinecraft().getCurrentServerData().pingToServer);
+						TextUtils.sendMessage("Note: Updates on login");
+						TextUtils.sendMessage("Total Player Count: "+Minecraft.getMinecraft().getCurrentServerData().populationInfo);
+						TextUtils.sendMessage("Your Ping: "+Minecraft.getMinecraft().getCurrentServerData().pingToServer);
 					}
 					return;
+				case "sublocation":
+
+					TextUtils.sendMessage("Sub Location: '"+SBP.subLocation+"'");
+					return;
+				case "location":
+					TextUtils.sendMessage("Location: '"+SBP.sbLocation+"'");
+					return;
+				case "disablehoewarning":
+					ConfigHandler.newObject("qol.blockHoeClicks.warning", false);
+					TextUtils.sendMessage("Block Hoe Right Click Warning has been permanently disabled.");
+					return;
+
 
 			}
 			
@@ -141,15 +178,15 @@ public class Main extends CommandBase {
 			try {
 				
 				if(DataGetter.findInt(configValue) == -69) {
-					Utils.sendErrMsg("That is not a valid config variable!");
+					TextUtils.sendErrMsg("That is not a valid config variable!");
 					return;
 				}
 				
 				int num = Integer.parseInt(newValue);
 				ConfigHandler.newObject(configValue, num);
-				Utils.sendMessage("Config Variable: "+Colors.AQUA+configValue+Colors.YELLOW+" has been set to "+Colors.AQUA+newValue+Colors.YELLOW+".");
+				TextUtils.sendMessage("Config Variable: "+Colors.AQUA+configValue+Colors.YELLOW+" has been set to "+Colors.AQUA+newValue+Colors.YELLOW+".");
 			} catch(Exception e) {
-				Utils.sendErrMsg("That is not a valid number!");
+				TextUtils.sendErrMsg("That is not a valid number!");
 			}
 		} else if(type.equalsIgnoreCase("str") || type.equalsIgnoreCase("string")) {
 			
@@ -159,9 +196,9 @@ public class Main extends CommandBase {
 				DataGetter.findStr(configValue);
 
 				ConfigHandler.newObject(configValue, newValue);
-				Utils.sendMessage("Config Variable: "+Colors.AQUA+configValue+Colors.YELLOW+" has been set to "+Colors.AQUA+newValue+Colors.YELLOW+".");
+				TextUtils.sendMessage("Config Variable: "+Colors.AQUA+configValue+Colors.YELLOW+" has been set to "+Colors.AQUA+newValue+Colors.YELLOW+".");
 			} catch(Exception e) {
-				Utils.sendErrMsg("That is not a valid string!");
+				TextUtils.sendErrMsg("That is not a valid string!");
 			}
 			
 		} else if(type.equalsIgnoreCase("bool") || type.equalsIgnoreCase("boolean")) {
@@ -173,9 +210,9 @@ public class Main extends CommandBase {
 				Boolean bool = Boolean.parseBoolean(newValue);
 				
 				ConfigHandler.newObject(configValue, bool);
-				Utils.sendMessage("Config Variable: "+Colors.AQUA+configValue+Colors.YELLOW+" has been set to "+Colors.AQUA+newValue+Colors.YELLOW+".");
+				TextUtils.sendMessage("Config Variable: "+Colors.AQUA+configValue+Colors.YELLOW+" has been set to "+Colors.AQUA+newValue+Colors.YELLOW+".");
 			} catch(Exception e) {
-				Utils.sendErrMsg("That is not a valid boolean!");
+				TextUtils.sendErrMsg("That is not a valid boolean!");
 			}
 			
 		}
@@ -193,8 +230,8 @@ public class Main extends CommandBase {
 					categories.put(keys[0], 1);
 				}
 			}
-			Utils.sendSpecificMessage(Colors.YELLOW+"--------------------");
-			Utils.sendMessage(Colors.YELLOW+"Config List:");
+			TextUtils.sendSpecificMessage(Colors.YELLOW+"--------------------");
+			TextUtils.sendMessage(Colors.YELLOW+"Config List:");
 			int i=0;
 			for(String key : categories.keySet()) {
 				i++;
@@ -207,8 +244,8 @@ public class Main extends CommandBase {
 			}
 		} else {
 			HashMap<String, Integer> vars = new HashMap<>();
-			Utils.sendSpecificMessage(Colors.YELLOW+"--------------------");
-			Utils.sendMessage(Colors.YELLOW+"Config List for "+Colors.AQUA+keyCode+Colors.YELLOW+":");
+			TextUtils.sendSpecificMessage(Colors.YELLOW+"--------------------");
+			TextUtils.sendMessage(Colors.YELLOW+"Config List for "+Colors.AQUA+keyCode+Colors.YELLOW+":");
 			for(String key : ConfigHandler.config.keySet()) {
 
 				if(key.startsWith(keyCode)) {

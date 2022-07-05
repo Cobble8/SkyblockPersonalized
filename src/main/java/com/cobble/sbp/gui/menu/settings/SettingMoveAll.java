@@ -3,7 +3,6 @@ package com.cobble.sbp.gui.menu.settings;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
 import com.cobble.sbp.events.RenderGuiEvent;
-import com.cobble.sbp.gui.screen.dungeons.SecretImage;
 import com.cobble.sbp.gui.screen.dwarven.CrystalHollowsMap;
 import com.cobble.sbp.gui.screen.dwarven.CrystalLobbyDay;
 import com.cobble.sbp.gui.screen.dwarven.DwarvenGui;
@@ -291,9 +290,6 @@ public class SettingMoveAll extends GuiScreen {
 
 				JerryTimer.jerryX = DataGetter.findInt("misc.jerryTimer.x");
 				JerryTimer.jerryY = DataGetter.findInt("misc.jerryTimer.y");
-
-				SecretImage.imgX = DataGetter.findInt("dungeon.secretImage.x");
-				SecretImage.imgY = DataGetter.findInt("dungeon.secretImage.y");
 
 				CrystalHollowsMap.mapX = DataGetter.findInt("dwarven.crystalMap.x");//
 				CrystalHollowsMap.mapY = DataGetter.findInt("dwarven.crystalMap.y");
