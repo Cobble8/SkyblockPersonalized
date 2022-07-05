@@ -1,16 +1,9 @@
 package com.cobble.sbp.utils;
 
 import com.cobble.sbp.SBP;
-import com.cobble.sbp.core.config.ConfigHandler;
-import com.cobble.sbp.core.config.DataGetter;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-
-import java.util.*;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 
 public class Utils {
 
