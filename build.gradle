@@ -1,28 +1,15 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            name = "forge"
-            url = "https://maven.minecraftforge.net/"
-        }
-        maven {
-            name = "jitpack"
-            url = "https://jitpack.io/"
-        }
-    }
-    dependencies {
-        classpath "com.github.Skytils:ForgeGradle:6f5327"
-        classpath 'com.github.xcfrg:MixinGradle:0.6-SNAPSHOT'
-    }
+import dev.architectury.pack200.java.Pack200Adapter
+plugins {
+    id 'java'
+    id 'idea'
+    id 'gg.essential.loom' version '0.10.0.+'
+    id 'dev.architectury.architectury-pack200' version '0.1.3'
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'org.spongepowered.mixin'
 
 version = ""
 group= "com.cobble.sbp"
 archivesBaseName = "[1.8.9] SkyblockPersonalized ["+mod_version+"]"
-sourceCompatibility = JavaVersion.VERSION_1_8
 
 
 tasks.withType(JavaCompile) {
@@ -34,20 +21,37 @@ configurations {
     implementation.extendsFrom(embed)
 }
 
-minecraft {
-    version = "1.8.9-11.15.1.2318-1.8.9"
-    runDir = "run"
-    mappings = "stable_22"
-    makeObfSourceJar = false
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
+loom {
+    launchConfigs {
+        client {
+            arg("--mixin", mod_id+".mixins.json")
+            arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+        }
+    }
+    forge {
+        pack200Provider.set(new Pack200Adapter())
+        mixinConfig(mod_id+'.mixins.json')
+    }
+    mixin {
+        defaultRefmapName.set("sbp.mixins.refmap.json")
+    }
 }
 
 repositories {
     maven { url 'https://repo.spongepowered.org/maven/' }
+    mavenCentral()
 }
 
 dependencies {
-    compile('org.spongepowered:mixin:0.7.11-SNAPSHOT')
-    annotationProcessor "org.spongepowered:mixin:0.7.11-SNAPSHOT"
+    minecraft("com.mojang:minecraft:1.8.9")
+    mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
+    forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
+    implementation('org.spongepowered:mixin:0.7.11-SNAPSHOT')
+    annotationProcessor "net.fabricmc:sponge-mixin:0.11.4+mixin.0.8.5"
 }
 
 jar {
@@ -60,37 +64,16 @@ jar {
     )
 }
 
-sourceSets {
-    main {
-        ext.refMap = "sbp.mixins.refmap.json"
-    }
-}
-
-mixin {
-    add sourceSets.main, "sbp.mixins.refmap.json"
-}
 
 processResources {
     inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+    filesMatching(['mcmod.info']) {
+        expand 'version':project.version
     }
 }
 
-task moveResources {
-    doLast {
-        ant.move file: "${buildDir}/resources/main",
-                todir: "${buildDir}/classes/java"
-    }
+sourceSets.main {
+    output.setResourcesDir(file("$buildDir/classes/java/main"))
 }
 
-moveResources.dependsOn processResources
-classes.dependsOn moveResources
+

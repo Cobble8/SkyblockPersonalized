@@ -3,7 +3,7 @@
   "modid": "sbp",
   "name": "SkyblockPersonalized",
   "description": "A mod made for full customizability of all things skyblock!",
-  "version": "1.7.0.0",
+  "version": "${version}",
   "mcversion": "1.8.9",
   "url": "https://github.com/Cobble8/SkyblockPersonalized/tree/main/",
   "updateUrl": "https://discord.gg/QXA3y5EbNA",
