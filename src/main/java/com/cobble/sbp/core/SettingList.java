@@ -157,7 +157,7 @@ public class SettingList {
 				.TextColor("Available Timer Color", "qol.enrageDisplay.availableTextColor").finish();
 
 		new MenuSetting("Additional NPC Dialogue", "misc", "misc.npcDialogue.toggle", "Sends additional Dialogue for some Skyblock NPCs. This can range from useful to just random text.", "1.5.0.0").finish();
-		new MenuSetting("Block Hoe Right Clicks", "misc, qol", "qol.blockHoeClicks.toggle", "Blocks right clicks while holding hoes (This will prevent clicking things such as but are not limited to: NPCs, Chests, Minions, and Crafting tables while holding hoes) "+Colors.AQUA+"Contribs: Erymanthus (helping transfer from old rick roll)", "1.5.1.0").finish();
+		new MenuSetting("Block Hoe Right Clicks", "misc, qol", "qol.blockHoeClicks.toggle", "Blocks right clicks while holding farming tools (This will prevent clicking things such as but are not limited to: NPCs, Chests, Minions, and Crafting tables while holding hoes) "+Colors.AQUA+"Contribs: Erymanthus (helping transfer from old rick roll), nea89 (adding axes)", "1.7.1.0").finish();
 		new MenuSetting("Jerry Timer", "misc", "misc.jerryTimer.toggle", "Send a message in chat when you can get another Jerry during Mayor Jerry!", "1.5.3.0")
 				.MoveGui("misc.jerryTimer", 50, 30)
 				.TextColor("Text Color", "misc.jerryTimer.textColor").finish();

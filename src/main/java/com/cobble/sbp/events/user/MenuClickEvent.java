@@ -1,60 +1,62 @@
 package com.cobble.sbp.events.user;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import com.cobble.sbp.handlers.GuiChestHandler;
-import com.cobble.sbp.utils.SBUtils;
-import com.cobble.sbp.utils.TextUtils;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import com.cobble.sbp.SBP;
 import com.cobble.sbp.core.config.ConfigHandler;
 import com.cobble.sbp.core.config.DataGetter;
+import com.cobble.sbp.handlers.GuiChestHandler;
 import com.cobble.sbp.handlers.KeyBindingHandler;
 import com.cobble.sbp.threads.misc.RickRolledThread;
+import com.cobble.sbp.utils.SBUtils;
+import com.cobble.sbp.utils.TextUtils;
 import com.cobble.sbp.utils.Utils;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MenuClickEvent {
 
-	public static ArrayList<String> itemList = new ArrayList<>();
-	public static int mouseX = 0;
-	public static int mouseY = 0;
+    public static ArrayList<String> itemList = new ArrayList<>();
+    public static int mouseX = 0;
     public static boolean menuClickAvailable = false;
-	private static final String MAXTIER = "_3";
-	private static int count = 0;
+    public static int mouseY = 0;
+    private static int count = 0;
+
+    public boolean isHoeOrAxe(String itemId) {
+        if (itemId == null) return false;
+        boolean isTier3 = itemId.endsWith("_3");
+        return (itemId.startsWith("theoretical_hoe_") && !isTier3)
+                || (itemId.startsWith("pumpkin_dicer") && !isTier3)
+                || (itemId.startsWith("melon_dicer") && !isTier3);
+    }
+
     @SubscribeEvent
-	public void onClick(PlayerInteractEvent event) {
-		if(SBP.onSkyblock) {
-			
-			
-			if(event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {
-				EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-				String heldItem = SBUtils.getSBID();
-				if(heldItem.contains("theoretical_hoe_") && DataGetter.findBool("qol.blockHoeClicks.toggle") && !heldItem.contains(MAXTIER)) {
-					count++;
-					if(count >= 3) {
-						count = 0;
-						if(DataGetter.findBool("qol.blockHoeClicks.warning")) {
-							new RickRolledThread().start();
-						}
-
-					}
-
-					event.setCanceled(true);
-					player.playSound("note.bass", 1, 0.2F);
-				}
-			}	
-		}
-	}
+    public void onClick(PlayerInteractEvent event) {
+        if (SBP.onSkyblock) {
+            if (event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {
+                EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                String heldItem = SBUtils.getSBID();
+                if (isHoeOrAxe(heldItem) && DataGetter.findBool("qol.blockHoeClicks.toggle")) {
+                    count++;
+                    if (count >= 3) {
+                        count = 0;
+                        if (DataGetter.findBool("qol.blockHoeClicks.warning")) {
+                            new RickRolledThread().start();
+                        }
+                    }
+                    event.setCanceled(true);
+                    player.playSound("note.bass", 1, 0.2F);
+                }
+            }
+        }
+    }
 	
 	
 	
