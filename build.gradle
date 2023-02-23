@@ -7,7 +7,7 @@ plugins {
 }
 
 
-version = ""
+version = mod_version
 group= "com.cobble.sbp"
 archivesBaseName = "[1.8.9] SkyblockPersonalized ["+mod_version+"]"
 
@@ -44,6 +44,7 @@ loom {
 repositories {
     maven { url 'https://repo.spongepowered.org/maven/' }
     mavenCentral()
+    maven { url 'https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1' }
 }
 
 dependencies {
@@ -52,6 +53,7 @@ dependencies {
     forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
     implementation('org.spongepowered:mixin:0.7.11-SNAPSHOT')
     annotationProcessor "net.fabricmc:sponge-mixin:0.11.4+mixin.0.8.5"
+    runtimeOnly "me.djtheredstoner:DevAuth-forge-legacy:1.1.0"
 }
 
 jar {
